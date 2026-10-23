@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>مصحف حفص وشعبة</title>
+<style>
+:root{--bg:#fdfaf3;--fg:#222;--muted:#777;--accent:#8a5a2b;--panel:#fff;--border:#e4dccb}
+@media (prefers-color-scheme: dark){:root{--bg:#1b1a17;--fg:#eee;--muted:#aaa;--accent:#d9a86c;--panel:#26241f;--border:#3a372f}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:"Traditional Arabic","Amiri","Noto Naskh Arabic",serif;line-height:2.1}
+header{position:sticky;top:0;z-index:2;background:var(--panel);border-bottom:1px solid var(--border);padding:.5rem;display:flex;gap:.6rem;align-items:center;flex-wrap:wrap}
+select{font:inherit;padding:.3rem .6rem;border-radius:6px;border:1px solid var(--border);background:var(--bg);color:var(--fg)}
+#title{font-weight:bold}
+main{max-width:760px;margin:0 auto;padding:1rem 1rem 6rem}
+.ayah{font-size:1.7rem;margin:.3rem 0;padding:.3rem .4rem;border-radius:8px}
+.num{color:var(--muted);font-size:1rem;margin-inline-start:.4rem}
+.w{cursor:pointer;padding:0 .1rem;border-radius:4px}
+.w:hover{background:var(--border)}
+.w.sel{background:var(--accent);color:#fff}
+#meaning{position:fixed;bottom:0;left:0;right:0;background:var(--panel);border-top:1px solid var(--border);padding:.8rem 1rem;min-height:3.2rem;font-size:1.15rem;line-height:1.8}
+#meaning .bw{font-weight:bold;color:var(--accent)}
+</style>
+</head>
+<body>
+<header>
+  <select id="surah" aria-label="السورة"></select>
+  <span id="title"></span>
+</header>
+<main id="quran">جارٍ التحميل…</main>
+<div id="meaning">اضغط على كلمة لعرض معناها</div>
+
+<script>
+let Q = null, M = {}, selected = null;
+const $ = id => document.getElementById(id);
+
+async function init() {
+  try {
+    const [q, m] = await Promise.all([
+      fetch('quran.json').then(r => r.json()),
+      fetch('meanings.json').then(r => r.json())
+    ]);
+    Q = q; M = m;
+    const sel = $('surah');
+    Q.surahs.forEach((s, i) => {
+      const o = document.createElement('option');
+      o.value = i + 1;
+      o.textContent = (i + 1) + '. ' + s[0];
+      sel.appendChild(o);
+    });
+    sel.onchange = () => show(+sel.value);
+    show(1);
+  } catch (e) {
+    $('quran').textContent = 'تعذّر تحميل الملفات: ' + e.message;
+  }
+}
+
+function show(s) {
+  const count = Q.surahs[s - 1][2];
+  $('title').textContent = Q.surahs[s - 1][0];
+  const main = $('quran');
+  main.innerHTML = '';
+  selected = null;
+  for (let a = 1; a <= count; a++) {
+    const key = s + ':' + a;
+    const words = (Q.text[key] || '').split(' '); // نفس طريقة الترقيم في meanings.json
+    const div = document.createElement('div');
+    div.className = 'ayah';
+    words.forEach((w, i) => {
+      if (!w) return; // نتجاوز الفراغات المزدوجة دون تغيير الترقيم
+      const span = document.createElement('span');
+      span.className = 'w';
+      span.textContent = w;
+      span.dataset.k = key + ':' + i;
+      span.onclick = () => pick(span);
+      div.appendChild(span);
+      div.appendChild(document.createTextNode(' '));
+    });
+    const n = document.createElement('span');
+    n.className = 'num';
+    n.textContent = '﴿' + a + '﴾';
+    div.appendChild(n);
+    main.appendChild(div);
+  }
+  window.scrollTo(0, 0);
+}
+
+function pick(span) {
+  if (selected) selected.classList.remove('sel');
+  span.classList.add('sel');
+  selected = span;
+  const m = M[span.dataset.k];
+  const box = $('meaning');
+  box.textContent = '';
+  if (m) {
+    const b = document.createElement('span');
+    b.className = 'bw';
+    b.textContent = m.w + ': ';
+    box.appendChild(b);
+    box.appendChild(document.createTextNode(m.t));
+  } else {
+    box.textContent = 'لا يوجد معنى لهذه الكلمة في الملف';
+  }
+}
+
+init();
+</script>
+</body>
+</html>

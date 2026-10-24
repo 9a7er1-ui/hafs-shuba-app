@@ -413,8 +413,15 @@ function layout(){
   /* القياس الطبيعي لكل سطر */
   const txt=lines.filter(l=>l.classList.contains('line'));
   txt.forEach(l=>{l.classList.remove('just','center');l.style.fontSize='';l.style.width='auto';l.querySelectorAll('.w').forEach(w=>w.style.transform='')});
-  const nats=new Map(txt.map(l=>[l,l.scrollWidth]));
-  const maxNat=Math.max(...nats.values(),1);
+  let nats=new Map(txt.map(l=>[l,l.scrollWidth]));
+  let maxNat=Math.max(...nats.values(),1);
+  /* ملاءمة الخط لكل صفحة: أطول سطر يملأ نحو ٩٣٪ من العرض، فلا تزاحم ولا فراغات واسعة */
+  if(!centeredPage&&txt.length){
+    const fit=Math.min(fs*lineW*0.93/maxNat,pitch/1.6);
+    if(Math.abs(fit-fs)>0.2){fs=fit;box.style.fontSize=fs+'px';
+      nats=new Map(txt.map(l=>[l,l.scrollWidth]));maxNat=Math.max(...nats.values(),1)}
+    pitch=Math.min(availH/15,fs*2.25);
+  }
   lines.forEach(l=>{
     l.style.height=pitch+'px';
     if(l.classList.contains('hdr')){const bh=lineW*135/1200;l.style.width=lineW+'px';l.style.height=bh+'px';l.style.margin=Math.max(0,(pitch-bh)/2)+'px 0'}

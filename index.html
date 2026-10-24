@@ -10,8 +10,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Amiri+Quran&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
 <title>مصحف حفص وشعبة</title>
 <style>
-:root{--paper:#fdfbf5;--edge:#7a9a88;--ink:#111;--muted:#6f8f7f;--sel:rgba(214,170,60,.35);--ui:#fff;--uitx:#222;--line:#e6e0d2;--acc:#4d7a5e;
-  --c-h:#e57373;--c-i:#ba68c8;--c-m:#ffb74d;--c-w:#81c784;--c-n:#64b5f6}
+:root{--paper:#fdfbf5;--edge:#7a9a88;--ink:#000;--muted:#6f8f7f;--sel:rgba(214,170,60,.35);--ui:#fff;--uitx:#222;--line:#e6e0d2;--acc:#4d7a5e;
+  --c-h:#b30000;--c-i:#9a009a;--c-m:#d96f00;--c-w:#005c00;--c-n:#0000b3}
 body.night{--paper:#1c1c1a;--edge:#2b3a32;--ink:#e9e4d6;--muted:#9fb8a9;--ui:#262624;--uitx:#eee;--line:#3a3833}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;height:100%;background:var(--edge);overflow:hidden;font-family:Amiri,-apple-system,"Segoe UI",Tahoma,serif}
@@ -21,7 +21,8 @@ button{font:inherit;cursor:pointer}
 .bar{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:clamp(14px,2.2vh,21px);padding:.5em 1.6em .1em}
 .foot{justify-content:center;padding:.1em 0 .6em}
 #lines{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;min-height:0}
-.line{display:flex;align-items:center;white-space:nowrap;direction:rtl;color:var(--ink)}
+.line{display:flex;align-items:center;white-space:nowrap;direction:rtl;color:var(--ink);-webkit-text-stroke:.018em currentColor}
+.num{cursor:pointer;color:var(--ink)!important}
 .line.just{justify-content:space-between}
 .line.center{justify-content:center}
 .line.center .w{margin:0 .07em}
@@ -56,7 +57,8 @@ body.nodiff .w[class*="d-"]{color:inherit}
 .sheet .x{border:0;background:none;font-size:24px;color:#999}
 .sheet .bd{overflow:auto;font-size:var(--tsize,19px);line-height:1.95}
 #mean .k{color:var(--acc);font-weight:bold}
-#mean .shu{margin-top:.4em;padding:.3em .6em;border-radius:8px;background:rgba(77,122,94,.1)}
+#mean .shu{margin-top:.2em;padding:.3em .7em;border-radius:8px;background:rgba(77,122,94,.08)}
+.qt{font-family:'Amiri Quran',Amiri,serif;font-size:1.15em}
 .mini{border:1px solid var(--line);background:none;color:var(--acc);border-radius:20px;padding:.15em .9em;font-size:15px}
 .tabs{display:flex;gap:.35em;overflow-x:auto;padding-bottom:.4em;margin-bottom:.4em;border-bottom:1px solid var(--line)}
 .tabs button{flex:none;border:1px solid var(--line);background:none;color:var(--uitx);border-radius:20px;padding:.2em .9em;font-size:15px}
@@ -77,6 +79,16 @@ input,select{font:inherit;padding:.45em .6em;border-radius:8px;border:1px solid 
 .prog i{display:block;height:100%;background:var(--acc)}
 .legend span{display:inline-block;margin:.15em .4em;font-size:15px}
 .legend i{display:inline-block;width:.9em;height:.9em;border-radius:3px;vertical-align:middle;margin-left:.3em}
+#tview{position:fixed;inset:0;background:var(--paper);color:var(--ink);z-index:3;display:none;flex-direction:column}
+#tview.open{display:flex}
+#tview .top{display:flex;align-items:center;gap:.5em;padding:calc(env(safe-area-inset-top,0) + .5em) 1em .4em;border-bottom:1px solid var(--line);color:var(--muted);font-size:16px;flex:none}
+#tview .top .sp{flex:1;text-align:center}
+#tview .tabs{padding:.4em 1em;margin:0;flex:none}
+#tvBody{overflow:auto;padding:.6em 1.2em 6em;flex:1;-webkit-overflow-scrolling:touch}
+.tv-a{font-family:"Amiri Quran",Amiri,serif;font-size:calc(var(--tsize,19px)*1.35);line-height:2.1;margin:.8em 0 .2em;color:var(--ink)}
+.tv-a .an{color:var(--acc);font-size:.8em}
+.tv-t{font-size:var(--tsize,19px);line-height:1.95;color:var(--uitx);padding:.2em .8em .8em;border-right:3px solid var(--line)}
+.tv-h{text-align:center;color:var(--acc);font-family:"Amiri Quran",Amiri,serif;font-size:1.4em;margin:.6em 0}
 #msg{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px}
 #toast{position:fixed;top:30%;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.78);color:#fff;padding:.5em 1.2em;border-radius:10px;z-index:9;display:none}
 </style>
@@ -89,6 +101,14 @@ input,select{font:inherit;padding:.45em .6em;border-radius:8px;border:1px solid 
   <div class="bar foot" id="pno"></div>
 </div>
 
+<div id="tview"><div class="top"><button class="mini" onclick="tvPage(1)">‹ التالية</button><span class="sp" id="tvTitle"></span><button class="mini" onclick="tvPage(-1)">السابقة ›</button></div>
+  <div class="tabs" id="tvTabs"></div>
+  <div id="tvBody"></div>
+  <div style="position:fixed;left:1em;bottom:calc(1em + env(safe-area-inset-bottom,0));display:flex;gap:.5em;z-index:4">
+    <button class="mini" style="background:var(--ui)" onclick="toggleTviewMushaf()">المصحف</button>
+    <button class="mini" style="background:var(--acc);color:#fff;border-color:var(--acc)" onclick="markHere()">وصلتُ هنا</button>
+    <button class="mini" style="background:var(--ui)" onclick="$('tb').classList.add('open')">القائمة</button></div>
+</div>
 <div id="kbadge"></div>
 <button id="here" onclick="markHere()">وصلتُ هنا</button>
 
@@ -169,7 +189,7 @@ async function show(p){
   try{await pageFont(p)}catch(e){$('lines').textContent='تعذّر تحميل خط الصفحة — تأكد من الاتصال بالإنترنت';return}
   if(p!==cur)return;
   const box=$('lines');box.innerHTML='';
-  const fam='p'+p;
+  const fam='p'+p;let lastAyah=firstKey(p).split(':').slice(0,2).join(':');
   LAYOUT[p-1].forEach(l=>{
     const div=document.createElement('div');
     if(l.h){div.className='hdr';const [d,x,y,w,h]=NAMES[l.h];div.innerHTML=`<img src="banner.png" alt=""><svg viewBox="${x} ${y} ${w} ${h}" style="aspect-ratio:${w}/${h}"><path d="${d}"/></svg>`}
@@ -177,14 +197,17 @@ async function show(p){
     else{
       div.className='line';div.style.fontFamily=fam;
       l.w.forEach(([k,g])=>{
-        const s=document.createElement('span');s.className='w';s.textContent=g;
+        const parts=g.split(' ');
+        const s=document.createElement('span');s.className='w';s.textContent=parts[0];
         if(k){
-          s.dataset.k=k;
+          s.dataset.k=k;lastAyah=k.split('|')[0].split(':').slice(0,2).join(':');
           const d=k.split('|').map(x=>DIFFS[x]).find(Boolean);
-          if(d)s.classList.add('d-'+(d.c||d));
-          s.onclick=ev=>{ev.stopPropagation();pick(s)};
-        }
-        div.appendChild(s);
+          if(d)s.classList.add('d-'+d.c);
+          bindPress(s);
+          div.appendChild(s);
+        }else{s.className='w num';s.dataset.a=lastAyah;s.onclick=ev=>{ev.stopPropagation();openTafsir(s.dataset.a)};div.appendChild(s)}
+        parts.slice(1).forEach(m=>{const n=document.createElement('span');n.className='w num';n.textContent=m;n.dataset.a=lastAyah;
+          n.onclick=ev=>{ev.stopPropagation();openTafsir(n.dataset.a)};div.appendChild(n)});
       });
     }
     box.appendChild(div);
@@ -192,7 +215,7 @@ async function show(p){
   $('sname').textContent=Q.surahs[surahOfPage(p)-1][0];
   $('juz').textContent='الجزء '+AR(juzOf(p));
   $('pno').textContent=AR(p);
-  layout();updateBadges();
+  layout();updateBadges();updateTview();
   [p+1,p-1].forEach(n=>{if(n>=1&&n<=604)pageFont(n).catch(()=>{})});
 }
 
@@ -221,8 +244,21 @@ function layout(){
 }
 
 /* ---------- word meaning ---------- */
+function bindPress(s){
+  let t=null,long=false,sx=0,sy=0;
+  const start=e=>{long=false;const pt=e.touches?e.touches[0]:e;sx=pt.clientX;sy=pt.clientY;
+    t=setTimeout(()=>{long=true;showDiff(s);if(navigator.vibrate)navigator.vibrate(15)},450)};
+  const move=e=>{const pt=e.touches?e.touches[0]:e;if(Math.abs(pt.clientX-sx)>10||Math.abs(pt.clientY-sy)>10)clearTimeout(t)};
+  const end=()=>clearTimeout(t);
+  s.addEventListener('touchstart',start,{passive:true});s.addEventListener('touchmove',move,{passive:true});s.addEventListener('touchend',end);
+  s.addEventListener('mousedown',start);s.addEventListener('mouseup',end);s.addEventListener('mouseleave',end);
+  s.addEventListener('contextmenu',e=>e.preventDefault());
+  s.addEventListener('click',ev=>{ev.stopPropagation();if(long){long=false;return}pick(s)});
+}
+function selectWord(s){if(selEl)selEl.classList.remove('sel');selEl=s;s.classList.add('sel')}
+function titleFor(k){const [su,ay]=k.split(':');return `${Q.surahs[su-1][0]} ${AR(ay)}`}
 function pick(s){
-  if(selEl)selEl.classList.remove('sel');selEl=s;s.classList.add('sel');
+  selectWord(s);
   const body=$('meanBody');body.innerHTML='';
   const keys=s.dataset.k.split('|');
   keys.forEach(k=>{
@@ -230,13 +266,24 @@ function pick(s){
     if(m){const b=document.createElement('span');b.className='k';b.textContent=m.w.replace(/^\d+\s+/,'')+': ';p.appendChild(b);p.appendChild(document.createTextNode(m.t))}
     else p.textContent='لا يوجد معنى لهذه الكلمة';
     body.appendChild(p);
-    const d=DIFFS[k];
-    if(d&&S.diffs){const x=document.createElement('div');x.className='shu';
-      x.textContent='شعبة: '+(DIFF_NAMES[d.c||d]||'')+(d.n?' — '+d.n:'');body.appendChild(x)}
   });
-  const [su,ay]=keys[0].split(':');
-  $('meanTitle').textContent=`${Q.surahs[su-1][0]} ${AR(ay)}`;
-  $('meanTafsir').onclick=()=>openTafsir(su+':'+ay);
+  $('meanTitle').textContent='معنى الكلمة — '+titleFor(keys[0]);
+  $('meanTafsir').style.display='';
+  const [su,ay]=keys[0].split(':');$('meanTafsir').onclick=()=>openTafsir(su+':'+ay);
+  openSheet('mean');
+}
+function showDiff(s){
+  selectWord(s);
+  const keys=s.dataset.k.split('|');const body=$('meanBody');body.innerHTML='';
+  const d=keys.map(k=>DIFFS[k]).find(Boolean);
+  $('meanTitle').textContent='خلاف شعبة — '+titleFor(keys[0]);$('meanTafsir').style.display='none';
+  if(!d){body.textContent='لا خلاف بين حفص وشعبة في هذه الكلمة.';openSheet('mean');return}
+  const lab=document.createElement('div');lab.className='shu';lab.style.borderRight='4px solid var(--c-'+d.c+')';
+  lab.innerHTML=`<b style="color:var(--c-${d.c})">${DIFF_NAMES[d.c]}</b>`;body.appendChild(lab);
+  const cmp=document.createElement('div');cmp.style.margin='.4em 0';
+  cmp.innerHTML='<span class="k">حفص:</span> <span class="qt"></span>&nbsp;&nbsp; <span class="k">شعبة:</span> <span class="qt"></span>';
+  const q=cmp.querySelectorAll('.qt');q[0].textContent=d.h;q[1].textContent=d.s;body.appendChild(cmp);
+  d.d.forEach(t=>{const x=document.createElement('div');x.textContent='• '+t;body.appendChild(x)});
   openSheet('mean');
 }
 
@@ -314,7 +361,7 @@ function renderKhatma(){
   reset.onclick=()=>{if(confirm('هل تريد إعادة الختمة الحالية إلى الصفحة الأولى؟')){K[K.active].page=1;K[K.active].start=Date.now();save('khatmas',K);show(1)}};
   body.appendChild(reset);
 }
-function switchKhatma(id){K.active=id;save('khatmas',K);show(K[id].page||1)}
+function switchKhatma(id){K.active=id;tvMushaf=false;save('khatmas',K);show(K[id].page||1)}
 function markHere(){
   if(K.active==='hifz')return;
   K[K.active].page=cur;if(!K[K.active].start)K[K.active].start=Date.now();save('khatmas',K);
@@ -323,7 +370,42 @@ function markHere(){
 function updateBadges(){
   const name=KH.find(x=>x[0]===K.active)[1];
   $('kbadge').textContent=name;
-  $('here').classList.toggle('open',K.active!=='hifz'&&$('tb').classList.contains('open'));
+  const tvOn=$('tview')&&$('tview').classList.contains('open');
+  $('here').classList.toggle('open',!tvOn&&K.active!=='hifz'&&($('tb').classList.contains('open')||(K.active==='tafsir'&&tvMushaf)));
+}
+
+
+/* ---------- tafsir khatma view ---------- */
+let tvMushaf=false,tvTaf=null;
+function ayahsOfPage(p){return Object.keys(Q.ayahPage).filter(k=>Q.ayahPage[k]===p).sort((a,b)=>{const[x,y]=a.split(':').map(Number),[u,v]=b.split(':').map(Number);return x-u||y-v})}
+function toggleTviewMushaf(){tvMushaf=!tvMushaf;updateTview()}
+function tvPage(d){show(cur+d)}
+function updateTview(){
+  const on=K.active==='tafsir'&&!tvMushaf;
+  $('tview').classList.toggle('open',on);
+  $('here').classList.toggle('open',K.active!=='hifz'&&!on&&$('tb').classList.contains('open'));
+  if(K.active==='tafsir'&&tvMushaf){$('here').classList.add('open');$('here').textContent='عرض التفسير';$('here').onclick=()=>{tvMushaf=false;updateTview()}}
+  else{$('here').textContent='وصلتُ هنا';$('here').onclick=markHere}
+  if(on)renderTview();
+}
+function renderTview(){
+  if(tvTaf==null)tvTaf=S.tafsir;
+  const p=cur;$('tvTitle').textContent=`${Q.surahs[surahOfPage(p)-1][0]} — صفحة ${AR(p)}`;
+  $('tvTabs').innerHTML='';
+  TAFSIRS.forEach(([slug,name],i)=>{const b=document.createElement('button');b.textContent=name;if(i===tvTaf)b.className='on';
+    b.onclick=()=>{tvTaf=i;renderTview()};$('tvTabs').appendChild(b)});
+  const body=$('tvBody');body.innerHTML='';body.scrollTop=0;
+  const token=p+':'+tvTaf;body.dataset.t=token;
+  ayahsOfPage(p).forEach(k=>{
+    const [su,ay]=k.split(':').map(Number);
+    if(ay===1){const h=document.createElement('div');h.className='tv-h';h.textContent='سورة '+Q.surahs[su-1][0];body.appendChild(h)}
+    const a=document.createElement('div');a.className='tv-a';a.textContent=Q.text[k]+' ';
+    const n=document.createElement('span');n.className='an';n.textContent='﴿'+AR(ay)+'﴾';a.appendChild(n);
+    const t=document.createElement('div');t.className='tv-t';t.textContent='جارٍ تحميل التفسير…';
+    body.appendChild(a);body.appendChild(t);
+    fetchTafsir(TAFSIRS[tvTaf][0],su,ay).then(x=>{if(body.dataset.t===token)t.textContent=x||'لا يوجد تفسير لهذه الآية في هذا الكتاب'})
+      .catch(()=>{if(body.dataset.t===token)t.textContent='تعذّر تحميل التفسير — تأكد من الاتصال بالإنترنت'});
+  });
 }
 
 /* ---------- settings ---------- */

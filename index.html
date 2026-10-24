@@ -31,8 +31,9 @@ button{font:inherit;cursor:pointer}
 body.nodiff .w[class*="d-"]{color:inherit}
 .hdr{position:relative;display:flex;align-items:center;justify-content:center}
 .hdr img{width:100%;height:100%;display:block}
-.hdr span{position:absolute;font-family:"Amiri Quran",Amiri,serif;color:#1a1a1a;white-space:nowrap}
-.bsm{display:flex;justify-content:center;align-items:center;font-family:"Amiri Quran",Amiri,serif;color:var(--ink)}
+.hdr svg{position:absolute;height:62%;top:19%;overflow:visible}
+.hdr svg path{fill:#1a1a1a;stroke:#e5f1dc;stroke-width:var(--thin,7);stroke-linejoin:round}
+.bsm{display:flex;justify-content:center;align-items:center;font-family:bsml;color:var(--ink);-webkit-text-stroke:.012em var(--paper);paint-order:fill stroke;direction:ltr;unicode-bidi:bidi-override}
 /* overlay toolbar */
 #tb{position:fixed;left:0;right:0;bottom:0;display:flex;justify-content:space-around;background:var(--ui);color:var(--uitx);
   border-top:1px solid var(--line);padding:.4em .3em calc(.4em + env(safe-area-inset-bottom,0));transform:translateY(110%);transition:transform .2s;z-index:4}
@@ -123,7 +124,7 @@ const DIFF_NAMES={h:'حرف يخالف حفصًا',i:'إدغام كامل',m:'إ
 const KH=[['hifz','ختمة الحفظ'],['tilawa','ختمة التلاوة'],['tafsir','ختمة التفسير']];
 const AR=n=>String(n).replace(/\d/g,d=>'٠١٢٣٤٥٦٧٨٩'[d]);
 const $=id=>document.getElementById(id);
-let Q,M,LAYOUT,DIFFS={},cur=1,surahFirst={},loaded={},selEl=null,taf={key:'1:1',i:0},ixMode='s';
+let Q,M,LAYOUT,NAMES={},DIFFS={},cur=1,surahFirst={},loaded={},selEl=null,taf={key:'1:1',i:0},ixMode='s';
 
 /* ---------- storage ---------- */
 function load(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}}
@@ -144,9 +145,10 @@ const pageFont=p=>loadFont('p'+p,FONT_BASE+'p'+String(p).padStart(3,'0')+'.woff2
 /* ---------- init ---------- */
 async function init(){
   try{
-    [Q,M,LAYOUT]=await Promise.all(['quran.json','meanings.json','layout.json']
+    [Q,M,LAYOUT,NAMES]=await Promise.all(['quran.json','meanings.json','layout.json','surah-names.json']
       .map(f=>fetch(f).then(r=>{if(!r.ok)throw new Error(f);return r.json()})));
   }catch(e){$('msg').textContent='تعذّر تحميل: '+e.message;return}
+  try{await loadFont('bsml',FONT_BASE.replace('QPC2/','QPC1/')+'QPC1BSML.ttf')}catch(e){}
   try{const r=await fetch('diffs.json');if(r.ok)DIFFS=await r.json()}catch(e){}
   LAYOUT.forEach((pg,i)=>pg.forEach(l=>{if(l.h&&!surahFirst[l.h])surahFirst[l.h]=i+1}));
   applySettings();
@@ -170,8 +172,8 @@ async function show(p){
   const fam='p'+p;
   LAYOUT[p-1].forEach(l=>{
     const div=document.createElement('div');
-    if(l.h){div.className='hdr';div.innerHTML=`<img src="banner.png" alt=""><span>سورة ${Q.surahs[l.h-1][0]}</span>`}
-    else if(l.b){div.className='bsm';div.textContent='بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ'}
+    if(l.h){div.className='hdr';const [d,x,y,w,h]=NAMES[l.h];div.innerHTML=`<img src="banner.png" alt=""><svg viewBox="${x} ${y} ${w} ${h}" style="aspect-ratio:${w}/${h}"><path d="${d}"/></svg>`}
+    else if(l.b){div.className='bsm';div.textContent='#"!'}
     else{
       div.className='line';div.style.fontFamily=fam;
       l.w.forEach(([k,g])=>{
@@ -212,8 +214,8 @@ function layout(){
   lines.forEach(l=>{
     l.style.height=(fs*lh)+'px';
     if(l.classList.contains('hdr')){const bh=lineW*135/1200;l.style.width=lineW+'px';l.style.height=bh+'px';
-      l.style.margin=Math.max(0,(fs*lh-bh)/2)+'px 0';l.querySelector('span').style.fontSize=(bh*0.42)+'px'}
-    else if(l.classList.contains('bsm')){l.style.fontSize=fs*0.9+'px'}
+      l.style.margin=Math.max(0,(fs*lh-bh)/2)+'px 0'}
+    else if(l.classList.contains('bsm')){l.style.fontSize=fs*1.05+'px'}
     else{const nat=l.scrollWidth;l.classList.add(centeredPage||nat<lineW*0.82?'center':'just');l.style.width=lineW+'px'}
   });
 }

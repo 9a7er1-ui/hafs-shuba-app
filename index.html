@@ -2,107 +2,177 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="icon" href="data:,">
 <title>مصحف حفص وشعبة</title>
 <style>
-:root{--bg:#fdfaf3;--fg:#222;--muted:#777;--accent:#8a5a2b;--panel:#fff;--border:#e4dccb}
-@media (prefers-color-scheme: dark){:root{--bg:#1b1a17;--fg:#eee;--muted:#aaa;--accent:#d9a86c;--panel:#26241f;--border:#3a372f}}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--fg);font-family:"Traditional Arabic","Amiri","Noto Naskh Arabic",serif;line-height:2.1}
-header{position:sticky;top:0;z-index:2;background:var(--panel);border-bottom:1px solid var(--border);padding:.5rem;display:flex;gap:.6rem;align-items:center;flex-wrap:wrap}
-select{font:inherit;padding:.3rem .6rem;border-radius:6px;border:1px solid var(--border);background:var(--bg);color:var(--fg)}
-#title{font-weight:bold}
-main{max-width:760px;margin:0 auto;padding:1rem 1rem 6rem}
-.ayah{font-size:1.7rem;margin:.3rem 0;padding:.3rem .4rem;border-radius:8px}
-.num{color:var(--muted);font-size:1rem;margin-inline-start:.4rem}
-.w{cursor:pointer;padding:0 .1rem;border-radius:4px}
-.w:hover{background:var(--border)}
-.w.sel{background:var(--accent);color:#fff}
-#meaning{position:fixed;bottom:0;left:0;right:0;background:var(--panel);border-top:1px solid var(--border);padding:.8rem 1rem;min-height:3.2rem;font-size:1.15rem;line-height:1.8}
-#meaning .bw{font-weight:bold;color:var(--accent)}
+:root{color-scheme:light;--paper:#fdfbf5;--edge:#7a9a88;--ink:#111;--muted:#6f8f7f;--sel:rgba(214,170,60,.35)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--edge);overflow:hidden;font-family:-apple-system,"Segoe UI",Tahoma,sans-serif}
+#page{position:absolute;inset:0;margin:auto;background:var(--paper);display:flex;flex-direction:column;
+  padding:env(safe-area-inset-top,0) 0 env(safe-area-inset-bottom,0);box-shadow:0 0 0 1px #e6e0d2,4px 0 0 #f1ece2,8px 0 0 #e6e0d2}
+.bar{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:clamp(13px,2.2vh,20px);padding:.6em 1.6em .2em}
+.foot{justify-content:center;padding:.2em 0 .7em;cursor:pointer}
+#lines{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;min-height:0}
+.line{display:flex;align-items:center;white-space:nowrap;direction:rtl;color:var(--ink)}
+.line.just{justify-content:space-between}
+.line.center{justify-content:center}
+.line.center .w{margin:0 .07em}
+.w{cursor:pointer;border-radius:.15em;line-height:1}
+.w.sel{background:var(--sel)}
+.hdr{position:relative;display:flex;align-items:center;justify-content:center}
+.hdr img{width:100%;height:100%;display:block}
+.hdr svg{position:absolute;height:72%;top:14%}
+.bsm{display:flex;justify-content:center;align-items:center;font-family:bsml}
+#sheet{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid #e3dccb;box-shadow:0 -6px 20px rgba(0,0,0,.12);
+  padding:1em 1.2em calc(1em + env(safe-area-inset-bottom,0));font-size:18px;line-height:1.9;transform:translateY(110%);transition:transform .2s;max-height:45vh;overflow:auto;z-index:5}
+#sheet.open{transform:none}
+#sheet .k{color:#4d7a5e;font-weight:bold}
+#sheet .x{float:left;border:0;background:none;font-size:22px;color:#999;cursor:pointer}
+#menu{position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;align-items:center;justify-content:center;z-index:6}
+#menu.open{display:flex}
+#menu .box{background:#fff;border-radius:14px;padding:1.2em;width:min(90vw,380px);display:grid;gap:.8em;font-size:17px}
+#menu select,#menu input,#menu button{font:inherit;padding:.5em;border-radius:8px;border:1px solid #ccc;width:100%}
+#menu button{background:#4d7a5e;color:#fff;border:0}
+#msg{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px}
 </style>
 </head>
 <body>
-<header>
-  <select id="surah" aria-label="السورة"></select>
-  <span id="title"></span>
-</header>
-<main id="quran">جارٍ التحميل…</main>
-<div id="meaning">اضغط على كلمة لعرض معناها</div>
+<div id="msg">جارٍ التحميل…</div>
+<div id="page" hidden>
+  <div class="bar"><span id="juz"></span><span id="sname"></span></div>
+  <div id="lines"></div>
+  <div class="bar foot" id="pno"></div>
+</div>
+<div id="sheet"><button class="x" onclick="closeSheet()">×</button><div id="sheetBody"></div></div>
+<div id="menu"><div class="box">
+  <select id="msur"></select>
+  <input id="mpage" type="number" min="1" max="604" placeholder="رقم الصفحة">
+  <button onclick="goMenu()">اذهب</button>
+</div></div>
 
 <script>
-let Q = null, M = {}, selected = null;
-const $ = id => document.getElementById(id);
+const FONT_BASE='https://raw.githubusercontent.com/zonetecde/mushaf-layout/refs/heads/v2/fonts/QPC2/';
+const AR=n=>String(n).replace(/\d/g,d=>'٠١٢٣٤٥٦٧٨٩'[d]);
+let Q,M,LAYOUT,NAMES,cur=1,surahFirst={},loaded={},selEl=null;
+const $=id=>document.getElementById(id);
 
-async function init() {
-  try {
-    const [q, m] = await Promise.all([
-      fetch('quran.json').then(r => r.json()),
-      fetch('meanings.json').then(r => r.json())
-    ]);
-    Q = q; M = m;
-    const sel = $('surah');
-    Q.surahs.forEach((s, i) => {
-      const o = document.createElement('option');
-      o.value = i + 1;
-      o.textContent = (i + 1) + '. ' + s[0];
-      sel.appendChild(o);
-    });
-    sel.onchange = () => show(+sel.value);
-    show(1);
-  } catch (e) {
-    $('quran').textContent = 'تعذّر تحميل الملفات: ' + e.message;
-  }
+function loadFont(fam,url){
+  if(loaded[fam])return loaded[fam];
+  const f=new FontFace(fam,`url(${url})`);
+  loaded[fam]=f.load().then(x=>{document.fonts.add(x);return x}).catch(e=>{delete loaded[fam];throw e});
+  return loaded[fam];
+}
+const pageFont=p=>loadFont('p'+p,FONT_BASE+'p'+String(p).padStart(3,'0')+'.woff2');
+
+async function init(){
+  try{
+    [Q,M,LAYOUT,NAMES]=await Promise.all(['quran.json','meanings.json','layout.json','surah-names.json']
+      .map(f=>fetch(f).then(r=>{if(!r.ok)throw new Error(f);return r.json()})));
+    await loadFont('bsml',FONT_BASE+'QPC2BSML.ttf');
+  }catch(e){$('msg').textContent='تعذّر تحميل: '+e.message;return}
+  LAYOUT.forEach((pg,i)=>pg.forEach(l=>{if(l.h&&!surahFirst[l.h])surahFirst[l.h]=i+1}));
+  Q.surahs.forEach((s,i)=>{const o=document.createElement('option');o.value=i+1;o.textContent=AR(i+1)+' - '+s[0];$('msur').appendChild(o)});
+  $('msg').remove();$('page').hidden=false;
+  let saved=1;try{saved=+localStorage.getItem('lastPage')||1}catch(e){}
+  show(saved);
 }
 
-function show(s) {
-  const count = Q.surahs[s - 1][2];
-  $('title').textContent = Q.surahs[s - 1][0];
-  const main = $('quran');
-  main.innerHTML = '';
-  selected = null;
-  for (let a = 1; a <= count; a++) {
-    const key = s + ':' + a;
-    const words = (Q.text[key] || '').split(' '); // نفس طريقة الترقيم في meanings.json
-    const div = document.createElement('div');
-    div.className = 'ayah';
-    words.forEach((w, i) => {
-      if (!w) return; // نتجاوز الفراغات المزدوجة دون تغيير الترقيم
-      const span = document.createElement('span');
-      span.className = 'w';
-      span.textContent = w;
-      span.dataset.k = key + ':' + i;
-      span.onclick = () => pick(span);
-      div.appendChild(span);
-      div.appendChild(document.createTextNode(' '));
-    });
-    const n = document.createElement('span');
-    n.className = 'num';
-    n.textContent = '﴿' + a + '﴾';
-    div.appendChild(n);
-    main.appendChild(div);
-  }
-  window.scrollTo(0, 0);
+function juzOf(p){let j=1;Q.juzPages.forEach((s,i)=>{if(p>=s)j=i+1});return j}
+function firstKey(p){for(const l of LAYOUT[p-1])if(l.w)for(const w of l.w)if(w[0])return w[0];return '1:1:0'}
+
+function nameSVG(s){
+  const [d,x,y,w,h]=NAMES[s];
+  return `<svg viewBox="${x} ${y} ${w} ${h}" style="aspect-ratio:${w}/${h}"><path d="${d}" fill="#111"/></svg>`;
 }
 
-function pick(span) {
-  if (selected) selected.classList.remove('sel');
-  span.classList.add('sel');
-  selected = span;
-  const m = M[span.dataset.k];
-  const box = $('meaning');
-  box.textContent = '';
-  if (m) {
-    const b = document.createElement('span');
-    b.className = 'bw';
-    b.textContent = m.w.replace(/^\d+\s+/, '') + ': ';
-    box.appendChild(b);
-    box.appendChild(document.createTextNode(m.t));
-  } else {
-    box.textContent = 'لا يوجد معنى لهذه الكلمة في الملف';
-  }
+async function show(p){
+  p=Math.max(1,Math.min(604,p));cur=p;closeSheet();
+  try{localStorage.setItem('lastPage',p)}catch(e){}
+  try{await pageFont(p)}catch(e){$('lines').textContent='تعذّر تحميل خط الصفحة';return}
+  const box=$('lines');box.innerHTML='';
+  const fam='p'+p;
+  LAYOUT[p-1].forEach(l=>{
+    const div=document.createElement('div');
+    if(l.h){div.className='hdr';div.innerHTML=`<img src="banner.png" alt="">`+nameSVG(l.h)}
+    else if(l.b){div.className='bsm';div.textContent=l.b}
+    else{
+      div.className='line';div.style.fontFamily=fam;
+      l.w.forEach(([k,g])=>{
+        const s=document.createElement('span');s.className='w';s.textContent=g;
+        if(k){s.dataset.k=k;s.onclick=ev=>{ev.stopPropagation();pick(s)}}
+        div.appendChild(s);
+      });
+    }
+    box.appendChild(div);
+  });
+  const s=+firstKey(p).split(':')[0];
+  $('sname').textContent=Q.surahs[s-1][0];
+  $('juz').textContent='الجزء '+AR(juzOf(p));
+  $('pno').textContent=AR(p);
+  layout();
+  [p+1,p-1].forEach(n=>{if(n>=1&&n<=604)pageFont(n).catch(()=>{})});
 }
 
+function layout(){
+  const pg=$('page'),box=$('lines');
+  const vw=innerWidth,vh=innerHeight;
+  const W=Math.min(vw,vh*0.68);pg.style.width=W+'px';
+  const lines=[...box.children];
+  const FULL=16.4;               // natural width of a full mushaf line, in em
+  const lh=1.78;
+  const barH=$('juz').parentElement.offsetHeight+$('pno').offsetHeight;
+  const fsH=(vh-barH-10)/(15*lh);
+  let fs=Math.min(W*0.88/FULL,fsH);
+  // make sure no line on this page overflows
+  box.style.fontSize='100px';
+  let maxw=0;
+  lines.forEach(l=>{if(l.classList.contains('line')){l.classList.remove('just','center');l.style.width='auto';maxw=Math.max(maxw,l.scrollWidth)}});
+  if(maxw/100*fs>FULL*fs*1.01)fs=fs*FULL*100/maxw;
+  box.style.fontSize=fs+'px';
+  const lineW=FULL*fs;
+  const centeredPage=cur<=2;
+  lines.forEach(l=>{
+    l.style.height=(fs*lh)+'px';
+    if(l.classList.contains('hdr')){const bh=lineW*135/1200;l.style.width=lineW+'px';l.style.height=bh+'px';l.style.margin=Math.max(0,(fs*lh-bh)/2)+'px 0'}
+    else if(l.classList.contains('bsm')){l.style.fontSize=fs*1.1+'px'}
+    else{
+      const nat=l.scrollWidth;
+      l.classList.add(centeredPage||nat<lineW*0.82?'center':'just');
+      l.style.width=lineW+'px';
+    }
+  });
+}
+
+function pick(s){
+  if(selEl)selEl.classList.remove('sel');selEl=s;s.classList.add('sel');
+  const body=$('sheetBody');body.innerHTML='';
+  s.dataset.k.split('|').forEach(k=>{
+    const m=M[k],p=document.createElement('div');
+    if(m){const b=document.createElement('span');b.className='k';b.textContent=m.w.replace(/^\d+\s+/,'')+': ';p.appendChild(b);p.appendChild(document.createTextNode(m.t))}
+    else p.textContent='لا يوجد معنى لهذه الكلمة';
+    body.appendChild(p);
+  });
+  $('sheet').classList.add('open');
+}
+function closeSheet(){$('sheet').classList.remove('open');if(selEl){selEl.classList.remove('sel');selEl=null}}
+
+$('pno').onclick=()=>{$('mpage').value='';$('msur').value=+firstKey(cur).split(':')[0];$('menu').classList.add('open')};
+$('menu').onclick=e=>{if(e.target.id==='menu')$('menu').classList.remove('open')};
+function goMenu(){
+  const v=+$('mpage').value;
+  show(v>=1&&v<=604?v:surahFirst[+$('msur').value]);
+  $('menu').classList.remove('open');
+}
+// swipe: finger moving right = next page (like Ayah)
+let sx=null,sy=null;
+addEventListener('touchstart',e=>{sx=e.touches[0].clientX;sy=e.touches[0].clientY},{passive:true});
+addEventListener('touchend',e=>{if(sx==null)return;const dx=e.changedTouches[0].clientX-sx,dy=e.changedTouches[0].clientY-sy;
+  if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)*1.5)show(cur+(dx>0?1:-1));sx=null},{passive:true});
+addEventListener('keydown',e=>{if(e.key==='ArrowLeft')show(cur+1);if(e.key==='ArrowRight')show(cur-1)});
+$('page').addEventListener('click',()=>closeSheet());
+addEventListener('resize',()=>layout());
 init();
 </script>
 </body>

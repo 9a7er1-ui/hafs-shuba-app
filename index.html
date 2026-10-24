@@ -28,7 +28,7 @@ body.night #page.odd,body.night #page.even{box-shadow:none}
 .bar{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:clamp(14px,2.2vh,21px);padding:.5em 1.6em .1em}
 .foot{justify-content:center;padding:.1em 0 .6em}
 #lines{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;min-height:0}
-.line{position:relative;display:flex;align-items:center;white-space:nowrap;direction:rtl;color:var(--ink);-webkit-text-stroke:.018em currentColor}
+.line{position:relative;display:flex;align-items:center;white-space:nowrap;direction:rtl;color:var(--ink);-webkit-text-stroke:.006em currentColor}
 .line.just{justify-content:space-between}
 .line.center{justify-content:center}
 .line.center .w{margin:0 .07em}
@@ -370,12 +370,15 @@ function renderPage(p){
       l.w.forEach(([k,g])=>{
         const parts=g.split(' ');
         if(k){
-          const nW=k.split('|').length;const s=document.createElement('span');s.className='w';s.textContent=parts.splice(0,nW,'').slice(0).join(' ');s.dataset.k=k;
-          lastAyah=ayahOf(k);s.dataset.a=lastAyah;
-          const d=k.split('|').map(x=>DIFFS[x]).find(Boolean);
-          if(d){s.classList.add('d-'+d.c);if(!dotc)dotc=d.c}
-          if(HL[lastAyah])s.classList.add('hl-'+HL[lastAyah]);
-          bindWord(s);div.appendChild(s);
+          const ks=k.split('|'),gl=parts.splice(0,ks.length,'');lastAyah=ayahOf(k);
+          gl.forEach((g,gi)=>{   // كل كلمة في عنصر مستقل حتى في المواضع المدمجة مثل «بعد ما»
+            const kk=gl.length===ks.length?ks[gi]:k;
+            const s=document.createElement('span');s.className='w';s.textContent=g;s.dataset.k=kk;s.dataset.a=lastAyah;
+            const d=kk.split('|').map(x=>DIFFS[x]).find(Boolean);
+            if(d){s.classList.add('d-'+d.c);if(!dotc)dotc=d.c}
+            if(HL[lastAyah])s.classList.add('hl-'+HL[lastAyah]);
+            bindWord(s);div.appendChild(s);
+          });
         }else parts.unshift('');
         parts.slice(1).forEach(m=>{const n=document.createElement('span');n.className='w num';n.textContent=m;n.dataset.a=lastAyah;bindMarker(n);div.appendChild(n)});
       });
@@ -392,52 +395,50 @@ function renderPage(p){
 function layout(){
   const pg=$('page'),box=$('lines');if(!box.children.length)return;
   const vw=innerWidth,vh=innerHeight;
-  /* الصفحة تلتصق بحافة الشاشة، والحدّ الأخضر من جهة الكعب فقط (كتطبيق آية) */
-  const gutter=Math.max(12,Math.round(vw*0.05));
-  const maxW=vh*0.74;let W=vw-gutter,side=true;
-  if(W>maxW){W=maxW;side=false}
+  /* مقاسات مأخوذة من صفحة تطبيق آية: هامش ٧٫٥٪ من كل جهة، والمسافة بين الأسطر ١١٫١٪ من عرض السطر */
+  const phone=vw<600;
+  const MARG=phone?0.035:0.075,PITCH=0.111;   // الجوال: هوامش أضيق كما في آية
+  const barH=$('juz').parentElement.offsetHeight+$('pno').offsetHeight;
+  const gutter=phone?0:Math.max(12,Math.round(vw*0.05));
+  let W=vw-gutter;
+  const need=w=>barH+16+15*(w*(1-2*MARG)*PITCH);      // الطول اللازم لصفحة بهذا العرض
+  if(need(W)>vh)W=(vh-barH-16)/(15*(1-2*MARG)*PITCH);  // الشاشة أقصر: نصغّر الصفحة كلها بالنسبة نفسها
+  const side=W>=vw-gutter-1;
   pg.style.width=W+'px';
   if(side){const odd=cur%2===1;pg.style.marginLeft=odd?'0':'auto';pg.style.marginRight=odd?'auto':'0'}
   else{pg.style.marginLeft=pg.style.marginRight='auto'}
   const lines=[...box.children];
-  const FULL=19.6;                       // نسبة الخط إلى عرض السطر — أصغر من قبل ليأخذ النص نفَسه
-  const margin=Math.round(W*0.075),lineW=W-2*margin;
+  const margin=Math.round(W*MARG),lineW=W-2*margin;
+  /* الشاشة أطول من الصفحة (كالجوال): تتسع المسافة بين الأسطر لتملأ الطول كله كما في آية */
+  const pitch=Math.max(lineW*PITCH,(vh-barH-16)/15);
   document.querySelectorAll('#page .bar').forEach(b=>{b.style.paddingLeft=b.style.paddingRight=margin+'px'});
-  const barH=$('juz').parentElement.offsetHeight+$('pno').offsetHeight;
-  const availH=vh-barH-14;
-  let fs=lineW/FULL,pitch=availH/15;
-  if(pitch<fs*1.62)fs=pitch/1.62;        // شاشة قصيرة: نصغّر الخط حتى لا تتداخل الأسطر
-  pitch=Math.min(pitch,fs*2.25);
-  box.style.fontSize=fs+'px';
   const centeredPage=cur<=2;
-  /* القياس الطبيعي لكل سطر */
+  let fs=pitch/2;box.style.fontSize=fs+'px';
   const txt=lines.filter(l=>l.classList.contains('line'));
-  txt.forEach(l=>{l.classList.remove('just','center');l.style.fontSize='';l.style.width='auto';l.querySelectorAll('.w').forEach(w=>w.style.transform='')});
-  let nats=new Map(txt.map(l=>[l,l.scrollWidth]));
-  let maxNat=Math.max(...nats.values(),1);
-  /* ملاءمة الخط لكل صفحة: أطول سطر يملأ نحو ٩٣٪ من العرض، فلا تزاحم ولا فراغات واسعة */
+  const measure=()=>{txt.forEach(l=>{l.classList.remove('just','center');l.style.fontSize='';l.style.width='auto';l.querySelectorAll('.w').forEach(w=>w.style.transform='')});
+    return new Map(txt.map(l=>[l,l.scrollWidth]))};
+  let nats=measure(),maxNat=Math.max(...nats.values(),1);
+  /* حجم الخط: أطول سطر يملأ ٩٦٪ من العرض، مع حدّ أعلى يترك فراغًا مريحًا بين الأسطر */
   if(!centeredPage&&txt.length){
-    const fit=Math.min(fs*lineW*0.93/maxNat,pitch/1.6);
-    if(Math.abs(fit-fs)>0.2){fs=fit;box.style.fontSize=fs+'px';
-      nats=new Map(txt.map(l=>[l,l.scrollWidth]));maxNat=Math.max(...nats.values(),1)}
-    pitch=Math.min(availH/15,fs*2.25);
+    const fit=Math.min(fs*lineW*0.96/maxNat,pitch/1.9);
+    if(Math.abs(fit-fs)>0.2){fs=fit;box.style.fontSize=fs+'px';nats=measure();maxNat=Math.max(...nats.values(),1)}
   }
   lines.forEach(l=>{
     l.style.height=pitch+'px';
     if(l.classList.contains('hdr')){const bh=lineW*135/1200;l.style.width=lineW+'px';l.style.height=bh+'px';l.style.margin=Math.max(0,(pitch-bh)/2)+'px 0'}
-    else if(l.classList.contains('bsm')){l.style.fontSize=fs*1.05+'px'}
+    else if(l.classList.contains('bsm')){l.style.fontSize=fs*0.95+'px'}
     else{
       let nat=nats.get(l);
       const isCenter=centeredPage||nat<maxNat*0.72;
       l.classList.add(isCenter?'center':'just');
       l.style.width=lineW+'px';
-      if(nat>lineW){l.style.fontSize=(fs*lineW/nat*0.995)+'px';nat=lineW}   // لا يتجاوز إطار النص
-      /* الأسطر قليلة الكلمات: تمديد أفقي خفيف للكلمات يقلّل الفراغات الواسعة */
+      if(nat>lineW){l.style.fontSize=(fs*lineW/nat*0.995)+'px';nat=lineW}
+      /* تمديد أفقي خفيف جدًا للأسطر التي فيها فراغ واضح */
       if(!isCenter){
-        const sc=Math.min(1.09,lineW*0.955/nat);
-        if(sc>1.012){const words=[...l.querySelectorAll('.w:not(.num)')],wsum=words.reduce((t,w)=>t+w.offsetWidth,0);
-          const s2=Math.min(sc,1+(lineW*0.955-nat)/Math.max(wsum,1));
-          if(s2>1.012)words.forEach(w=>w.style.transform=`scaleX(${s2.toFixed(3)})`)}
+        const room=lineW*0.97-nat;
+        if(room>lineW*0.02){const words=[...l.querySelectorAll('.w:not(.num)')],wsum=words.reduce((t,w)=>t+w.offsetWidth,0);
+          const sc=Math.min(1.05,1+room/Math.max(wsum,1));
+          if(sc>1.01)words.forEach(w=>w.style.transform=`scaleX(${sc.toFixed(3)})`)}
       }
       const dt=l.querySelector('.dot');
       if(dt){const off=-(margin/2)-3.5;dt.style.right=dt.style.left='';if(cur%2===1)dt.style.right=off+'px';else dt.style.left=off+'px'}

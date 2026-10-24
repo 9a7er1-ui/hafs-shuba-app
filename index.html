@@ -241,7 +241,7 @@ body.night .more{color:#6aa8ff}
 <div id="lib">
   <div class="lh"><span class="ref2" id="libRef"></span><span class="ttl">المكتبة</span><span class="xw"><button class="xc" onclick="closeLib()">✕</button></span></div>
   <div class="lb" id="libBody"></div>
-  <div class="lf"><button class="nb" onclick="libStep(-1)">›</button><button class="cp" id="libPill" onclick="openDrawer('index')"></button><button class="nb" onclick="libStep(1)">‹</button><button class="fs" onclick="cycleSize()">عع</button></div>
+  <div class="lf"><button class="nb" onclick="libStep(-1)" aria-label="الآية السابقة"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" style="vertical-align:middle"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button class="cp" id="libPill" onclick="openDrawer('index')"></button><button class="nb" onclick="libStep(1)" aria-label="الآية التالية"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" style="vertical-align:middle"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button class="fs" onclick="cycleSize()">عع</button></div>
 </div>
 <div class="menu" id="tmenu">
   <button onclick="menuAct('img')">مشاركة صورة <svg class="i" viewBox="0 0 24 24"><circle cx="18" cy="5.5" r="2.3"/><circle cx="6" cy="12" r="2.3"/><circle cx="18" cy="18.5" r="2.3"/><path d="M8 11l8-4.3M8 13l8 4.3"/></svg></button>
@@ -677,8 +677,13 @@ function splitTafsirForAyah(t,su,ay){
 
 /* تنظيف تفاسير الطبري وابن كثير والبغوي من حواشي المحققين والأقواس المربعة */
 const CLEAN_TAF=new Set(['ar-tafsir-al-tabari','ar-tafsir-ibn-kathir','ar-tafsir-al-baghawi']);
+/* حذف إحالات الآيات إلى السور مثل [المدثر: ٤٢-٤٣] من جميع التفاسير */
+function stripRefs(t){return t
+  .replace(/\(\s*\(/g,'(').replace(/\)\s*\)/g,')')                       // (( )) تصير ( )
+  .replace(/[ \t]*\[\s*(?:سورة\s*)?[^\[\]\n:]{2,30}?\s*:\s*[٠-٩0-9]+(?:\s*[-–،,و]\s*[٠-٩0-9]+)*\s*\]/g,'')
+  .replace(/[ \t]+([،.:؛؟!)﴾])/g,'$1')}
 function cleanTafsir(slug,t){
-  t=t
+  t=stripRefs(t)
     .replace(/\{\s*([^{}\[\]\n]{1,600}?)\s*\]/g,'﴿$1﴾').replace(/\[\s*([^{}\[\]\n]{1,600}?)\s*\}/g,'﴿$1﴾') // أقواس مختلطة { ] و [ }
     .replace(/\{\s*([^{}\n]{1,600}?)\s*\}/g,'﴿$1﴾')                                   // أقواس الآيات { } تصير بأقواس المصحف ﴿ ﴾
     .replace(/[ \t]*\((?:سورة\s*)?[^()\n]{1,25}?\s*:\s*[٠-٩0-9]+(?:\s*[-–،,]\s*[٠-٩0-9]+)*\s*\)/g,'') // (البقرة: ٢٥)
@@ -705,7 +710,7 @@ function splitCached(slug,ck,su,ay){
   return tafSplit[ck]=x;
 }
 async function fetchTafsir(slug,su,ay){
-  if(slug==='my'){if(!MYT)await loadMy();const mk=myKey(su+':'+ay);return mk?MYT.e[mk]:''}
+  if(slug==='my'){if(!MYT)await loadMy();const mk=myKey(su+':'+ay);return mk?stripRefs(MYT.e[mk]||''):''}
   const ck=slug+su+':'+ay;if(tafCache[ck]!=null)return splitCached(slug,ck,+su,+ay);
   for(const b of TAF_BASE){try{const r=await fetch(`${b}${slug}/${su}/${ay}.json`);if(r.ok){const j=await r.json();tafCache[ck]=parenToQuran(cleanTafsir(slug,j.text||''));return splitCached(slug,ck,+su,+ay)}}catch(e){}}
   throw new Error('fail');
@@ -780,6 +785,24 @@ function shareCurrent(){
 }
 function wrapLines(ctx,words,maxW,sep){const out=[];let line='';
   words.forEach(w=>{const t=line?line+sep+w:w;if(ctx.measureText(t).width>maxW&&line){out.push(line);line=w}else line=t});if(line)out.push(line);return out}
+/* نص التفسير في الصورة: الآيات بخط المصحف ولونه، ورقم الآية داخل علامتها كما في التطبيق */
+function richLines(ctx,txt,maxW,sysF){
+  const FT=`36px ${sysF}`,FQ='40px "Amiri Quran",Amiri,serif',CT='#111',CQ='#8b1f1f',CR='#a09484';
+  txt=txt.replace(/۝\s+([٠-٩]+)/g,'۝$1');
+  const words=[];
+  txt.split(/\n+/).forEach((para,pi)=>{if(!para.trim())return;if(words.length)words.push({br:1});
+    let mode=0;   // 0 نص، 1 آية، 2 إحالة
+    para.trim().split(/\s+/).forEach(t=>{
+      let m=mode;if(t.includes('﴿'))m=1;else if(mode===0&&t.startsWith('['))m=2;
+      const f=m===1?FQ:FT,c=m===1?CQ:m===2?CR:CT;ctx.font=f;
+      words.push({t,f,c,w:ctx.measureText(t).width,sp:ctx.measureText(' ').width*(m===1?1.2:1)});
+      if(t.includes('﴾'))mode=0;else if(m===1)mode=1;else if(m===2&&t.includes(']'))mode=0;else mode=m;
+    })});
+  const lines=[];let cur=[],lw=0;
+  words.forEach(w=>{if(w.br){if(cur.length)lines.push({w:cur});lines.push({gap:1});cur=[];lw=0;return}
+    if(cur.length&&lw+w.w>maxW){lines.push({w:cur});cur=[];lw=0}cur.push(w);lw+=w.w+w.sp});
+  if(cur.length)lines.push({w:cur});return lines;
+}
 async function shareImage(a,name,txt){
   const W=1200,P=70,cw=W-2*P;
   const toks=AYTOK[a]||[];const pages=[...new Set(toks.map(t=>t[1]))];
@@ -791,9 +814,11 @@ async function shareImage(a,name,txt){
   const qfs=56;ctx.font=`${qfs}px p${pages[0]}`;
   const qLines=[];let line=[],lw=0;
   toks.forEach(t=>{ctx.font=`${qfs}px p${t[1]}`;const w=ctx.measureText(t[0]).width+10;if(lw+w>cw&&line.length){qLines.push(line);line=[];lw=0}line.push([t,w]);lw+=w});if(line.length)qLines.push(line);
-  ctx.font=`36px ${sysF}`;const tl=wrapLines(ctx,txt.replace(/\s+/g,' ').split(' '),cw-80,' ');
+  try{await document.fonts.load('40px "Amiri Quran"','﴿بسم ۝١٢﴾')}catch(e){}
+  const tl=richLines(ctx,stripJoint(txt),cw-80,sysF),LH=66;
   const bh=banner?cw*banner.height/banner.width:0;
-  const H=P+bh+40+qLines.length*qfs*1.9+60+50+tl.length*64+80+P;
+  const tH=tl.reduce((s,l)=>s+(l.gap?LH*0.4:LH),0);
+  const H=P+bh+40+qLines.length*qfs*1.9+60+50+tH+80+P;
   c.width=W;c.height=H;ctx.fillStyle='#fdfbf5';ctx.fillRect(0,0,W,H);
   let y=P;
   if(banner){ctx.filter='brightness(.86) saturate(1.25)';ctx.drawImage(banner,P,y,cw,bh);ctx.filter='none';
@@ -803,8 +828,9 @@ async function shareImage(a,name,txt){
   qLines.forEach(l=>{const tw=l.reduce((s,x)=>s+x[1],0);let x=W/2+tw/2;y+=qfs*0.95;
     l.forEach(([t,w])=>{ctx.font=`${qfs}px p${t[1]}`;ctx.textAlign='right';ctx.fillText(t[0],x,y);x-=w});y+=qfs*0.95});
   y+=50;ctx.textAlign='right';ctx.font=`34px ${sysF}`;ctx.fillStyle='#9a8a73';ctx.fillText(name,W-P-20,y);y+=40;
-  const ch=tl.length*64+60;ctx.fillStyle='#f2eeea';ctx.beginPath();if(ctx.roundRect)ctx.roundRect(P,y,cw,ch,28);else ctx.rect(P,y,cw,ch);ctx.fill();
-  ctx.fillStyle='#111';ctx.font=`36px ${sysF}`;let ty=y+30+32;tl.forEach(l=>{ctx.fillText(l,W-P-40,ty);ty+=64});
+  const ch=tH+60;ctx.fillStyle='#f2eeea';ctx.beginPath();if(ctx.roundRect)ctx.roundRect(P,y,cw,ch,28);else ctx.rect(P,y,cw,ch);ctx.fill();
+  let ty=y+30+LH/2;tl.forEach(l=>{if(l.gap){ty+=LH*0.4;return}let x=W-P-40;
+    l.w.forEach(w=>{ctx.font=w.f;ctx.fillStyle=w.c;ctx.textAlign='right';ctx.fillText(w.t,x,ty);x-=w.w+w.sp});ty+=LH});
   ctx.textAlign='center';ctx.font=`26px ${sysF}`;ctx.fillStyle='#b9ab95';ctx.fillText('رِواء',W/2,H-P/2-10);
   const blob=await new Promise(r=>c.toBlob(r,'image/png'));
   const file=new File([blob],'tafsir.png',{type:'image/png'});

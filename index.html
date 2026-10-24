@@ -192,6 +192,11 @@ textarea{min-height:8em;-webkit-user-select:text;user-select:text}
 #toast{position:fixed;top:30%;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.8);color:#fff;padding:.55em 1.3em;border-radius:10px;z-index:20;display:none;font-size:16px}
 .res{padding:.6em .2em;border-bottom:1px solid var(--line);cursor:pointer}
 .res .qt{display:block;color:var(--ink)}.res small{color:var(--muted)}
+.tx.clamp{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:10;line-clamp:10;overflow:hidden}
+.more{display:inline-flex;align-items:center;gap:.25em;margin-top:.35em;background:none;border:0;padding:.2em 0;color:var(--blue,#1d6fe0);font-size:.85em;font-family:inherit;cursor:pointer}
+.more svg{width:.7em;height:.7em;transition:transform .2s}.more.up svg{transform:rotate(180deg)}
+body.night .more{color:#6aa8ff}
+.jn{font-size:.8em;color:var(--muted);margin-bottom:.4em}
 </style>
 </head>
 <body>
@@ -262,8 +267,8 @@ textarea{min-height:8em;-webkit-user-select:text;user-select:text}
 <script>
 const FONT_BASE='https://raw.githubusercontent.com/zonetecde/mushaf-layout/refs/heads/v2/fonts/QPC2/';
 const TAF_BASE=['https://raw.githubusercontent.com/spa5k/tafsir_api/main/tafsir/','https://cdn.jsdelivr.net/gh/spa5k/tafsir_api@main/tafsir/'];
-const TAFSIRS=[['ar-tafsir-al-mukhtasar','المختصر'],['ar-tafsir-muyassar','التفسير الميسر'],['ar-tafseer-al-saddi','تفسير السعدي'],
-  ['ar-tafsir-ibn-kathir','تفسير ابن كثير'],['ar-tafsir-al-baghawi','تفسير البغوي'],['ar-tafsir-al-tabari','تفسير الطبري'],['my','تفسيري']];
+const TAFSIRS=[['ar-tafsir-al-mukhtasar','المختصر'],['my','تفسيري'],['ar-tafsir-muyassar','التفسير الميسر'],['ar-tafseer-al-saddi','تفسير السعدي'],
+  ['ar-tafsir-ibn-kathir','تفسير ابن كثير'],['ar-tafsir-al-baghawi','تفسير البغوي'],['ar-tafsir-al-tabari','تفسير الطبري']];
 /* تفسيري: ملف my-tafsir.json بجانب التطبيق — يظهر خياره فقط في الآيات التي لها تفسير فيه */
 const MYI=TAFSIRS.findIndex(t=>t[0]==='my');let MYT=null,myLoading=null;
 function loadMy(){return myLoading||(myLoading=fetch('my-tafsir.json').then(r=>r.ok?r.json():null).then(j=>{MYT=j||{e:{},a:{}};return MYT}).catch(()=>{MYT={e:{},a:{}};return MYT}))}
@@ -281,6 +286,9 @@ let Q,M,LAYOUT,NAMES={},DIFFS={},QUARTERS=[],AYTOK={},cur=1,surahFirst={},loaded
 function load(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}}
 function save(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
 let S=Object.assign({tafsir:0,tsize:19,night:false,diffs:true,mode:'bottom'},load('settings',{}));
+/* بعد نقل «تفسيري» إلى المرتبة الثانية: يبقى التفسير الافتراضي المحفوظ كما اختاره المستخدم */
+if(S.tord!==2){const OLD=['ar-tafsir-al-mukhtasar','ar-tafsir-muyassar','ar-tafseer-al-saddi','ar-tafsir-ibn-kathir','ar-tafsir-al-baghawi','ar-tafsir-al-tabari','my'];
+  S.tafsir=Math.max(0,TAFSIRS.findIndex(t=>t[0]===OLD[S.tafsir]));S.tord=2;save('settings',S)}
 let K=load('khatmas',{active:'hifz',hifz:{page:1,wird:1},tilawa:{page:1,wird:20},tafsir:{page:1,wird:2}});
 let BM=load('bookmarks',[]),HL=load('highlights',{}),NT=load('notes',{});
 function toast(t){const e=$('toast');e.textContent=t;e.style.display='block';clearTimeout(e._t);e._t=setTimeout(()=>e.style.display='none',1700)}
@@ -303,10 +311,23 @@ const surahOfPage=p=>+firstKey(p).split(':')[0];
 const ayahOf=k=>k.split('|')[0].split(':').slice(0,2).join(':');
 function nextAyah(k,d){let[s,a]=k.split(':').map(Number);a+=d;
   if(a<1){if(s===1)return null;s--;a=Q.surahs[s-1][2]}else if(a>Q.surahs[s-1][2]){if(s===114)return null;s++;a=1}return s+':'+a}
+/* خانة التفسير: يظهر منها ١٠ أسطر، والباقي بزر «المزيد» */
+const CHEV='<svg viewBox="0 0 10 10" aria-hidden="true"><path d="M2 3.6 5 6.6 8 3.6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+function setTaf(el,t,empty){
+  const jm=(t||'').match(JOINT_RE),h=fmtTafsir(stripJoint(t));if(!h){el.textContent=empty;return}
+  el.innerHTML=(jm?`<div class="jn">${esc(jm[0].trim())}</div>`:'')+`<div class="tx clamp">${h}</div>`;
+  const tx=el.querySelector('.tx');
+  requestAnimationFrame(()=>{if(tx.scrollHeight<=tx.clientHeight+4){tx.classList.remove('clamp');return}
+    const b=document.createElement('button');b.className='more';b.innerHTML='المزيد '+CHEV;
+    b.onclick=ev=>{ev.stopPropagation();const open=tx.classList.toggle('clamp');b.innerHTML=(open?'المزيد ':'أقل ')+CHEV;b.classList.toggle('up',!open);
+      if(open){const r=el.getBoundingClientRect();if(r.top<0)el.scrollIntoView({block:'start',behavior:'smooth'})}};
+    el.appendChild(b)});
+}
 function fmtTafsir(t){
-  let h=esc(t||'');
+  let note='';t=(t||'').replace(JOINT_RE,m=>{note=`<div class="jn">${esc(m.trim())}</div>`;return ''});
+  let h=esc(t);
   h=h.replace(/﴿[^﴾]*﴾|\{[^}\n]{2,400}\}/g,m=>`<span class="qv">${m}</span>`).replace(/\[[^\]\n]{1,40}\]/g,m=>`<span class="ref">${m}</span>`);
-  return h.replace(/\n+/g,'<br>');
+  return note+h.replace(/\n+/g,'<br>');
 }
 
 /* ---------- تصحيحات توزيع الأسطر لتطابق طبعة المجمع في تطبيق آية ----------
@@ -395,6 +416,9 @@ function renderPage(p){
   $('slider').value=p;$('topInfo').textContent=`${sname(surahOfPage(p))} · صفحة ${AR(p)}`;
   layout();updateBadges();updateTview();
 }
+/* أسطر تتوسط الصفحة كما في تطبيق آية (تُعرف بآخر آية تنتهي في السطر) */
+const CENTER_LINES=new Set(['107:7']);   // آخر سطر في سورة الماعون
+function lineEndAyah(l){const n=l.querySelectorAll('.w');const last=n[n.length-1];return last&&last.classList.contains('num')?last.dataset.a:''}
 function layout(){
   const pg=$('page'),box=$('lines');if(!box.children.length)return;
   const vw=innerWidth,vh=innerHeight;
@@ -432,7 +456,7 @@ function layout(){
     else if(l.classList.contains('bsm')){l.style.fontSize=fs*0.95+'px'}
     else{
       let nat=nats.get(l);
-      const isCenter=centeredPage||nat<maxNat*0.72;
+      const isCenter=centeredPage||nat<maxNat*0.72||CENTER_LINES.has(lineEndAyah(l));
       l.classList.add(isCenter?'center':'just');
       l.style.width=lineW+'px';
       if(nat>lineW){l.style.fontSize=(fs*lineW/nat*0.995)+'px';nat=lineW}
@@ -539,16 +563,20 @@ function fullStep(d){
 /* ---------- تقسيم التفسير المجمّع: كل آية تأخذ ما يشرحها فقط ---------- */
 const skel=s=>(s||'').normalize('NFKD').replace(/[\u064B-\u065F\u0670\u06D6-\u06ED\u0640]/g,'')
   .replace(/[اأإآٱءئؤوىيٰ]/g,'').replace(/ة/g,'ه').replace(/[^\u0621-\u064A]/g,'');
-let QSK=null,QSKS={};
+let QSK=null,QSKS={};const JOINT={};
 function qSkel(){if(QSK)return QSK;const src=Q.plain||Q.text||{};const parts=[];
   for(const k in src){const s=skel(src[k]);QSKS[k]=s;parts.push(s)}QSK='|'+parts.join('|')+'|';return QSK}
+/* هيكل النص مع خريطة ترجع كل حرف إلى موضعه في الأصل */
+function skelMap(t){let s='';const m=[];for(let i=0;i<t.length;i++){const c=skel(t[i]);for(const x of c){s+=x;m.push(i)}}return{s,m}}
+const bare=s=>s.normalize('NFKD').replace(/[\u064B-\u065F\u0670\u06D6-\u06ED\u0640]/g,'').replace(/[أإآٱ]/g,'ا');
+const LEAD_RE=/(?:^|[\s(])(?:[وف]?(?:ب)?قوله|تعالى|تعالي|ذكره|تاويل|ثم قال|وقال|فقال|يقول)(?=[\s:،])[^\n.؟!]{0,30}$/;
 /* الآيات المقتبسة بين قوسين عاديين ( ) تصير بأقواس المصحف ﴿ ﴾ */
 function parenToQuran(t){
   const all=qSkel();
   return t.replace(/\(([^()\n]{3,700})\)/g,(m,x)=>{
     if(/^[\s٠-٩0-9\/\-–،,.:]+$/.test(x))return m;
     const parts=x.split(/\s*\*\s*/).map(skel).filter(Boolean);
-    const ok=parts.length&&parts.every(p=>p.length>=(parts.length>1?4:7)&&all.includes(p));
+    const ok=parts.length&&parts[0].length>=(parts.length>1?4:7)&&parts.join('').length>=7&&parts.every(p=>p.length>=3&&all.includes(p));
     return ok?'﴿'+x.trim()+'﴾':m});
 }
 /* تنسيق علامات التنصيص " ": لا فراغ داخلها، وفراغ واحد خارجها */
@@ -563,38 +591,95 @@ function fixQuotes(t){
 /* حذف سطور العنوان في أول السورة: «تفسير سورة كذا»، «وهي مكية»، البسملة */
 function stripHead(seg){const ls=seg.split('\n');
   while(ls.length){const l=ls[0].trim(),k=skel(l);
-    if(!l||l.replace(/[*\s]/g,'')===''||(l.length<70&&/^(تفسرسره|سره|بسملله|همك|همدن|مكه|مدنه)/.test(k)))ls.shift();else break}
+    if(!l||l.replace(/[*\s]/g,'')===''||(k.length<28&&/^(تفسر|سره|بسملله|همك|همدن|مكه|مدنه)/.test(k)))ls.shift();else break}
   return ls.join('\n')}
+/* إن دخل في النص آخرُ تفسير السورة السابقة: نبدأ من عنوان «تفسير سورة كذا» */
+const preCut=x=>{const m=[...x.matchAll(/(^|\n)[^\n]{0,100}(?=\n|$)/g)].filter(m=>m.index>0&&/^(تفسرسره|تفسرلسره)/.test(skel(m[0])));return m.length?x.slice(m[m.length-1].index):x};
+/* الآية المقتبسة في أول الموضع إن امتدت إلى آيات لها مواضع مستقلة: تُقصر على آيات هذا الموضع */
+function trimLead(seg,su,from,to){
+  const q=seg.match(/﴿([^﴾]*)﴾/);if(!q||q.index>160)return seg;
+  const body=q[1];let cut=-1;
+  const nums=[...body.matchAll(/\(([٠-٩0-9]+)\)/g)];
+  if(nums.length){const m=nums.find(m=>+m[1].replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d))===to);if(m&&m!==nums[nums.length-1])cut=m.index+m[0].length}
+  else{let need='';for(let j=from;j<=to;j++)need+=QSKS[su+':'+j]||'';
+    const M=skelMap(body);if(M.s.length>need.length+2&&M.s.startsWith(need)&&need.length){let i=M.m[need.length-1]+1;while(i<body.length&&body[i]!==' ')i++;cut=i}}
+  if(cut<0)return seg;
+  return seg.slice(0,q.index+1)+body.slice(0,cut).trim()+'﴾'+seg.slice(q.index+q[0].length);
+}
 function splitTafsirForAyah(t,su,ay){
-  if(!t||t.length<350||!Q)return t;
+  delete JOINT[su+':'+ay];
+  if(!t||t.length<300||!Q)return t;
   const cnt=Q.surahs[su-1]?.[2]||300;qSkel();
   const sk=j=>QSKS[su+':'+j]||'';
-  const qs=[...t.matchAll(/﴿([^﴾]{2,2500})﴾/g)];if(qs.length<2)return t;
-  const startOf=q=>{if(/\([٠-٩0-9]+\)/.test(q))return 0;           // كتلة آيات بأرقامها: ليست بداية شرح
-    const first=q.split(/\s*\*\s*/)[0];const s=skel(first);if(s.length<3)return 0;
-    const p=s.slice(0,Math.min(s.length,12));let hit=0;
-    for(let j=1;j<=cnt;j++){const a=sk(j);if(a&&a.startsWith(p)&&(p.length>=7||a.length<=p.length+2)){if(hit)return -1;hit=j}}
-    return hit};
-  const marks=[];let last=0;
-  for(const q of qs){const j=startOf(q[1]);if(j>last){
-      let s=q.index;const back=t.lastIndexOf('\n',s),from=Math.max(back+1,s-70),cut=t.slice(from,s);
-      const m=cut.search(/(?:وَ?قَوْلُهُ|وَ?قوله|وَقَالَ تَعَالَى|يَقُولُ تَعَالَى|قال تعالى|يقول تعالى|القول في تأويل|ثُمَّ قَالَ|ثم قال)[^\n]*$/);
-      if(m>=0)s=from+m;else if(s-back<70)s=back+1;
-      marks.push({j,s});last=j}}
-  if(!marks.length)return t;
+  const lo=Math.max(1,ay-60),hi=Math.min(cnt,ay+60);
+  const ctx=pos=>{const back=t.lastIndexOf('\n',pos-1)+1;const pre=t.slice(Math.max(back,pos-60),pos);
+    if(LEAD_RE.test(bare(pre)))return 3;
+    return skel(t.slice(back,pos)).replace(/^و/,'')===''?2:0};
+  const cands=[];const spans=[];
+  /* ١) الآيات المقتبسة بين ﴿ ﴾ */
+  for(const q of t.matchAll(/﴿([^﴾]{2,2500})﴾|\(([^()\n]{3,700})\)/g)){
+    const body=q[1]||q[2];spans.push([q.index,q.index+q[0].length]);
+    const c=ctx(q.index);
+    const num=body.match(/\(([٠-٩0-9]+)\)/);
+    if(num){if(q[2])continue;   // عنوان فيه الآيات بأرقامها (الطبري): يبدأ موضع أول آية فيه
+      const n=+num[1].replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d));const p0=skel(body.slice(0,num.index)).slice(0,14);let fj=0;
+      for(let j=Math.max(1,n-12);j<=n;j++){const a=sk(j);if(a&&p0&&(a.startsWith(p0)||p0.startsWith(a))){fj=j;break}}
+      if(fj&&fj>=lo&&fj<=hi)cands.push({j:fj,pos:q.index,sc:Math.max(c,2)+2});
+      continue}
+    const s=skel(body.split(/\s*\*\s*/)[0]);if(s.length<(q[2]?7:3))continue;
+    const p=s.slice(0,Math.min(s.length,14));const hits=[];
+    for(let j=lo;j<=hi;j++){const a=sk(j);if(a&&((a.startsWith(p)&&(p.length>=7||a.length<=p.length+2))||(a.length>=5&&s.startsWith(a))))hits.push(j)}
+    if(!hits.length&&c>=2&&p.length>=4&&p.length<7){   // مقطع قصير من أول الآية بعد «وقوله:»
+      for(let j=lo;j<=hi;j++)if(sk(j).startsWith(p))hits.push(j);
+      if(hits.length!==1)hits.length=0}
+    if(!hits.length&&c>=2&&s.length>=8){   // جزء من وسط الآية بعد «وقوله:» ونحوها
+      for(let j=lo;j<=hi;j++)if(sk(j).includes(s.slice(0,Math.min(s.length,20))))hits.push(j);
+      if(hits.length===1){cands.push({j:hits[0],pos:q.index,sc:c});continue}
+      hits.length=0}
+    if(!hits.length||hits.length>3)continue;
+    hits.forEach(j=>cands.push({j,pos:q.index,sc:c+1}));
+  }
+  /* ٢) آيات مذكورة بلا أقواس في أول السطر أو بعد «قوله/قال تعالى» */
+  const inQ=pos=>spans.some(([a,b])=>pos>=a&&pos<b);
+  const M=skelMap(t);
+  for(let j=lo;j<=hi;j++){const a=sk(j);const p=a.slice(0,Math.min(a.length,16));if(p.length<10)continue;
+    let i=-1,n=0;while((i=M.s.indexOf(p,i+1))>=0&&n<6){n++;const pos=M.m[i];if(inQ(pos))continue;
+      const c=ctx(pos);if(c)cands.push({j,pos,sc:c})}}
+  if(!cands.length){const x=stripHead(preCut(t)).trim();return x||t}
+  /* ٣) أفضل سلسلة متصاعدة في رقم الآية وفي الموضع معًا */
+  cands.sort((x,y)=>x.pos-y.pos||x.j-y.j);
+  const dp=[],pr=[];let best=-1;
+  cands.forEach((c,i)=>{const own=1+0.4*c.sc;dp[i]=own;pr[i]=-1;
+    for(let k=0;k<i;k++){const d=cands[k];if(d.j<c.j&&d.pos<c.pos){const g=c.j-d.j-1;const v=dp[k]+own-0.3*g+(g===0?0.5:0);if(v>dp[i]){dp[i]=v;pr[i]=k}}}
+    if(best<0||dp[i]>dp[best])best=i});
+  const marks=[];for(let i=best;i>=0;i=pr[i])marks.unshift({j:cands[i].j,pos:cands[i].pos});
+  if(marks.every(m=>m.j===ay)){delete JOINT[su+':'+ay];return t}   // تفسير خاص بهذه الآية وحدها
+  /* بداية كل موضع: نرجع إلى «وقوله:» ونحوها، أو إلى أول السطر إن كانت قريبة منه */
+  let prevEnd=0;
+  marks.forEach(mk=>{let s=mk.pos;const back=t.lastIndexOf('\n',s-1);const from=Math.max(back+1,s-70,prevEnd);const cut=t.slice(from,s);
+    const m=cut.search(/(?:وَ?قَوْلُهُ|وَ?قوله|وَقَالَ تَعَالَى|يَقُولُ تَعَالَى|قال تعالى|يقول تعالى|القول في تأويل|ثُمَّ قَالَ|ثم قال)[^\n]*$/);
+    if(m>=0)s=from+m;
+    else{const b=Math.max(cut.lastIndexOf('.'),cut.lastIndexOf('؟'),cut.lastIndexOf('!'));const tail=cut.slice(b+1);
+      if(b>=0&&/:\s*$/.test(tail)&&tail.trim().length<45)s=from+b+1;
+      else if(s-back<70&&back+1>=prevEnd)s=back+1}
+    mk.s=s;prevEnd=mk.pos+1});
+  const tidy=x=>x.replace(/\n[^\n]{0,8}آخر تفسير[^\n]*\s*$/,'').replace(/(\n[\s*]*)+$/,'').trim().replace(/[\s،,؛:\-–]+$/,'').replace(/([^.؟!»"﴾)])$/,'$1.');
   let k=-1;for(let n=0;n<marks.length;n++)if(marks[n].j<=ay)k=n;
-  if(k<0){const seg=t.slice(0,marks[0].s);return stripHead(seg).trim().length>60?stripHead(seg).trim():t}   // الآيات قبل أول موضع معروف
-  const start=(k===0&&marks[0].j===1)?0:marks[k].s;
+  if(k<0){const seg=stripHead(preCut(t.slice(0,marks[0].s))).trim();return seg.length>40?tidy(seg):t}   // الآيات قبل أول موضع معروف
+  if(marks[k].j<ay)JOINT[su+':'+ay]=marks[k].j;else delete JOINT[su+':'+ay];
+  const start=(k===0&&(marks[0].j===1||stripHead(preCut(t.slice(0,marks[0].s))).trim().length<40))?0:marks[k].s;
   const end=k+1<marks.length?marks[k+1].s:t.length;
   let seg=t.slice(start,end);
-  if(start===0)seg=stripHead(seg);
-  return seg.trim()||t;
+  if(start===0)seg=stripHead(preCut(seg));
+  if(k+1<marks.length)seg=trimLead(seg,su,marks[k].j,marks[k+1].j-1);
+  return seg.trim()?tidy(seg):t;
 }
 
 /* تنظيف تفاسير الطبري وابن كثير والبغوي من حواشي المحققين والأقواس المربعة */
 const CLEAN_TAF=new Set(['ar-tafsir-al-tabari','ar-tafsir-ibn-kathir','ar-tafsir-al-baghawi']);
 function cleanTafsir(slug,t){
   t=t
+    .replace(/\{\s*([^{}\[\]\n]{1,600}?)\s*\]/g,'﴿$1﴾').replace(/\[\s*([^{}\[\]\n]{1,600}?)\s*\}/g,'﴿$1﴾') // أقواس مختلطة { ] و [ }
     .replace(/\{\s*([^{}\n]{1,600}?)\s*\}/g,'﴿$1﴾')                                   // أقواس الآيات { } تصير بأقواس المصحف ﴿ ﴾
     .replace(/[ \t]*\((?:سورة\s*)?[^()\n]{1,25}?\s*:\s*[٠-٩0-9]+(?:\s*[-–،,]\s*[٠-٩0-9]+)*\s*\)/g,'') // (البقرة: ٢٥)
     .replace(/[ \t]*\(\s*[٠-٩0-9]+(?:\s*[-–،,]\s*[٠-٩0-9]+)*\s*[-–]\s*[^()\n٠-٩0-9]{2,20}\)/g,'')      // (٨٧-الحجر)
@@ -607,11 +692,22 @@ function cleanTafsir(slug,t){
     .replace(/[\[\]]/g,'')                                                    // أي قوس مربع شارد
     .replace(/[ \t]{2,}/g,' ').replace(/ +([،.:؛؟!)﴾])/g,'$1').replace(/ +\n/g,'\n');
 }
-const tafCache={};
+const tafCache={},tafSplit={};
+/* الميسر والمختصر تفسيرهما آية آية فلا يُقسَّمان؛ وما فُسِّر مع آية قبله يُنبَّه عليه في أوله */
+const NO_SPLIT=new Set(['ar-tafsir-muyassar','ar-tafsir-al-mukhtasar']);
+const JOINT_RE=/^فُسِّرت هذه الآية مع الآية [٠-٩]+\n/;
+const stripJoint=t=>(t||'').replace(JOINT_RE,'');
+function splitCached(slug,ck,su,ay){
+  if(tafSplit[ck]!=null)return tafSplit[ck];
+  const raw=tafCache[ck];let x=NO_SPLIT.has(slug)?raw:splitTafsirForAyah(raw,su,ay);
+  const j=NO_SPLIT.has(slug)?0:JOINT[su+':'+ay];
+  x=fixQuotes(x);if(j&&x)x=`فُسِّرت هذه الآية مع الآية ${AR(j)}\n`+x;
+  return tafSplit[ck]=x;
+}
 async function fetchTafsir(slug,su,ay){
   if(slug==='my'){if(!MYT)await loadMy();const mk=myKey(su+':'+ay);return mk?MYT.e[mk]:''}
-  const ck=slug+su+':'+ay;if(tafCache[ck]!=null)return fixQuotes(splitTafsirForAyah(tafCache[ck],+su,+ay));
-  for(const b of TAF_BASE){try{const r=await fetch(`${b}${slug}/${su}/${ay}.json`);if(r.ok){const j=await r.json();tafCache[ck]=parenToQuran(cleanTafsir(slug,j.text||''));return fixQuotes(splitTafsirForAyah(tafCache[ck],+su,+ay))}}catch(e){}}
+  const ck=slug+su+':'+ay;if(tafCache[ck]!=null)return splitCached(slug,ck,+su,+ay);
+  for(const b of TAF_BASE){try{const r=await fetch(`${b}${slug}/${su}/${ay}.json`);if(r.ok){const j=await r.json();tafCache[ck]=parenToQuran(cleanTafsir(slug,j.text||''));return splitCached(slug,ck,+su,+ay)}}catch(e){}}
   throw new Error('fail');
 }
 function openAyahTafsir(a){
@@ -651,7 +747,7 @@ async function openLib(a){
     c.innerHTML=`<div class="tl"><span>${name}</span><button class="dots">•••</button></div><div class="card">جارٍ التحميل…</div>`;
     c.querySelector('.dots').onclick=ev=>{ev.stopPropagation();openMenu(ev,slug)};
     b.appendChild(c);
-    fetchTafsir(slug,su,ay).then(t=>{if(libAyah===a)c.querySelector('.card').innerHTML=fmtTafsir(t)||'لا يوجد تفسير لهذه الآية في هذا الكتاب'})
+    fetchTafsir(slug,su,ay).then(t=>{if(libAyah===a)setTaf(c.querySelector('.card'),t,'لا يوجد تفسير لهذه الآية في هذا الكتاب')})
       .catch(()=>{if(libAyah===a)c.querySelector('.card').textContent='تعذّر التحميل — تأكد من الاتصال بالإنترنت'});
   });
 }
@@ -846,7 +942,7 @@ function renderTview(){
     body.append(a,t);
     if(tvTaf===MYI){const mk=myKey(k);if(mk&&shownMy.has(mk)){t.textContent='تقدّم تفسيرها مع ما قبلها.';return}if(mk)shownMy.add(mk)}
     const fp=fetchTafsir(TAFSIRS[tvTaf][0],su,ay),pp=prevTv;prevTv=fp.catch(()=>null);
-    Promise.all([fp,pp]).then(([x,prev])=>{if(body.dataset.t===token)t.innerHTML=(x&&prev===x)?'تقدّم تفسيرها مع ما قبلها.':(fmtTafsir(x)||'لا يوجد تفسير لهذه الآية في هذا الكتاب')})
+    Promise.all([fp,pp]).then(([x,prev])=>{if(body.dataset.t===token){if(x&&prev&&stripJoint(prev)===stripJoint(x))t.textContent='تقدّم تفسيرها مع ما قبلها.';else setTaf(t,x,'لا يوجد تفسير لهذه الآية في هذا الكتاب')}})
       .catch(()=>{if(body.dataset.t===token)t.textContent='تعذّر تحميل التفسير — تأكد من الاتصال بالإنترنت'});
   });
 }

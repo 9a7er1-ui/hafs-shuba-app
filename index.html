@@ -260,7 +260,12 @@ textarea{min-height:8em;-webkit-user-select:text;user-select:text}
 const FONT_BASE='https://raw.githubusercontent.com/zonetecde/mushaf-layout/refs/heads/v2/fonts/QPC2/';
 const TAF_BASE=['https://raw.githubusercontent.com/spa5k/tafsir_api/main/tafsir/','https://cdn.jsdelivr.net/gh/spa5k/tafsir_api@main/tafsir/'];
 const TAFSIRS=[['ar-tafsir-al-mukhtasar','المختصر'],['ar-tafsir-muyassar','التفسير الميسر'],['ar-tafseer-al-saddi','تفسير السعدي'],
-  ['ar-tafsir-ibn-kathir','تفسير ابن كثير'],['ar-tafsir-al-baghawi','تفسير البغوي'],['ar-tafsir-al-tabari','تفسير الطبري']];
+  ['ar-tafsir-ibn-kathir','تفسير ابن كثير'],['ar-tafsir-al-baghawi','تفسير البغوي'],['ar-tafsir-al-tabari','تفسير الطبري'],['my','تفسيري']];
+/* تفسيري: ملف my-tafsir.json بجانب التطبيق — يظهر خياره فقط في الآيات التي لها تفسير فيه */
+const MYI=TAFSIRS.findIndex(t=>t[0]==='my');let MYT=null,myLoading=null;
+function loadMy(){return myLoading||(myLoading=fetch('my-tafsir.json').then(r=>r.ok?r.json():null).then(j=>{MYT=j||{e:{},a:{}};return MYT}).catch(()=>{MYT={e:{},a:{}};return MYT}))}
+const myKey=k=>!MYT?null:(MYT.e[k]!=null?k:(MYT.a[k]||null));
+const hasMy=k=>!!myKey(k);
 const DIFF_NAMES={h:'حرف يخالف حفصًا',i:'إدغام كامل',m:'إمالة وصلًا ووقفًا',w:'إمالة وقفًا فقط',n:'إدغام ناقص بغنة'};
 const KH=[['hifz','ختمة الحفظ'],['tilawa','ختمة التلاوة'],['tafsir','ختمة التفسير']];
 const HLC=[['y','أصفر'],['g','أخضر'],['b','أزرق'],['p','وردي'],['o','برتقالي']];
@@ -301,15 +306,35 @@ function fmtTafsir(t){
   return h.replace(/\n+/g,'<br>');
 }
 
+/* ---------- تصحيحات توزيع الأسطر لتطابق طبعة المجمع في تطبيق آية ----------
+   كل سطر: [رقم الصفحة، مفتاح الكلمة، الاتجاه]
+   الاتجاه 1 = تنتقل الكلمة إلى أول السطر التالي، و -1 = تنتقل إلى آخر السطر السابق */
+const LINE_FIXES=[
+  [177,'8:6:10',1],   // الأنفال ٦: «وَهُمۡ» إلى أول السطر التالي
+];
+function applyLineFixes(){
+  LINE_FIXES.forEach(([p,key,dir])=>{
+    const pg=LAYOUT[p-1];if(!pg)return;
+    const txt=pg.filter(l=>l.w);
+    const li=txt.findIndex(l=>l.w.some(w=>w[0]===key));if(li<0)return;
+    const from=txt[li],to=txt[li+dir];if(!to)return;
+    const wi=from.w.findIndex(w=>w[0]===key);
+    if(dir===1&&wi===from.w.length-1)to.w.unshift(from.w.pop());
+    else if(dir===-1&&wi===0)to.w.push(from.w.shift());
+  });
+}
+
 /* ---------- init ---------- */
 async function init(){
   try{
     [Q,M,LAYOUT,NAMES]=await Promise.all(['quran.json','meanings.json','layout.json','surah-names.json']
       .map(f=>fetch(f).then(r=>{if(!r.ok)throw new Error(f);return r.json()})));
   }catch(e){$('msg').textContent='تعذّر تحميل: '+e.message;return}
+  loadMy();
   try{const r=await fetch('diffs.json');if(r.ok)DIFFS=await r.json()}catch(e){}
   try{const r=await fetch('quarters.json');if(r.ok)QUARTERS=await r.json()}catch(e){}
   try{await loadFont('bsml',FONT_BASE.replace('QPC2/','QPC1/')+'QPC1BSML.ttf')}catch(e){}
+  applyLineFixes();
   LAYOUT.forEach((pg,i)=>{let last=null;pg.forEach(l=>{
     if(l.h&&!surahFirst[l.h])surahFirst[l.h]=i+1;
     if(l.w)l.w.forEach(([k,g])=>{const parts=g.split(' ');
@@ -345,7 +370,7 @@ function renderPage(p){
       l.w.forEach(([k,g])=>{
         const parts=g.split(' ');
         if(k){
-          const s=document.createElement('span');s.className='w';s.textContent=parts[0];s.dataset.k=k;
+          const nW=k.split('|').length;const s=document.createElement('span');s.className='w';s.textContent=parts.splice(0,nW,'').slice(0).join(' ');s.dataset.k=k;
           lastAyah=ayahOf(k);s.dataset.a=lastAyah;
           const d=k.split('|').map(x=>DIFFS[x]).find(Boolean);
           if(d){s.classList.add('d-'+d.c);if(!dotc)dotc=d.c}
@@ -367,24 +392,46 @@ function renderPage(p){
 function layout(){
   const pg=$('page'),box=$('lines');if(!box.children.length)return;
   const vw=innerWidth,vh=innerHeight;
-  const W=Math.min(vw-14,vh*0.68);pg.style.width=W+'px';
+  /* الصفحة تلتصق بحافة الشاشة، والحدّ الأخضر من جهة الكعب فقط (كتطبيق آية) */
+  const gutter=Math.max(12,Math.round(vw*0.05));
+  const maxW=vh*0.74;let W=vw-gutter,side=true;
+  if(W>maxW){W=maxW;side=false}
+  pg.style.width=W+'px';
+  if(side){const odd=cur%2===1;pg.style.marginLeft=odd?'0':'auto';pg.style.marginRight=odd?'auto':'0'}
+  else{pg.style.marginLeft=pg.style.marginRight='auto'}
   const lines=[...box.children];
-  const FULL=16.4,lh=1.78;
+  const FULL=19.6;                       // نسبة الخط إلى عرض السطر — أصغر من قبل ليأخذ النص نفَسه
+  const margin=Math.round(W*0.075),lineW=W-2*margin;
+  document.querySelectorAll('#page .bar').forEach(b=>{b.style.paddingLeft=b.style.paddingRight=margin+'px'});
   const barH=$('juz').parentElement.offsetHeight+$('pno').offsetHeight;
-  const fsH=(vh-barH-10)/(15*lh);
-  const fs=Math.min(W*0.86/FULL,fsH);
+  const availH=vh-barH-14;
+  let fs=lineW/FULL,pitch=availH/15;
+  if(pitch<fs*1.62)fs=pitch/1.62;        // شاشة قصيرة: نصغّر الخط حتى لا تتداخل الأسطر
+  pitch=Math.min(pitch,fs*2.25);
   box.style.fontSize=fs+'px';
-  const lineW=FULL*fs,centeredPage=cur<=2,margin=(W-lineW)/2;
+  const centeredPage=cur<=2;
+  /* القياس الطبيعي لكل سطر */
+  const txt=lines.filter(l=>l.classList.contains('line'));
+  txt.forEach(l=>{l.classList.remove('just','center');l.style.fontSize='';l.style.width='auto';l.querySelectorAll('.w').forEach(w=>w.style.transform='')});
+  const nats=new Map(txt.map(l=>[l,l.scrollWidth]));
+  const maxNat=Math.max(...nats.values(),1);
   lines.forEach(l=>{
-    l.style.height=(fs*lh)+'px';
-    if(l.classList.contains('hdr')){const bh=lineW*135/1200;l.style.width=lineW+'px';l.style.height=bh+'px';l.style.margin=Math.max(0,(fs*lh-bh)/2)+'px 0'}
+    l.style.height=pitch+'px';
+    if(l.classList.contains('hdr')){const bh=lineW*135/1200;l.style.width=lineW+'px';l.style.height=bh+'px';l.style.margin=Math.max(0,(pitch-bh)/2)+'px 0'}
     else if(l.classList.contains('bsm')){l.style.fontSize=fs*1.05+'px'}
     else{
-      l.classList.remove('just','center');l.style.fontSize='';l.style.width='auto';
-      const nat=l.scrollWidth;
-      l.classList.add(centeredPage||nat<lineW*0.82?'center':'just');
+      let nat=nats.get(l);
+      const isCenter=centeredPage||nat<maxNat*0.72;
+      l.classList.add(isCenter?'center':'just');
       l.style.width=lineW+'px';
-      if(l.scrollWidth>lineW+0.5)l.style.fontSize=(fs*lineW/l.scrollWidth*0.995)+'px';   // never overflow the text frame
+      if(nat>lineW){l.style.fontSize=(fs*lineW/nat*0.995)+'px';nat=lineW}   // لا يتجاوز إطار النص
+      /* الأسطر قليلة الكلمات: تمديد أفقي خفيف للكلمات يقلّل الفراغات الواسعة */
+      if(!isCenter){
+        const sc=Math.min(1.09,lineW*0.955/nat);
+        if(sc>1.012){const words=[...l.querySelectorAll('.w:not(.num)')],wsum=words.reduce((t,w)=>t+w.offsetWidth,0);
+          const s2=Math.min(sc,1+(lineW*0.955-nat)/Math.max(wsum,1));
+          if(s2>1.012)words.forEach(w=>w.style.transform=`scaleX(${s2.toFixed(3)})`)}
+      }
       const dt=l.querySelector('.dot');
       if(dt){const off=-(margin/2)-3.5;dt.style.right=dt.style.left='';if(cur%2===1)dt.style.right=off+'px';else dt.style.left=off+'px'}
     }
@@ -478,10 +525,22 @@ function fullStep(d){
 }
 
 /* ---------- tafsir ---------- */
+/* تنظيف تفاسير الطبري وابن كثير والبغوي من حواشي المحققين والأقواس المربعة */
+const CLEAN_TAF=new Set(['ar-tafsir-al-tabari','ar-tafsir-ibn-kathir','ar-tafsir-al-baghawi']);
+function cleanTafsir(slug,t){
+  if(!CLEAN_TAF.has(slug))return t;
+  return t
+    .replace(/[ \t]*\[\[[\s\S]*?\]\]/g,'')                                   // حواشي المحقق: تُحذف كلها
+    .replace(/[ \t]*\[[^\[\]\n]{1,40}?:\s*[٠-٩0-9]+(?:\s*[-–،,]\s*[٠-٩0-9]+)*\s*\]/g,'') // إحالات السور مثل [البقرة: ٢١٦]
+    .replace(/\[([^\[\]]*)\]/g,'$1')                                          // الزيادات: تبقى الكلمة بلا أقواس
+    .replace(/[\[\]]/g,'')                                                    // أي قوس مربع شارد
+    .replace(/[ \t]{2,}/g,' ').replace(/ +([،.:؛؟!)﴾])/g,'$1').replace(/ +\n/g,'\n');
+}
 const tafCache={};
 async function fetchTafsir(slug,su,ay){
+  if(slug==='my'){if(!MYT)await loadMy();const mk=myKey(su+':'+ay);return mk?MYT.e[mk]:''}
   const ck=slug+su+':'+ay;if(tafCache[ck]!=null)return tafCache[ck];
-  for(const b of TAF_BASE){try{const r=await fetch(`${b}${slug}/${su}/${ay}.json`);if(r.ok){const j=await r.json();return tafCache[ck]=(j.text||'')}}catch(e){}}
+  for(const b of TAF_BASE){try{const r=await fetch(`${b}${slug}/${su}/${ay}.json`);if(r.ok){const j=await r.json();return tafCache[ck]=cleanTafsir(slug,j.text||'')}}catch(e){}}
   throw new Error('fail');
 }
 function openAyahTafsir(a){
@@ -489,8 +548,8 @@ function openAyahTafsir(a){
   panel.kind='tafsir';panel.tafI=S.tafsir;renderAyahTafsir(a);
 }
 function renderAyahTafsir(a){
-  const[su,ay]=a.split(':');const i=panel.tafI;
-  const sel=`<select class="pill" onchange="panel.tafI=+this.value;renderAyahTafsir('${a}')">${TAFSIRS.map((t,j)=>`<option value="${j}" ${j==i?'selected':''}>${t[1]}</option>`).join('')}</select>`;
+  const[su,ay]=a.split(':');if(panel.tafI===MYI&&!hasMy(a))panel.tafI=S.tafsir===MYI?0:S.tafsir;const i=panel.tafI;
+  const sel=`<select class="pill" onchange="panel.tafI=+this.value;renderAyahTafsir('${a}')">${TAFSIRS.map((t,j)=>j===MYI&&!hasMy(a)?'':`<option value="${j}" ${j==i?'selected':''}>${t[1]}</option>`).join('')}</select>`;
   const body=document.createElement('div');body.className='just-t';body.textContent='جارٍ تحميل التفسير…';
   const nav=document.createElement('div');nav.style.cssText='display:flex;justify-content:space-between;margin-top:.6em';
   nav.innerHTML=`<button class="mini" onclick="stepTafsir('${a}',-1)">› السابقة</button><button class="mini" onclick="openLib('${a}')">كل التفاسير</button><button class="mini" onclick="stepTafsir('${a}',1)">التالية ‹</button>`;
@@ -516,6 +575,7 @@ async function openLib(a){
   const b=$('libBody');b.innerHTML=`<div class="ayah">${ayahGlyphHTML(a)}</div>`;b.scrollTop=0;
   const[su,ay]=a.split(':');
   TAFSIRS.forEach(([slug,name],i)=>{
+    if(slug==='my'&&!hasMy(a))return;
     const c=document.createElement('div');c.className='tc';
     c.innerHTML=`<div class="tl"><span>${name}</span><button class="dots">•••</button></div><div class="card">جارٍ التحميل…</div>`;
     c.querySelector('.dots').onclick=ev=>{ev.stopPropagation();openMenu(ev,slug)};
@@ -701,10 +761,10 @@ function updateTview(){
   if(on)renderTview();
 }
 function renderTview(){
-  if(tvTaf==null)tvTaf=S.tafsir;const p=cur;
+  if(tvTaf==null)tvTaf=S.tafsir;const p=cur;const myHere=ayahsOfPage(p).some(hasMy);if(tvTaf===MYI&&!myHere)tvTaf=S.tafsir===MYI?0:S.tafsir;const shownMy=new Set();
   $('tvTitle').textContent=`${sname(surahOfPage(p))} — صفحة ${AR(p)}`;
   $('tvTabs').innerHTML='';
-  TAFSIRS.forEach(([slug,name],i)=>{const b=document.createElement('button');b.textContent=name;if(i===tvTaf)b.className='on';b.onclick=()=>{tvTaf=i;renderTview()};$('tvTabs').appendChild(b)});
+  TAFSIRS.forEach(([slug,name],i)=>{if(i===MYI&&!myHere)return;const b=document.createElement('button');b.textContent=name;if(i===tvTaf)b.className='on';b.onclick=()=>{tvTaf=i;renderTview()};$('tvTabs').appendChild(b)});
   const body=$('tvBody');body.innerHTML='';body.scrollTop=0;const token=p+':'+tvTaf;body.dataset.t=token;
   ayahsOfPage(p).forEach(k=>{
     const[su,ay]=k.split(':').map(Number);
@@ -713,6 +773,7 @@ function renderTview(){
     const n=document.createElement('span');n.className='an';n.textContent='﴿'+AR(ay)+'﴾';a.appendChild(n);
     const t=document.createElement('div');t.className='tv-t';t.textContent='جارٍ تحميل التفسير…';
     body.append(a,t);
+    if(tvTaf===MYI){const mk=myKey(k);if(mk&&shownMy.has(mk)){t.textContent='تقدّم تفسيرها مع ما قبلها.';return}if(mk)shownMy.add(mk)}
     fetchTafsir(TAFSIRS[tvTaf][0],su,ay).then(x=>{if(body.dataset.t===token)t.innerHTML=fmtTafsir(x)||'لا يوجد تفسير لهذه الآية في هذا الكتاب'})
       .catch(()=>{if(body.dataset.t===token)t.textContent='تعذّر تحميل التفسير — تأكد من الاتصال بالإنترنت'});
   });
@@ -744,7 +805,7 @@ function openSettings(){
       <option value="bottom" ${S.mode==='bottom'?'selected':''}>نافذة في أسفل الصفحة</option>
       <option value="center" ${S.mode==='center'?'selected':''}>نافذة في وسط الصفحة</option>
       <option value="full" ${S.mode==='full'?'selected':''}>صفحة كاملة</option></select></div>
-    <div class="set"><label>التفسير الافتراضي</label><select id="sTaf">${TAFSIRS.map((t,i)=>`<option value="${i}" ${i==S.tafsir?'selected':''}>${t[1]}</option>`).join('')}</select></div>
+    <div class="set"><label>التفسير الافتراضي</label><select id="sTaf">${TAFSIRS.map((t,i)=>i===MYI?'':`<option value="${i}" ${i==S.tafsir?'selected':''}>${t[1]}</option>`).join('')}</select></div>
     <div class="set"><label>حجم خط المعاني والتفسير</label><select id="sSize">${[16,17,19,21,24,27].map(v=>`<option ${v==S.tsize?'selected':''}>${v}</option>`).join('')}</select></div>
     <div class="set"><label>الوضع الليلي</label><input type="checkbox" id="sNight" ${S.night?'checked':''} style="width:auto"></div>
     <div class="set"><label>تلوين مواضع خلاف شعبة</label><input type="checkbox" id="sDiff" ${S.diffs?'checked':''} style="width:auto"></div>

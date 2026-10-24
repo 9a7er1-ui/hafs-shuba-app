@@ -95,7 +95,7 @@ function pick(span) {
   if (m) {
     const b = document.createElement('span');
     b.className = 'bw';
-    b.textContent = m.w + ': ';
+    b.textContent = m.w.replace(/^\d+\s+/, '') + ': ';
     box.appendChild(b);
     box.appendChild(document.createTextNode(m.t));
   } else {

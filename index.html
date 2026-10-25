@@ -41,8 +41,7 @@ body.night #page.odd,body.night #page.even{box-shadow:none}
 body.nodiff .w[class*="d-"]{color:inherit}body.nodiff .dot{display:none}
 .w.hl-y{background:var(--hl-y)}.w.hl-g{background:var(--hl-g)}.w.hl-b{background:var(--hl-b)}.w.hl-p{background:var(--hl-p)}.w.hl-o{background:var(--hl-o)}
 .num{color:var(--ink)!important;position:relative;z-index:0}
-/* وسط رمز الآية بلون وسط إطار السورة */
-.num::before{content:'';position:absolute;left:calc(50% + .07em);top:calc(50% + .02em);width:var(--mk-size,.56em);height:var(--mk-size,.56em);transform:translate(-50%,-50%);border-radius:50%;background:var(--mk,#e6f0de);z-index:-1;pointer-events:none}
+.num canvas.mkf{position:absolute;left:0;top:0;z-index:-1;pointer-events:none}
 .ar{width:1em;height:1em;vertical-align:-.15em;fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round;margin:0 .15em}
 .dot{position:absolute;top:50%;width:7px;height:7px;margin-top:-3.5px;border-radius:50%;-webkit-text-stroke:0;pointer-events:none}
 .hdr{position:relative;display:flex;align-items:center;justify-content:center}
@@ -209,6 +208,30 @@ textarea{min-height:8em;-webkit-user-select:text;user-select:text}
 .more svg{width:.7em;height:.7em;transition:transform .2s}.more.up svg{transform:rotate(180deg)}
 body.night .more{color:#8fbf8f}
 .jn{font-size:.8em;color:var(--muted);margin-bottom:.4em}
+
+/* ---------- صفحة البحث ---------- */
+#srch{position:fixed;inset:0;z-index:9;background:var(--ui);color:var(--uitx);display:none;flex-direction:column;font-family:var(--sys)}
+#srch.open{display:flex}
+#srch .sh{display:flex;align-items:center;gap:.8em;padding:calc(env(safe-area-inset-top,0px) + .7em) 1em .7em;border-bottom:1px solid var(--line);background:var(--ui)}
+#srch .sbox{flex:1;display:flex;align-items:center;gap:.4em;background:rgba(0,0,0,.06);border-radius:12px;padding:0 .7em;height:42px}
+#srch .sbox .i{width:22px;height:22px;color:var(--muted);flex:none}
+#srch input{flex:1;min-width:0;border:0;background:none;outline:none;font:inherit;font-size:18px;color:var(--uitx);padding:0;-webkit-appearance:none}
+#srch input::-webkit-search-cancel-button{display:none}
+#srch .sclr{flex:none;width:24px;height:24px;border-radius:50%;border:0;background:var(--muted);color:var(--ui);font-size:17px;line-height:22px;padding:0;visibility:hidden}
+#srch .scancel{flex:none;background:none;border:0;color:var(--acc);font:inherit;font-size:18px;padding:.2em 0}
+#srch .sbody{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:1em 1em calc(1em + env(safe-area-inset-bottom,0px))}
+#srch .srh{font-weight:700;font-size:22px;margin:.1em .2em .6em}
+#srch .scard{background:var(--paper);border-radius:16px;padding:0 1.2em}
+#srch .sr{padding:.9em 0;border-bottom:1px solid var(--line);cursor:pointer}
+#srch .sr:last-child{border-bottom:0}
+#srch .srt{display:flex;justify-content:space-between;font-size:17px;margin-bottom:.15em}
+#srch .srt .pg{color:var(--muted)}
+#srch .stx{font-family:"Amiri Quran",Amiri,serif;font-size:25px;line-height:2.05;color:#a3906f}
+body.night #srch .sbox{background:rgba(255,255,255,.08)}
+body.night #srch .stx{color:#c4b393}
+#srch .sempty{text-align:center;color:var(--muted);margin-top:2em}
+.kbtn{display:flex;align-items:center;gap:.5em;width:100%;margin:0 0 .8em;padding:.75em 1em;border:1px solid var(--line);border-radius:12px;background:var(--paper);color:var(--acc);font:inherit;font-size:17px;font-weight:600;cursor:pointer}
+.kbtn .i{width:22px;height:22px}
 </style>
 </head>
 <body>
@@ -275,6 +298,7 @@ body.night .more{color:#8fbf8f}
 </div>
 
 <div class="sheet" id="aux"><div class="hd"><span class="sp" id="auxTitle"></span><button class="x" onclick="closeAll()">×</button></div><div class="bd" id="auxBody"></div></div>
+<div id="srch"><div class="sh"><div class="sbox"><svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><input id="sq" type="search" enterkeyhint="search" autocomplete="off" autocorrect="off" spellcheck="false" placeholder="ابحث في القرآن"><button class="sclr" id="sclr" aria-label="مسح">×</button></div><button class="scancel" onclick="closeSearch()">إلغاء</button></div><div class="sbody" id="sres"></div></div>
 <div id="toast"></div>
 
 <script>
@@ -524,6 +548,45 @@ function layout(){
       const dt=l.querySelector('.dot');
       if(dt){const off=-(margin/2)-3.5;dt.style.right=dt.style.left='';if(cur%2===1)dt.style.right=off+'px';else dt.style.left=off+'px'}
     }
+  });
+  requestAnimationFrame(fillMarkers);
+}
+/* تلوين وسط رموز الآيات: يُرسم الرمز نفسه على لوحة خفية، ويُعرف داخله من شكله،
+   فيُلوَّن الفراغ الأوسط فقط (ومعه فراغات الأرقام داخله) خلف الرمز تمامًا؛ وما ليس رمز آية لا يُلوَّن */
+function fillMarkers(){
+  const mk=(getComputedStyle(document.documentElement).getPropertyValue('--mk').trim()||'#e6f0de').replace('#','');
+  const fr=parseInt(mk.slice(0,2),16),fg=parseInt(mk.slice(2,4),16),fb=parseInt(mk.slice(4,6),16);
+  const dpr=Math.min(3,window.devicePixelRatio||1);
+  document.querySelectorAll('#lines .num').forEach(n=>{
+    n.querySelectorAll('canvas.mkf').forEach(c=>c.remove());
+    const txt=n.textContent;if(!txt.trim())return;
+    const cs=getComputedStyle(n),fsz=parseFloat(cs.fontSize),w=n.offsetWidth,h=n.offsetHeight;if(!w||!h||!fsz)return;
+    const pad=Math.ceil(h*0.35),W=Math.ceil((w+2*pad)*dpr),H=Math.ceil((h+2*pad)*dpr),c=document.createElement('canvas');c.width=W;c.height=H;
+    const x=c.getContext('2d');x.font=`${fsz*dpr}px ${cs.fontFamily}`;x.textBaseline='alphabetic';x.direction='ltr';
+    const mt=x.measureText(txt);const A=mt.fontBoundingBoxAscent,D=mt.fontBoundingBoxDescent;if(A==null||D==null)return;
+    const base=pad*dpr+(h*dpr-(A+D))/2+A;x.fillStyle='#000';x.fillText(txt,(W-mt.width)/2,base);
+    const img=x.getImageData(0,0,W,H),p=img.data,N=W*H,solid=new Uint8Array(N),lab=new Int32Array(N);
+    for(let i=0;i<N;i++)solid[i]=p[i*4+3]>90?1:0;
+    /* المناطق الفارغة المتصلة؛ ما يلمس حافة اللوحة فهو خارج الرمز */
+    const comps=[];let id=0;const st=[];
+    for(let s=0;s<N;s++){if(solid[s]||lab[s])continue;id++;let edge=false,cnt=0,x0=W,x1=0,y0=H,y1=0;st.push(s);lab[s]=id;
+      while(st.length){const q=st.pop(),qx=q%W,qy=(q/W)|0;cnt++;if(qx<x0)x0=qx;if(qx>x1)x1=qx;if(qy<y0)y0=qy;if(qy>y1)y1=qy;
+        if(qx===0||qy===0||qx===W-1||qy===H-1)edge=true;
+        const nb=[qx>0?q-1:-1,qx<W-1?q+1:-1,qy>0?q-W:-1,qy<H-1?q+W:-1];
+        for(const v of nb)if(v>=0&&!solid[v]&&!lab[v]){lab[v]=id;st.push(v)}}
+      comps.push({id,edge,cnt,x0,x1,y0,y1})}
+    const inner=comps.filter(k=>!k.edge);if(!inner.length)return;
+    const big=inner.reduce((a,b)=>b.cnt>a.cnt?b:a);
+    const bx=(big.x0+big.x1)/2,by=(big.y0+big.y1)/2;
+    if(big.cnt<w*h*dpr*dpr*0.12||Math.abs(bx-W/2)>W*0.15||Math.abs(by-H/2)>H*0.15)return;   // ليس رمز آية
+    const keep=new Set(inner.filter(k=>k===big||(k.x0>=big.x0&&k.x1<=big.x1&&k.y0>=big.y0&&k.y1<=big.y1)).map(k=>k.id));
+    const out=x.createImageData(W,H),o=out.data;
+    for(let i=0;i<N;i++){if(!keep.has(lab[i]))continue;
+      /* توسيع بكسل واحد حتى لا يبقى فراغ عند حواف الرمز */
+      const qx=i%W,qy=(i/W)|0;
+      for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){const X=qx+dx,Y=qy+dy;if(X<0||Y<0||X>=W||Y>=H)continue;const j=(Y*W+X)*4;o[j]=fr;o[j+1]=fg;o[j+2]=fb;o[j+3]=255}}
+    x.clearRect(0,0,W,H);x.putImageData(out,0,0);
+    c.className='mkf';c.style.width=(w+2*pad)+'px';c.style.height=(h+2*pad)+'px';c.style.left=c.style.top=(-pad)+'px';n.appendChild(c);
   });
 }
 
@@ -1051,17 +1114,25 @@ function renderTview(){
 
 /* ---------- search ---------- */
 const normS=s=>s.replace(/[\u064B-\u065F\u0670\u06D6-\u06ED\u0640]/g,'').replace(/[أإآٱ]/g,'ا').replace(/ى/g,'ي').replace(/ة/g,'ه');
+/* صفحة البحث: خانة ثابتة في الأعلى كتطبيق آية، والرموز العلوية مخفية أثناء البحث */
 function openSearch(){
-  aux('البحث في القرآن',`<input id="sq" placeholder="اكتب كلمة أو جزءًا من آية" oninput="doSearch()"><div id="sres" style="margin-top:.5em"></div>`);
-  setTimeout(()=>$('sq').focus(),250);
+  closeAll(true);$('srch').classList.add('open');
+  const q=$('sq');q.oninput=()=>{clearTimeout(q._t);q._t=setTimeout(doSearch,180);$('sclr').style.visibility=q.value?'visible':'hidden'};
+  q.onkeydown=e=>{if(e.key==='Enter')q.blur()};
+  $('sclr').onclick=()=>{q.value='';q.oninput();doSearch();q.focus()};
+  $('sclr').style.visibility=q.value?'visible':'hidden';
+  setTimeout(()=>q.focus(),200);
 }
+function closeSearch(){$('sq').blur();$('srch').classList.remove('open')}
 function doSearch(){
   const q=normS($('sq').value.trim());const R=$('sres');R.innerHTML='';if(q.length<2)return;
-  let n=0;
-  for(const k in Q.plain){if(normS(Q.plain[k]).includes(q)){
-    const d=document.createElement('div');d.className='res';d.innerHTML=`<span class="qt">${esc(Q.text[k])}</span><small>${esc(ayRef(k))} - الصفحة ${AR(Q.ayahPage[k])}</small>`;
-    d.onclick=()=>{closeAll();show(Q.ayahPage[k])};R.appendChild(d);if(++n>=150)break}}
-  if(!n)R.innerHTML='<div class="gh">لا نتائج</div>';else if(n>=150)R.insertAdjacentHTML('beforeend','<div class="gh">تُعرض أول ١٥٠ نتيجة</div>');
+  const hits=[];for(const k in Q.plain){if(normS(Q.plain[k]).includes(q)){hits.push(k);if(hits.length>=300)break}}
+  if(!hits.length){R.innerHTML='<div class="sempty">لا نتائج</div>';return}
+  R.innerHTML=`<div class="srh">الآيات (${AR(hits.length)}${hits.length>=300?'+':''})</div><div class="scard"></div>`;
+  const card=R.querySelector('.scard');
+  hits.forEach(k=>{const d=document.createElement('div');d.className='sr';
+    d.innerHTML=`<div class="srt"><span>${esc(ayRef(k))}</span><span class="pg">${AR(Q.ayahPage[k])}</span></div><div class="stx">${esc(Q.text[k])}</div>`;
+    d.onclick=()=>{closeSearch();show(Q.ayahPage[k])};card.appendChild(d)});
 }
 
 /* ---------- settings ---------- */
@@ -1071,11 +1142,12 @@ function applySettings(){
   document.body.classList.toggle('night',!!S.night);document.body.classList.toggle('nodiff',!S.diffs);
   const P=PAPERS[S.paper]||PAPERS.def,rs=document.documentElement.style;
   if(S.night){rs.removeProperty('--paper');rs.setProperty('--mk','#34413a')}else{rs.setProperty('--paper',P[1]);rs.setProperty('--mk',P[2])}
-  buildBanner();
+  buildBanner();if($('lines')&&$('lines').children.length)requestAnimationFrame(fillMarkers);
   document.documentElement.style.setProperty('--tsize',S.tsize+'px');
 }
 function openSettings(){
   aux('الإعدادات',`
+    <button class="kbtn" onclick="openDrawer('khatma')"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M8 12.3l2.8 2.8L16.3 9.5"/></svg>الختمات</button>
     <div class="set"><label>طريقة عرض المعنى والتفسير</label><select id="sMode">
       <option value="bottom" ${S.mode==='bottom'?'selected':''}>نافذة في أسفل الصفحة</option>
       <option value="center" ${S.mode==='center'?'selected':''}>نافذة في وسط الصفحة</option>
@@ -1098,7 +1170,7 @@ function openSettings(){
 /* ---------- overlays & bars ---------- */
 function closeAll(keepBars){
   ['sheet','aux'].forEach(id=>$(id).classList.remove('open'));
-  ['pop','full','drw','dim'].forEach(id=>$(id).classList.remove('open'));
+  ['pop','full','drw','dim','srch'].forEach(id=>$(id)&&$(id).classList.remove('open'));
   $('tmenu').classList.remove('open');
   if(!keepBars){$('top').classList.remove('open');$('bot').classList.remove('open')}
   selectWord(null);
@@ -1116,10 +1188,49 @@ sl.addEventListener('input',()=>{const p=+sl.value;slTag(p);const b=$('bubble');
 sl.addEventListener('change',()=>{$('bubble').style.display='none';const p=+sl.value;cur=p;show(p).then(()=>{$('top').classList.add('open');$('bot').classList.add('open')})});
 
 /* ---------- navigation ---------- */
-let sx=null,sy=null;
-addEventListener('touchstart',e=>{if(e.target.closest('.sheet,#pop,#full,#drw,#lib,#bot,#top,.menu')){sx=null;return}sx=e.touches[0].clientX;sy=e.touches[0].clientY},{passive:true});
-addEventListener('touchend',e=>{if(sx==null)return;const dx=e.changedTouches[0].clientX-sx,dy=e.changedTouches[0].clientY-sy;
-  if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)*1.5)show(cur+(dx>0?1:-1));sx=null},{passive:true});
+/* تقليب الصفحات بالسحب المتصل كتطبيق آية: الصفحة تتبع الإصبع والتي بعدها تدخل بجانبها */
+let sx=null,sy=null,st0=0,drag=null;
+const pgEl=()=>$('page');
+function makeGhost(){
+  const pg=pgEl(),g=pg.cloneNode(true);   // يبقى بنفس المعرّفات ليأخذ التنسيق نفسه، ويوضع بعد الأصل فيبقى الأصل هو المقصود في الشيفرة
+  const src=pg.querySelectorAll('canvas'),dst=g.querySelectorAll('canvas');
+  dst.forEach((c,i)=>{try{c.getContext('2d').drawImage(src[i],0,0)}catch(e){}});
+  g.classList.add('ghost');g.style.zIndex=2;g.style.pointerEvents='none';g.removeAttribute('hidden');pg.parentNode.insertBefore(g,pg.nextSibling);return g;
+}
+function setX(el,x,anim){el.style.transition=anim?'transform .24s ease-out':'none';el.style.transform=x?`translateX(${x}px)`:''}
+addEventListener('touchstart',e=>{
+  if(drag||e.touches.length>1||e.target.closest('.sheet,#pop,#full,#drw,#lib,#bot,#top,.menu,#srch,#tview')){sx=null;return}
+  sx=e.touches[0].clientX;sy=e.touches[0].clientY;st0=Date.now();
+},{passive:true});
+addEventListener('touchmove',e=>{
+  if(sx==null)return;const dx=e.touches[0].clientX-sx,dy=e.touches[0].clientY-sy;
+  if(!drag){
+    if(Math.abs(dx)<12||Math.abs(dx)<Math.abs(dy)*1.3){if(Math.abs(dy)>20&&!drag)sx=null;return}
+    const to=cur+(dx>0?1:-1);if(to<1||to>604){sx=null;return}
+    const W=innerWidth,from=cur,dir=dx>0?1:-1;
+    drag={from,to,dir,W,ghost:makeGhost(),ready:false};
+    const pg=pgEl();pg.style.visibility='hidden';
+    show(to).then(()=>{if(!drag||drag.to!==to)return;drag.ready=true;pg.style.visibility='';setX(pg,drag.lastX-dir*W)});
+  }
+  /* لا يُسحب أبعد من اتجاهه الأول */
+  const x=drag.dir>0?Math.max(0,dx):Math.min(0,dx);drag.lastX=x;
+  setX(drag.ghost,x);if(drag.ready)setX(pgEl(),x-drag.dir*drag.W);
+},{passive:true});
+addEventListener('touchend',e=>{
+  if(sx==null)return;const dx=e.changedTouches[0].clientX-sx,dy=e.changedTouches[0].clientY-sy;sx=null;
+  if(!drag){return}
+  const d=drag,pg=pgEl(),v=Math.abs(dx)/Math.max(1,Date.now()-st0);
+  const done=(Math.abs(d.lastX||0)>d.W*0.22||v>0.45)&&Math.sign(d.lastX||0)===d.dir;
+  const finish=()=>{d.ghost.remove();setX(pg,0);pg.style.visibility='';drag=null};
+  if(done){
+    if(!d.ready){setX(d.ghost,d.dir*d.W,true);const w=setInterval(()=>{if(d.ready||cur!==d.to){clearInterval(w);finish()}},40);setTimeout(()=>{clearInterval(w);finish()},1500);return}
+    setX(d.ghost,d.dir*d.W,true);setX(pg,0,true);setTimeout(finish,250);
+  }else{
+    setX(d.ghost,0,true);if(d.ready)setX(pg,-d.dir*d.W,true);
+    setTimeout(()=>{pg.style.visibility='hidden';show(d.from).then(()=>{finish()})},250);
+  }
+},{passive:true});
+addEventListener('touchcancel',()=>{sx=null;if(drag){const d=drag;d.ghost.remove();setX(pgEl(),0);pgEl().style.visibility='';drag=null;show(d.from)}},{passive:true});
 addEventListener('keydown',e=>{if(/INPUT|TEXTAREA|SELECT/.test(e.target.tagName))return;
   if($('lib').classList.contains('open')){if(e.key==='ArrowLeft')libStep(1);if(e.key==='ArrowRight')libStep(-1);if(e.key==='Escape')closeLib();return}
   if(e.key==='ArrowLeft')show(cur+1);if(e.key==='ArrowRight')show(cur-1);if(e.key==='Escape')closeAll()});

@@ -41,7 +41,10 @@ body.night .bar{color:#9fc29f}
 .line{position:relative;display:flex;align-items:center;white-space:nowrap;direction:rtl;color:var(--ink);-webkit-text-stroke:.006em currentColor}
 .line.just{justify-content:space-between}
 .line.center{justify-content:center}
-.line.center .w{margin:0 .07em}
+.line.center .w{margin:0 calc(.07em - .32em)}
+/* بعض حروف خط المصحف تمتد خارج حدود كلمتها (كألف «مَّا»)، فإذا مُدّت الكلمة قُصّ الزائد؛
+   نوسّع مساحة رسم الكلمة دون أن يتغير موضعها أو المسافات بين الكلمات */
+.line .w{padding:0 .32em;margin:0 -.32em;background-clip:content-box}
 .w{cursor:pointer;border-radius:.15em;line-height:1}
 .w.sel{background:var(--sel)!important}
 .w.d-h{color:var(--c-h)}.w.d-i{color:var(--c-i)}.w.d-m{color:var(--c-m)}.w.d-w{color:var(--c-w)}.w.d-n{color:var(--c-n)}
@@ -578,7 +581,7 @@ function layout(){
   let fs=pitch/2;box.style.fontSize=fs+'px';
   const txt=lines.filter(l=>l.classList.contains('line'));
   const measure=()=>{txt.forEach(l=>{l.classList.remove('just','center');l.style.fontSize='';l.style.width='auto';l.querySelectorAll('.w').forEach(w=>w.style.transform='')});
-    return new Map(txt.map(l=>[l,l.scrollWidth]))};
+    return new Map(txt.map(l=>[l,l.scrollWidth-0.64*parseFloat(getComputedStyle(l).fontSize)]))};   // دون مساحة الرسم الإضافية حول الكلمات
   let nats=measure(),maxNat=Math.max(...nats.values(),1);
   /* حجم الخط: أطول سطر يملأ ٩٦٪ من العرض، مع حدّ أعلى يترك فراغًا مريحًا بين الأسطر */
   if(!centeredPage&&txt.length){
@@ -598,7 +601,7 @@ function layout(){
       /* تمديد أفقي خفيف جدًا للأسطر التي فيها فراغ واضح */
       if(!isCenter){
         const room=lineW*0.97-nat;
-        if(room>lineW*0.02){const words=[...l.querySelectorAll('.w:not(.num)')],wsum=words.reduce((t,w)=>t+w.offsetWidth,0);
+        if(room>lineW*0.02){const words=[...l.querySelectorAll('.w:not(.num)')],wsum=words.reduce((t,w)=>t+w.offsetWidth-0.64*parseFloat(getComputedStyle(w).fontSize),0);
           const sc=Math.min(1.05,1+room/Math.max(wsum,1));
           if(sc>1.01)words.forEach(w=>w.style.transform=`scaleX(${sc.toFixed(3)})`)}
       }

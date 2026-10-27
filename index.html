@@ -31,6 +31,8 @@ body.night #page.odd,body.night #page.even{box-shadow:none}
 .bar{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:clamp(14px,2.2vh,21px);padding:.5em 1.6em .1em}
 .foot{justify-content:center;padding:.1em 0 .6em}
 #lines{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;min-height:0}
+#page.scrolly{overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+#page.scrolly #lines{flex:none;padding-bottom:1.2em}
 .line{position:relative;display:flex;align-items:center;white-space:nowrap;direction:rtl;color:var(--ink);-webkit-text-stroke:.006em currentColor}
 .line.just{justify-content:space-between}
 .line.center{justify-content:center}
@@ -236,6 +238,13 @@ body.night #srch .stx{color:#c4b393}
 #srch .sempty{text-align:center;color:var(--muted);margin-top:2em}
 .kbtn{display:flex;align-items:center;gap:.5em;width:100%;margin:0 0 .8em;padding:.75em 1em;border:1px solid var(--line);border-radius:12px;background:var(--paper);color:var(--acc);font:inherit;font-size:17px;font-weight:600;cursor:pointer}
 .kbtn .i{width:22px;height:22px}
+.set.tvis{flex-direction:column;align-items:stretch}
+.tchk{display:grid;grid-template-columns:1fr 1fr;gap:.45em .8em;margin-top:.5em}
+.tchk label{display:flex;align-items:center;gap:.4em;font-size:16px;font-weight:400}
+.tchk input{width:20px;height:20px;accent-color:var(--acc)}
+#backBtn{flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;background:none;border:0;color:var(--acc);padding:0 .2em;font:inherit;font-size:17px;font-weight:700;line-height:1;cursor:pointer}
+#backBtn[hidden]{display:none}
+#backBtn svg{width:30px;height:30px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
 </style>
 </head>
 <body>
@@ -255,6 +264,7 @@ body.night #srch .stx{color:#c4b393}
   <button onclick="openSettings()" aria-label="الإعدادات"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4M5.5 5.5l1.7 1.7M16.8 16.8l1.7 1.7M5.5 18.5l1.7-1.7M16.8 7.2l1.7-1.7"/><circle cx="12" cy="12" r="7"/></svg></button>
 </div>
 <div id="bot">
+  <button id="backBtn" onclick="goBack()" hidden aria-label="الرجوع إلى الصفحة السابقة"><svg viewBox="0 0 24 24"><path d="M4 19v-4a6 6 0 0 1 6-6h10"/><path d="M15 4l5 5-5 5"/></svg><span></span></button>
   <button id="here" onclick="markHere()">وصلتُ هنا</button>
   <div class="slw"><input type="range" id="slider" min="1" max="604" value="1"><span id="slTag"></span></div>
 </div>
@@ -424,25 +434,34 @@ async function init(){
   applySettings();
   try{$('hday').textContent=new Intl.DateTimeFormat('ar-SA-u-ca-islamic-umalqura',{day:'numeric'}).format(new Date())}catch(e){}
   $('msg').remove();$('page').hidden=false;
-  K.active='hifz';save('khatmas',K);
+  /* يفتح التطبيق على آخر صفحة وآخر ختمة كنت عليهما */
+  if(!K[K.active])K.active='hifz';
   await document.fonts.ready;
-  show(K.hifz.page||1);
+  const lp=load('lastPage',0);
+  show(lp||K[K.active].page||1);
 }
 
 /* ---------- page ---------- */
 /* العرض بصفحتين في الآيباد أفقيًا: الفردية يمينًا والزوجية يسارًا */
 const isSpread=()=>innerWidth>innerHeight&&Math.min(innerWidth,innerHeight)>=600;
-let COMP=null;   // الصفحة اليسرى المرافقة في العرض بصفحتين
+let COMP=null,BACK=0,PAGE_SHOWN=false;
+/* زر الرجوع إلى الصفحة التي كنت عليها قبل آخر انتقال */
+function updBack(){const b=$('backBtn');if(!b)return;if(BACK&&BACK!==cur){b.hidden=false;b.querySelector('span').textContent=AR(BACK)}else b.hidden=true}
+function goBack(){if(BACK)show(BACK)}   // الصفحة اليسرى المرافقة في العرض بصفحتين
 async function show(p){
   p=Math.max(1,Math.min(604,p|0||1));
   if(isSpread()&&p%2===0)p=(p===cur+1)?Math.min(603,p+1):p-1;   // «التالية» من صفحة فردية تعني الصفحتين التاليتين
-  cur=p;closeAll(true);
+  const prev=cur;
+  if(PAGE_SHOWN&&Math.abs(p-prev)>(isSpread()?2:1)){BACK=prev;}   // انتقال بعيد (فهرس، بحث، مسطرة…): نحفظ موضع الرجوع
+  PAGE_SHOWN=true;
+  cur=p;closeAll(true);save('lastPage',p);updBack();
   if(K.active==='hifz'){K.hifz.page=p;save('khatmas',K)}
   try{await pageFont(p);if(isSpread()&&p<604)await pageFont(p+1)}catch(e){$('lines').textContent='تعذّر تحميل خط الصفحة — تأكد من الاتصال بالإنترنت';return}
   if(p!==cur)return;
   if(drag)dragReset();PRE={};
   if(COMP){COMP.remove();COMP=null}
   renderPage(p);
+  $('page').scrollTop=0;
   if(isSpread()&&p<604){COMP=prerenderOne(p+1,p);delete PRE[p+1];bindPageEl(COMP);$('page').after(COMP)}
   [p+1,p-1,p+2,p+3,p-2].forEach(n=>{if(n>=1&&n<=604)pageFont(n).catch(()=>{})});
   schedulePre();
@@ -517,14 +536,16 @@ function layout(){
   const pg=$('page'),box=$('lines');if(!box.children.length)return;
   const vw=innerWidth,vh=innerHeight;
   /* مقاسات مأخوذة من صفحة تطبيق آية: هامش ٧٫٥٪ من كل جهة، والمسافة بين الأسطر ١١٫١٪ من عرض السطر */
-  const phone=vw<600;
+  const phone=Math.min(vw,vh)<600;
+  const phoneLand=phone&&vw>vh;   // الجوال أفقيًا: الصفحة بعرض الشاشة وتُقرأ بالتمرير للأعلى
+  pg.classList.toggle('scrolly',phoneLand);
   const MARG=phone?0.035:0.075,PITCH=0.111;   // الجوال: هوامش أضيق كما في آية
   const barH=$('juz').parentElement.offsetHeight+$('pno').offsetHeight;
   const spread=isSpread();
   const gutter=phone?0:Math.max(12,Math.round(vw*(spread?0.04:0.05)));
   let W=spread?(vw-gutter)/2:vw-gutter;
   const need=w=>barH+16+15*(w*(1-2*MARG)*PITCH);      // الطول اللازم لصفحة بهذا العرض
-  if(need(W)>vh)W=(vh-barH-16)/(15*(1-2*MARG)*PITCH);  // الشاشة أقصر: نصغّر الصفحة كلها بالنسبة نفسها
+  if(!phoneLand&&need(W)>vh)W=(vh-barH-16)/(15*(1-2*MARG)*PITCH);  // الشاشة أقصر: نصغّر الصفحة كلها بالنسبة نفسها
   const side=!spread&&W>=vw-gutter-1;
   pg.style.width=W+'px';
   if(spread){const odd=cur%2===1;pg.style.marginLeft=odd?(vw/2)+'px':'auto';pg.style.marginRight=odd?'auto':(vw/2)+'px'}
@@ -533,7 +554,7 @@ function layout(){
   const lines=[...box.children];
   const margin=Math.round(W*MARG),lineW=W-2*margin;
   /* الشاشة أطول من الصفحة (كالجوال): تتسع المسافة بين الأسطر لتملأ الطول كله كما في آية */
-  const pitch=Math.max(lineW*PITCH,(vh-barH-16)/15);
+  const pitch=phoneLand?lineW*PITCH:Math.max(lineW*PITCH,(vh-barH-16)/15);
   document.querySelectorAll('#page .bar').forEach(b=>{b.style.paddingLeft=b.style.paddingRight=margin+'px'});
   const centeredPage=cur<=2;
   let fs=pitch/2;box.style.fontSize=fs+'px';
@@ -883,7 +904,7 @@ function openAyahTafsir(a){
 }
 function renderAyahTafsir(a){
   const[su,ay]=a.split(':');if(panel.tafI===MYI&&!hasMy(a))panel.tafI=S.tafsir===MYI?0:S.tafsir;const i=panel.tafI;
-  const sel=`<select class="pill" onchange="panel.tafI=+this.value;renderAyahTafsir('${a}')">${TAFSIRS.map((t,j)=>j===MYI&&!hasMy(a)?'':`<option value="${j}" ${j==i?'selected':''}>${t[1]}</option>`).join('')}</select>`;
+  const sel=`<select class="pill" onchange="panel.tafI=+this.value;renderAyahTafsir('${a}')">${TAFSIRS.map((t,j)=>(j===MYI&&!hasMy(a))||(!tafOn(j)&&j!=i)?'':`<option value="${j}" ${j==i?'selected':''}>${t[1]}</option>`).join('')}</select>`;
   const body=document.createElement('div');body.className='just-t';body.textContent='جارٍ تحميل التفسير…';
   const nav=document.createElement('div');nav.style.cssText='display:flex;justify-content:space-between;margin-top:.6em';
   nav.innerHTML=`<button class="mini" onclick="stepTafsir('${a}',-1)"><svg class="ar" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>السابقة</button><button class="mini" onclick="openLib('${a}')">كل التفاسير</button><button class="mini" onclick="stepTafsir('${a}',1)">التالية<svg class="ar" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>`;
@@ -909,7 +930,7 @@ async function openLib(a){
   const b=$('libBody');b.innerHTML=`<div class="ayah">${ayahGlyphHTML(a)}</div>`;b.scrollTop=0;
   const[su,ay]=a.split(':');
   TAFSIRS.forEach(([slug,name],i)=>{
-    if(slug==='my'&&!hasMy(a))return;
+    if(slug==='my'&&!hasMy(a))return;if(!tafOn(i))return;
     const c=document.createElement('div');c.className='tc';
     c.innerHTML=`<div class="tl"><span>${name}</span><button class="dots">•••</button></div><div class="card">جارٍ التحميل…</div>`;
     c.querySelector('.dots').onclick=ev=>{ev.stopPropagation();openMenu(ev,slug)};
@@ -1118,7 +1139,7 @@ function renderTview(){
   if(tvTaf==null)tvTaf=S.tafsir;const p=cur;const myHere=ayahsOfPage(p).some(hasMy);if(tvTaf===MYI&&!myHere)tvTaf=S.tafsir===MYI?0:S.tafsir;const shownMy=new Set();let prevTv=Promise.resolve(null);
   $('tvTitle').textContent=`${sname(surahOfPage(p))} — صفحة ${AR(p)}`;
   $('tvTabs').innerHTML='';
-  TAFSIRS.forEach(([slug,name],i)=>{if(i===MYI&&!myHere)return;const b=document.createElement('button');b.textContent=name;if(i===tvTaf)b.className='on';b.onclick=()=>{tvTaf=i;renderTview()};$('tvTabs').appendChild(b)});
+  TAFSIRS.forEach(([slug,name],i)=>{if(i===MYI&&!myHere)return;if(!tafOn(i)&&i!==tvTaf)return;const b=document.createElement('button');b.textContent=name;if(i===tvTaf)b.className='on';b.onclick=()=>{tvTaf=i;renderTview()};$('tvTabs').appendChild(b)});
   const body=$('tvBody');body.innerHTML='';body.scrollTop=0;const token=p+':'+tvTaf;body.dataset.t=token;
   ayahsOfPage(p).forEach(k=>{
     const[su,ay]=k.split(':').map(Number);
@@ -1174,6 +1195,8 @@ const srObs=new IntersectionObserver(es=>es.forEach(en=>{if(!en.isIntersecting)r
 /* ---------- settings ---------- */
 /* ألوان الصفحة: [الاسم، لون الورق، لون وسط الإطار ورموز الآيات] */
 const PAPERS={def:['الأصلي','#fdfbf5','#e6f0de'],green:['أخضر فاتح','#F4F7E8','#e4ecd0'],blue:['أزرق فاتح','#F3F8FD','#dceaf8'],pink:['وردي فاتح','#FEF5F9','#f7dfe9']};
+/* التفاسير الظاهرة: يختار المستخدم ما يظهر منها في المكتبة وقوائم التفسير */
+const tafOn=i=>!(S.tafHidden||[]).includes(TAFSIRS[i][0]);
 function applySettings(){
   document.body.classList.toggle('night',!!S.night);document.body.classList.toggle('nodiff',!S.diffs);
   const P=PAPERS[S.paper]||PAPERS.def,rs=document.documentElement.style;
@@ -1188,6 +1211,7 @@ function openSettings(){
       <option value="bottom" ${S.mode==='bottom'?'selected':''}>نافذة في أسفل الصفحة</option>
       <option value="center" ${S.mode==='center'?'selected':''}>نافذة في وسط الصفحة</option>
       <option value="full" ${S.mode==='full'?'selected':''}>صفحة كاملة</option></select></div>
+    <div class="set tvis"><label>التفاسير الظاهرة</label><div class="tchk">${TAFSIRS.map((t,i)=>`<label><input type="checkbox" data-s="${t[0]}" ${tafOn(i)?'checked':''}> ${t[1]}</label>`).join('')}</div></div>
     <div class="set"><label>التفسير الافتراضي</label><select id="sTaf">${TAFSIRS.map((t,i)=>i===MYI?'':`<option value="${i}" ${i==S.tafsir?'selected':''}>${t[1]}</option>`).join('')}</select></div>
     <div class="set"><label>حجم خط المعاني والتفسير</label><select id="sSize">${[16,17,19,21,24,27].map(v=>`<option ${v==S.tsize?'selected':''}>${v}</option>`).join('')}</select></div>
     <div class="set"><label>لون الصفحة</label><select id="sPaper">${Object.entries(PAPERS).map(([k,v])=>`<option value="${k}" ${k===(S.paper||'def')?'selected':''}>${v[0]}</option>`).join('')}</select></div>
@@ -1198,6 +1222,12 @@ function openSettings(){
   $('sMode').onchange=e=>{S.mode=e.target.value;save('settings',S)};
   $('sTaf').onchange=e=>{S.tafsir=+e.target.value;tvTaf=null;save('settings',S)};
   $('sSize').onchange=e=>{S.tsize=+e.target.value;save('settings',S);applySettings()};
+  document.querySelectorAll('.tchk input').forEach(cb=>cb.onchange=()=>{
+    const all=[...document.querySelectorAll('.tchk input')],on=all.filter(x=>x.checked);
+    if(!on.length){cb.checked=true;toast('يلزم إبقاء تفسير واحد على الأقل');return}
+    S.tafHidden=all.filter(x=>!x.checked).map(x=>x.dataset.s);
+    const d=TAFSIRS[S.tafsir];if(d&&S.tafHidden.includes(d[0])){S.tafsir=TAFSIRS.findIndex((t,i)=>i!==MYI&&tafOn(i));if(S.tafsir<0)S.tafsir=0;const st=$('sTaf');if(st)st.value=S.tafsir}
+    save('settings',S)});
   $('sPaper').onchange=e=>{S.paper=e.target.value;save('settings',S);applySettings()};
   $('sNight').onchange=e=>{S.night=e.target.checked;save('settings',S);applySettings()};
   $('sDiff').onchange=e=>{S.diffs=e.target.checked;save('settings',S);applySettings()};
@@ -1292,7 +1322,7 @@ function adoptPage(d){
   drag=null;const{from,to}=d;
   d.cur.forEach(el=>el.remove());[...d.cur,...d.nb].forEach(el=>{el.style.transition='';el.style.transform='';el.style.zIndex='';el.style.willChange=''});
   PRE={};d.cur.forEach((el,i)=>PRE[from+i]=el);d.nb.forEach(bindPageEl);COMP=d.nb[1]||null;
-  cur=to;closeAll(true);if(K.active==='hifz'){K.hifz.page=to;save('khatmas',K)}
+  cur=to;closeAll(true);save('lastPage',to);updBack();if(K.active==='hifz'){K.hifz.page=to;save('khatmas',K)}
   pageChrome(to);
   [to+1,to-1,to+2,to-2,to+3].forEach(n=>{if(n>=1&&n<=604)pageFont(n).catch(()=>{})});
   schedulePre();

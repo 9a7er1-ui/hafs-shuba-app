@@ -656,7 +656,7 @@ function diffNode(keys){
   f.style.textAlign='right';
   f.innerHTML=`<div class="shu" style="border-right:4px solid var(--c-${d.c})"><b style="color:var(--c-${d.c})">${DIFF_NAMES[d.c]}</b></div>
     <div class="dgrid"><span class="k">حفص:</span><span class="dq">${esc(d.h)}</span><span class="k">شعبة:</span><span class="dq">${esc(d.s)}</span></div>`+
-    d.d.map(t=>`<div>• ${esc(t)}</div>`).join('');
+    d.d.map(t=>`<div class="dq">• ${esc(t)}</div>`).join('');
   panel.shareText=`خلاف شعبة (${DIFF_NAMES[d.c]}): حفص «${d.h}» — شعبة «${d.s}»\n`+d.d.join('\n');
   return f;
 }

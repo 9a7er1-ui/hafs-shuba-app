@@ -42,7 +42,7 @@ body.nodiff .w[class*="d-"]{color:inherit}body.nodiff .dot{display:none}
 .w.hl-y{background:var(--hl-y)}.w.hl-g{background:var(--hl-g)}.w.hl-b{background:var(--hl-b)}.w.hl-p{background:var(--hl-p)}.w.hl-o{background:var(--hl-o)}
 .num{color:var(--ink)!important;position:relative;z-index:0}
 /* وسط رمز الآية بلون وسط إطار السورة */
-.num::before{content:'';position:absolute;left:calc(50% + .07em);top:calc(50% + .02em);width:var(--mk-size,.56em);height:var(--mk-size,.56em);transform:translate(-50%,-50%);border-radius:50%;background:var(--mk,#e6f0de);z-index:-1;pointer-events:none}
+.num::before{content:'';position:absolute;left:calc(50% + var(--mk-dx,0em));top:calc(50% + var(--mk-dy,0em));width:var(--mk-size,.56em);height:var(--mk-size,.56em);transform:translate(-50%,-50%);border-radius:50%;background:var(--mk,#e6f0de);z-index:-1;pointer-events:none}
 .ar{width:1em;height:1em;vertical-align:-.15em;fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round;margin:0 .15em}
 .dot{position:absolute;top:50%;width:7px;height:7px;margin-top:-3.5px;border-radius:50%;-webkit-text-stroke:0;pointer-events:none}
 .hdr{position:relative;display:flex;align-items:center;justify-content:center}

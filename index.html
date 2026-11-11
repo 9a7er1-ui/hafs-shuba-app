@@ -99,6 +99,15 @@ body.nodiff .w[class*="d-"]{color:inherit}body.nodiff .dot{display:none}
 #bubble{position:fixed;bottom:calc(4.4em + env(safe-area-inset-bottom,0));left:50%;transform:translateX(-50%);background:var(--acc);color:#fff;border-radius:10px;padding:.25em .9em;font-size:15px;display:none;z-index:5}
 #here{background:var(--acc);color:#fff;border:0;border-radius:20px;padding:.35em 1em;font-size:15px;display:none;white-space:nowrap}
 #here.on{display:block}
+/* أيقونة «وصلتُ هنا» وزر التصفح المتحرك */
+#here{padding:.3em .85em;line-height:0}
+#here svg,#autoBtn svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;display:block}
+#autoBtn{flex:none;display:none;background:none;color:var(--acc);border:1.6px solid var(--acc);border-radius:20px;padding:.25em .8em;line-height:0}
+#autoBtn.show{display:block}
+#autoBtn.on{background:var(--acc);color:#fff}
+#autoMenu{min-width:210px}
+#autoMenu button{padding:.6em 1.1em;font-size:16px}
+#autoMenu .ck{color:var(--acc);font-weight:700}
 /* ---------- generic overlays ---------- */
 .dim{position:fixed;inset:0;background:rgba(0,0,0,.42);z-index:6;display:none}
 .dim.open{display:block}
@@ -309,8 +318,9 @@ body.night #srch{--s-bg:#1f1f1c;--s-card:#2a2925;--s-seg:#34332d;--s-ol:#a9c27a;
 </div>
 <div id="bot">
   <button id="backBtn" onclick="goBack()" hidden aria-label="الرجوع إلى الصفحة السابقة"><svg viewBox="0 0 24 24"><path d="M4 19v-4a6 6 0 0 1 6-6h10"/><path d="M15 4l5 5-5 5"/></svg><span></span></button>
-  <button id="here" onclick="markHere()">وصلتُ هنا</button>
+  <button id="here" onclick="markHere()" aria-label="وصلتُ هنا"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3.5h10a1 1 0 0 1 1 1V20.5l-6-4-6 4V4.5a1 1 0 0 1 1-1z"/><path d="M9.3 9.9l2 2 3.7-3.8"/></svg></button>
   <div class="slw"><input type="range" id="slider" min="1" max="604" value="1"><span id="slTag"></span></div>
+  <button id="autoBtn" onclick="openAutoMenu(event)" aria-label="التصفح المتحرك"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 7h9M3.5 12h9M3.5 17h9"/><path d="M18 19.5V5M14.6 8.4L18 5l3.4 3.4"/></svg></button>
 </div>
 <div id="bubble"></div>
 
@@ -337,6 +347,7 @@ body.night #srch{--s-bg:#1f1f1c;--s-card:#2a2925;--s-seg:#34332d;--s-ol:#a9c27a;
   <div class="lb" id="libBody"></div>
   <div class="lf"><button class="nb" onclick="libStep(-1)" aria-label="الآية السابقة"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" style="vertical-align:middle"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button class="cp" id="libPill" onclick="openDrawer('index')"></button><button class="nb" onclick="libStep(1)" aria-label="الآية التالية"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" style="vertical-align:middle"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button class="fs" onclick="cycleSize()">عع</button></div>
 </div>
+<div class="menu" id="autoMenu"></div>
 <div class="menu" id="tmenu">
   <button onclick="menuAct('img')">مشاركة صورة <svg class="i" viewBox="0 0 24 24"><circle cx="18" cy="5.5" r="2.3"/><circle cx="6" cy="12" r="2.3"/><circle cx="18" cy="18.5" r="2.3"/><path d="M8 11l8-4.3M8 13l8 4.3"/></svg></button>
   <button onclick="menuAct('txt')">مشاركة نص <svg class="i" viewBox="0 0 24 24"><circle cx="18" cy="5.5" r="2.3"/><circle cx="6" cy="12" r="2.3"/><circle cx="18" cy="18.5" r="2.3"/><path d="M8 11l8-4.3M8 13l8 4.3"/></svg></button>
@@ -1539,14 +1550,34 @@ function restoreData(inp){
 const AS_LPM=[4,6,9,13,18];   // السرعات: عدد الأسطر في الدقيقة
 let asPage=0,asPos=0,asWait=0,asLast=0,asTouch=false,asNext=false;
 function asReset(){asPage=0;asNext=false}
+/* قائمة زر التصفح المتحرك: تشغيل أو إيقاف، والسرعات الخمس (مرتبطة بخيارات الإعدادات نفسها) */
+const AS_NAMES=['بطيء جدًا','بطيء','متوسط','سريع','سريع جدًا'];
+function openAutoMenu(ev){
+  ev.stopPropagation();const m=$('autoMenu');
+  if(m.classList.contains('open')){m.classList.remove('open');return}
+  const ck='<span class="ck">✓</span>';
+  m.innerHTML=`<button onclick="autoSet('toggle')">${S.auto?'إيقاف التصفح المتحرك':'تشغيل التصفح المتحرك'}</button><div class="sepr"></div>`+
+    AS_NAMES.map((n,i)=>`<button onclick="autoSet(${i+1})">${n}${(S.aspd||3)===i+1?ck:''}</button>`).join('');
+  m.classList.add('open');
+  const r=$('autoBtn').getBoundingClientRect();m.style.top='';m.style.left=Math.max(10,r.left)+'px';
+  m.style.bottom=(innerHeight-r.top+8)+'px';
+  setTimeout(()=>document.addEventListener('click',()=>m.classList.remove('open'),{once:true}),0);
+}
+function autoSet(v){
+  if(v==='toggle')S.auto=!S.auto;else{S.aspd=v;S.auto=true}   // اختيار سرعة يشغّل التحريك
+  save('settings',S);asReset();$('autoMenu').classList.remove('open');
+  closeAll();   // تُخفى الأشرطة فيبدأ التحريك
+  toast(S.auto?'التصفح المتحرك: '+AS_NAMES[(S.aspd||3)-1]:'أُوقف التصفح المتحرك');
+}
 function asPaused(){
   return asTouch||drag||document.visibilityState!=='visible'||anyOpen()||
-    ['srch','tmenu','tview','top'].some(id=>$(id)&&$(id).classList.contains('open'));
+    ['srch','tmenu','autoMenu','tview','top'].some(id=>$(id)&&$(id).classList.contains('open'));
 }
 function asTick(t){
   requestAnimationFrame(asTick);
   const dt=asLast?Math.min(100,t-asLast):0;asLast=t;
   const pg=$('page');
+  const ab=$('autoBtn');if(ab){const sh=!!(pg&&pg.classList.contains('scrolly'));ab.classList.toggle('show',sh);ab.classList.toggle('on',!!S.auto)}
   if(!S.auto||!pg||!pg.classList.contains('scrolly')){asPage=0;return}
   if(asPage!==cur){asPage=cur;asNext=false;pg.scrollTop=0;asPos=0;asWait=t+1500;return}   // صفحة جديدة: من أعلاها بعد ثانية ونصف
   if(asNext)return;

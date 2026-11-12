@@ -316,13 +316,8 @@ body.night #srch{--s-ay:#cfe3c4;--s-gr:#9fcf8f}
 body.night #srch .srt .bk{color:#1f1f1c}
 #srch .stx{font-family:"KFGQPC Hafs","Amiri Quran",Amiri,serif;color:var(--s-ay)}
 
-/* ===== خط حفص لكلمتي الخلاف وشعار الحزب، ومنع التكبير ===== */
+/* ===== خط حفص لكلمتي الخلاف، ومنع التكبير ===== */
 .qt.qh{font-family:"KFGQPC Hafs","Amiri Quran",Amiri,serif;font-size:1.25em;line-height:1.6}
-.hzb .t{font-family:"KFGQPC Hafs",var(--sys);font-weight:400;-webkit-text-stroke:.025em currentColor}
-.hzb .t.n2{font-size:calc(var(--hw,63px)*.19)}
-.hzb .t.n3{font-size:calc(var(--hw,63px)*.165)}
-.hzb .t.n4{font-size:calc(var(--hw,63px)*.14)}
-.hzb .t .hn{font-family:var(--sys);font-weight:600;-webkit-text-stroke:0}
 html,body{touch-action:pan-x pan-y}
 </style>
 </head>
@@ -1454,7 +1449,7 @@ const turnGap=()=>badgeW()+24;
 function makeBadge(i,els){
   const bw=badgeW(),bh=Math.round(bw*1.9);
   const h=AR(Math.floor(i/4)+1),q=i%4;
-  const words=[...(['','ربع','نصف','ثلاثة أرباع'][q]).split(' ').filter(Boolean),'الحزب',`<span class="hn">${h}</span>`];
+  const words=[...(['','ربع','نصف','ثلاثة أرباع'][q]).split(' ').filter(Boolean),'الحزب',h];
   const txt=words.join('<br>');
   const b=document.createElement('div');b.className='hzb';b.style.setProperty('--hw',bw+'px');b.style.width=bw+'px';b.style.height=bh+'px';
   b.innerHTML=`<img src="${HZB_IMG}" alt="" draggable="false"><div class="t n${words.length}">${txt}</div>`;
@@ -1513,7 +1508,8 @@ function onTEnd(e){
   if(!drag)return;
   if(rafX){cancelAnimationFrame(rafX);rafX=0}
   const d=drag,v=Math.abs(dx)/Math.max(1,Date.now()-st0);d.t=Date.now();
-  const done=Math.sign(d.lastX)===d.dir&&(Math.abs(d.lastX)>d.W*0.2||v>0.4);
+  /* لا تنقلب الصفحة إلا إذا سُحبت أكثر من نصف عرضها، وإلا عادت (لا تقليب بالسرعة وحدها) */
+  const done=Math.sign(d.lastX)===d.dir&&Math.abs(d.lastX)>d.W*0.5;
   /* مدة الإكمال كتطبيق آية: نحو نصف ثانية بتباطؤ ناعم، تقصر إن كان الباقي قليلًا */
   const rem=done?Math.abs(-d.off-d.lastX):Math.abs(d.lastX),dur=Math.min(.55,Math.max(.3,.22+.38*rem/Math.max(1,d.W)));
   if(done){d.cur.forEach(el=>setX(el,-d.off,dur));d.nb.forEach(el=>setX(el,0,dur));if(d.badge)setB(d.badge,d.bx-d.off,dur);setTimeout(()=>{if(drag===d)adoptPage(d)},dur*1000+30)}

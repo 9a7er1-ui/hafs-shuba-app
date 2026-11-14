@@ -1502,25 +1502,34 @@ function expStripsOn(curEls){if(!EXP)return;const r=curEls[0].getBoundingClientR
     (VAXIS?`left:0;right:0;height:${EXP_EDGE}px;${i?'bottom':'top'}:0`:`top:0;bottom:0;width:${EXP_EDGE}px;${i?'right':'left'}:0`)})}
 function expStripsOff(){if(expStrips)expStrips.forEach(e=>e.style.display='none')}
 if(EXP)addEventListener('resize',()=>pageEls().forEach(el=>el._b=null));
-function dragReset(){if(!drag)return;const d=drag;drag=null;if(EXP)expStripsOff();if(d.anims)d.anims.forEach(a=>a.cancel());if(d.badge)d.badge.remove();
+function dragReset(){if(rafX){cancelAnimationFrame(rafX);rafX=0}if(!drag)return;const d=drag;drag=null;if(EXP)expStripsOff();if(d.anims)d.anims.forEach(a=>a.cancel());if(d.badge)d.badge.remove();
   d.cur.forEach(el=>{setX(el,0);el.style.zIndex='';el.style.willChange=''});
   d.nb.forEach(el=>{setX(el,0);parkPage(el)})}
 let tTarget=null,rafX=0;
-/* مواضع الإصبع منذ بدء اللمس [الوقت، س، ص]: تُحسب منها حركة الصفحة على توقيت كل إطار،
-   لأن حركات اللمس في سفاري لا تصل منتظمة مع إطارات الشاشة (إطار بلا حركة ثم إطار بحركتين = اهتزاز) */
+/* نرسم آخر موضع لمس مرة واحدة في إطار الشاشة، دون تأخير متغيّر. */
 let tS=[];
-const evT=e=>{const n=performance.now(),t=e.timeStamp;return t>0&&n-t>=0&&n-t<100?t:n};
-function fingerAt(t){const n=tS.length;if(!n)return[0,0];
-  if(t>=tS[n-1][0])return[tS[n-1][1],tS[n-1][2]];if(t<=tS[0][0])return[tS[0][1],tS[0][2]];
-  let i=n-1;while(i>1&&tS[i-1][0]>t)i--;const a=tS[i-1],b=tS[i],k=(t-a[0])/Math.max(.001,b[0]-a[0]);
-  return[a[1]+(b[1]-a[1])*k,a[2]+(b[2]-a[2])*k]}
-/* التأخر المقصود عن الإصبع = متوسط الفاصل بين حركات اللمس (بين ٤ و١٧ ملّي ثانية)، فيقع موضع كل إطار بين حركتين مسجلتين */
-function inLag(){const n=tS.length;if(n<3)return 8;const k=Math.min(n-1,6);return Math.max(4,Math.min(17,(tS[n-1][0]-tS[n-1-k][0])/k))}
-function dragPos(d,t){const[a,b]=fingerAt(t);const dx=VAXIS?-b:a;return d.dir>0?Math.max(0,dx):Math.min(0,dx)}
-function dragPaint(d,x){d.lastX=x;d.cur.forEach(el=>setX(el,x));d.nb.forEach(el=>setX(el,d.off+x));if(d.badge)setB(d.badge,d.bx+x)}
-function dragLoop(now){rafX=0;const d=drag;if(!d||d.rel)return;const x=dragPos(d,now-inLag());if(x!==d.lastX)dragPaint(d,x);rafX=requestAnimationFrame(dragLoop)}
+const evT=e=>performance.now();
+function dragPos(d){
+  const point=tS[tS.length-1]||[0,0,0];
+  const x=VAXIS?-point[2]:point[1];
+  return d.dir*Math.max(0,Math.min(d.W,x*d.dir));
+}
+function dragPaint(d,x){
+  d.lastX=x;
+  d.cur.forEach(el=>setX(el,x));
+  d.nb.forEach(el=>setX(el,d.off+x));
+  if(d.badge)setB(d.badge,d.bx+x);
+}
+function dragLoop(){
+  rafX=0;
+  const d=drag;
+  if(!d||d.rel)return;
+  const x=dragPos(d);
+  if(x!==d.lastX)dragPaint(d,x);
+}
 function unbindTouch(){if(tTarget){tTarget.removeEventListener('touchmove',onTMove);tTarget.removeEventListener('touchend',onTEnd);tTarget.removeEventListener('touchcancel',onTCancel);tTarget=null}}
 addEventListener('touchstart',e=>{
+  if(e.touches.length>1){onTCancel();return}
   if(drag&&Date.now()-drag.t>1800)dragReset();
   if(drag||e.touches.length>1||e.target.closest('.sheet,#pop,#full,#drw,#lib,#bot,#top,.menu,#srch,#tview')){sx=null;return}
   sx=e.touches[0].clientX;sy=e.touches[0].clientY;st0=Date.now();simpleSwipe=false;tS=[[evT(e),0,0]];
@@ -1528,6 +1537,7 @@ addEventListener('touchstart',e=>{
   tTarget.addEventListener('touchmove',onTMove,{passive:true});tTarget.addEventListener('touchend',onTEnd,{passive:true});tTarget.addEventListener('touchcancel',onTCancel,{passive:true});
 },{passive:true});
 function onTMove(e){
+  if(e.touches.length!==1){onTCancel();return}
   if(sx==null||simpleSwipe)return;const dx0=e.touches[0].clientX-sx,dy0=e.touches[0].clientY-sy;
   tS.push([evT(e),dx0,dy0]);if(tS.length>40)tS.shift();
   if(!drag)VAXIS=vAxis();
@@ -1558,8 +1568,8 @@ function onTMove(e){
   const d=drag,fx=d.dir>0?Math.max(0,dx):Math.min(0,dx);d.t=Date.now();
   /* آخر مواضع الإصبع لحساب سرعته عند الرفع */
   const tn=performance.now();(d.smp||(d.smp=[])).push([tn,fx]);while(d.smp.length>2&&tn-d.smp[0][0]>100)d.smp.shift();
-  /* أول حركة تُرسم فورًا، ثم تُرسم الصفحة في كل إطار على موضع الإصبع في توقيت ذلك الإطار */
-  if(!rafX){dragPaint(d,dragPos(d,performance.now()-inLag()));rafX=requestAnimationFrame(dragLoop)}
+  /* نجمع أحداث اللمس المتتالية في تحديث واحد لكل إطار. */
+  if(!rafX)rafX=requestAnimationFrame(dragLoop);
 }
 function onTEnd(e){
   unbindTouch();if(sx==null)return;const dx0=e.changedTouches[0].clientX-sx,dy0=e.changedTouches[0].clientY-sy;sx=null;
@@ -1584,10 +1594,15 @@ function onTEnd(e){
    قوة النابض ثابتة في الانقلاب والرجوع، مضبوطة على تطبيق آية (نحو ٠٫٣٥ ثانية في الحالتين) */
 const SPRING_CSS=false;
 function springTo(d,target,v0,fin){
+  if(rafX){cancelAnimationFrame(rafX);rafX=0}
   const x0=d.lastX,A=x0-target,D=Math.abs(A);
   const pos=x=>{d.cur.forEach(el=>setX(el,x));d.nb.forEach(el=>setX(el,d.off+x));if(d.badge)setB(d.badge,d.bx+x)};
   if(D<0.5){pos(target);fin();return}
-  const w=18,B=v0+w*A,t0=performance.now();
+  const w=18;
+  /* نحصر السرعة باتجاه الهدف وبحد يمنع عبور الهدف ثم الرجوع إليه. */
+  const direction=Math.sign(target-x0);
+  v0=direction*Math.max(0,Math.min(v0*direction,w*D));
+  const B=v0+w*A,t0=performance.now();
   /* يُحسب منحنى النابض كاملًا مرة واحدة ثم يؤديه المتصفح نفسه بانتقال CSS بمنحنى linear()،
      فلا يفوته إطار مهما انشغلت الصفحة؛ وإن لم يدعمه الجهاز بقيت الحركة بالإطارات كما هي.
      معطّل (SPRING_CSS=false): قيس في تسجيل الآيباد أن سفاري يبدأ الانتقال بإطار واقف ثم قفزة كبيرة ثم شبه توقف،
@@ -1603,10 +1618,10 @@ function springTo(d,target,v0,fin){
     if(d.badge){setB(d.badge,d.bx+target,T);d.badge.style.transition=tr}
     d.t=Date.now();setTimeout(()=>{if(drag===d){d.t=Date.now();fin()}},T*1000+30);return;
   }
-  const step=now=>{if(drag!==d)return;const t=Math.max(0,now-t0)/1000,e=Math.exp(-w*t),x=target+(A+B*t)*e,v=(v0-w*B*t)*e;
+  const step=now=>{rafX=0;if(drag!==d)return;const t=Math.max(0,now-t0)/1000,e=Math.exp(-w*t),x=target+(A+B*t)*e,v=(v0-w*B*t)*e;
     if((Math.abs(x-target)<1&&Math.abs(v)<30)||t>1.2){pos(target);d.t=Date.now();fin();return}
-    pos(x);d.t=Date.now();requestAnimationFrame(step)};
-  requestAnimationFrame(step);
+    pos(x);d.t=Date.now();rafX=requestAnimationFrame(step)};
+  rafX=requestAnimationFrame(step);
 }
 /* إتمام التقليب: الصفحة المجهّزة تصير هي الصفحة الحالية دون إعادة رسم */
 function adoptPage(d){
@@ -1631,7 +1646,7 @@ addEventListener('keydown',e=>{if(/INPUT|TEXTAREA|SELECT/.test(e.target.tagName)
 /* عند تدوير الجهاز أو تغيير المقاس: تُعاد الصفحة (صفحة أو صفحتان حسب الوضع) */
 let rsT=0,rsW=innerWidth,rsS=isSpread();
 addEventListener('resize',()=>{clearTimeout(rsT);rsT=setTimeout(()=>{
-  if(innerWidth===rsW&&isSpread()===rsS){layout();return}   // تغيّر الطول فقط (كظهور لوحة المفاتيح): لا نعيد الصفحة
+  if(innerWidth===rsW&&isSpread()===rsS){if(drag)dragReset();layout();return}   // تغيّر الطول فقط (كظهور لوحة المفاتيح): لا نعيد الصفحة
   rsW=innerWidth;rsS=isSpread();if(drag)dragReset();clearPre();show(cur)},160)});
 /* ---------- إعادة رسم الصفحة بعد تغيير خيار يمس التخطيط ---------- */
 function relayPage(){if(drag)dragReset();clearPre();rsW=innerWidth;rsS=isSpread();show(cur)}
@@ -1706,6 +1721,7 @@ function asPaused(){
 function asTick(t){
   requestAnimationFrame(asTick);
   const dt=asLast?Math.min(100,t-asLast):0;asLast=t;
+  if(drag)return;
   const pg=$('page');
   const ab=$('autoBtn');if(ab){const sh=!!(pg&&pg.classList.contains('scrolly'));ab.classList.toggle('show',sh);ab.classList.toggle('on',!!S.auto)}
   if(!S.auto||!pg||!pg.classList.contains('scrolly')){asPage=0;return}

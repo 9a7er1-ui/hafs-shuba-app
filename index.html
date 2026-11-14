@@ -1723,6 +1723,49 @@ init();
 /* منع التكبير والتصغير بإصبعين (Safari يتجاهل user-scalable=no) */
 ['gesturestart','gesturechange','gestureend'].forEach(t=>document.addEventListener(t,e=>e.preventDefault(),{passive:false}));
 document.addEventListener('touchmove',e=>{if(e.touches.length>1)e.preventDefault()},{passive:false});
+
+/* ---------- وضع القياس المخفي: لا يعمل إلا إذا أُضيف ?perf إلى الرابط ----------
+   يسجّل مدة كل دالة من دوال التقليب والرسم والخطوط، وكل إطار تأخر أكثر من ٣٤ ملّي ثانية وما جرى فيه */
+if(/[?&]perf\b/.test(location.search))(function(){
+  const T0=performance.now(),EV=[],LONG=[],TOT={};
+  const log=(name,t,ms)=>{EV.push([t,name,ms]);if(EV.length>3000)EV.splice(0,1000);
+    const s=TOT[name]||(TOT[name]={n:0,sum:0,max:0});s.n++;s.sum+=ms;if(ms>s.max)s.max=ms};
+  const wrap=name=>{const f=window[name];if(typeof f!=='function')return;
+    window[name]=function(){const t=performance.now();try{return f.apply(this,arguments)}finally{const ms=performance.now()-t;if(ms>=1)log(name,t,ms)}}};
+  ['onTMove','onTEnd','prerenderOne','prerenderNeighbors','renderPage','fillMarkers','adoptPage','dragReset','springTo','makeBadge',
+   'pageChrome','closeAll','show','updBack','save','layout','schedulePre','clearPre','keepAwake','updClock','asTick','toggleBars','buildBanner','loadFont'].forEach(wrap);
+  /* الخطوط: متى طُلب خط الصفحة ومتى أُضيف إلى الصفحة (إضافته قد تُعيد حساب أنماط الصفحة كلها) */
+  const add=document.fonts.add.bind(document.fonts);
+  document.fonts.add=function(f){const t=performance.now();try{return add(f)}finally{log('font+ '+f.family,t,performance.now()-t)}};
+  /* أحداث اللمس التي وصلت متأخرة (الصفحة كانت مشغولة قبلها) */
+  ['touchstart','touchmove','touchend'].forEach(k=>addEventListener(k,e=>{const n=performance.now(),d=n-e.timeStamp;
+    if(e.timeStamp>0&&d>=20&&d<5000)log('late '+k,n,d)},{capture:true,passive:true}));
+  let last=0;
+  const fr=now=>{if(last&&now-last>34){const ev=EV.filter(x=>x[0]>=last-2&&x[0]<now).map(x=>x[1]+' '+x[2].toFixed(0));
+      LONG.push([last-T0,now-last,ev,!!drag]);if(LONG.length>200)LONG.shift()}
+    last=now;requestAnimationFrame(fr)};
+  requestAnimationFrame(fr);
+  const css='position:fixed;z-index:2147483647;font:12px/1.35 -apple-system,sans-serif;';
+  const btn=document.createElement('div');btn.textContent='⏱';
+  btn.style.cssText=css+'left:6px;bottom:calc(6px + env(safe-area-inset-bottom,0));width:34px;height:34px;border-radius:17px;background:rgba(0,0,0,.55);color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px';
+  const pan=document.createElement('div');pan.dir='ltr';
+  pan.style.cssText=css+'left:6px;right:6px;top:calc(6px + env(safe-area-inset-top,0));bottom:calc(46px + env(safe-area-inset-bottom,0));background:rgba(255,255,255,.97);color:#111;overflow:auto;padding:8px;border-radius:10px;box-shadow:0 4px 20px rgba(0,0,0,.3);display:none;white-space:pre-wrap;word-break:break-word';
+  const stop=e=>e.stopPropagation();
+  [btn,pan].forEach(el=>['touchstart','touchmove','touchend','click'].forEach(k=>el.addEventListener(k,stop,{passive:true})));
+  const draw=()=>{const tot=Object.entries(TOT).sort((a,b)=>b[1].sum-a[1].sum)
+      .map(([k,s])=>`${k}: n=${s.n} sum=${s.sum.toFixed(0)} max=${s.max.toFixed(0)}`).join('\n');
+    const lf=LONG.slice(-60).reverse().map(([t,g,ev,dr])=>`${(t/1000).toFixed(2)}s  ${g.toFixed(0)}ms${dr?' [drag]':''}  ${ev.join(', ')||'—'}`).join('\n');
+    pan.innerHTML='';const h=document.createElement('div');
+    h.style.cssText='display:flex;gap:8px;margin-bottom:6px';
+    const b=(t,f)=>{const x=document.createElement('button');x.textContent=t;x.style.cssText='font:13px -apple-system,sans-serif;padding:4px 10px';x.onclick=f;h.appendChild(x)};
+    b('تحديث',draw);b('مسح',()=>{EV.length=0;LONG.length=0;for(const k in TOT)delete TOT[k];draw()});b('إغلاق',()=>pan.style.display='none');
+    const txt=document.createElement('div');
+    txt.textContent=`${navigator.userAgent.match(/(iPhone|iPad|Macintosh|Android)[^;)]*/)?.[0]||''}  ${innerWidth}x${innerHeight} dpr=${devicePixelRatio}\n\n`+
+      `== إطارات تأخرت (الأحدث أولًا): الوقت، المدة، ما جرى فيها ==\n${lf||'—'}\n\n== مجموع كل دالة (ملّي ثانية) ==\n${tot||'—'}`;
+    pan.append(h,txt)};
+  btn.onclick=()=>{if(pan.style.display==='none'){draw();pan.style.display='block'}else pan.style.display='none'};
+  document.body.append(pan,btn);
+})();
 </script>
 </body>
 </html>

@@ -25,6 +25,8 @@ html,body{margin:0;height:100%;background:var(--edge);overflow:hidden;font-famil
 button{font:inherit;cursor:pointer;color:inherit}
 svg.i{width:1.35em;height:1.35em;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;vertical-align:middle}
 /* ---------- page ---------- */
+#pageTrack{position:absolute;inset:0;transform:translate3d(0,0,0);will-change:transform;pointer-events:none}
+#pageTrack #page{pointer-events:auto}
 #page{position:absolute;inset:0;margin:auto;background:var(--paper);display:flex;flex-direction:column;padding:env(safe-area-inset-top,0) 0 env(safe-area-inset-bottom,0)}
 #page.odd{border-radius:0 16px 16px 0;box-shadow:3px 0 0 #f4f0e7,4px 0 0 #d8d1c3,7px 0 0 #f4f0e7,8px 0 0 #d8d1c3,11px 0 0 #f4f0e7,12px 0 0 #cfc7b8}
 #page.even{border-radius:16px 0 0 16px;box-shadow:-3px 0 0 #f4f0e7,-4px 0 0 #d8d1c3,-7px 0 0 #f4f0e7,-8px 0 0 #d8d1c3,-11px 0 0 #f4f0e7,-12px 0 0 #cfc7b8}
@@ -330,10 +332,12 @@ html,body{touch-action:pan-x pan-y}
 <body>
 <script>if(new URLSearchParams(location.search).get('edge')==='plain')document.documentElement.classList.add('plain-turn-edge');</script>
 <div id="msg">جارٍ التحميل…</div>
+<div id="pageTrack">
 <div id="page" hidden>
   <div class="clk"></div>
   <div class="bar"><span id="sname"></span><span id="pno"></span><span id="juz"></span></div>
   <div id="lines"></div>
+</div>
 </div>
 
 <div id="top">
@@ -1452,7 +1456,7 @@ function clearPre(){const B=$('page');Object.values(PRE).forEach(el=>{if(el!==B&
 function prerenderOne(n,base){
   const B=$('page'),fresh=B.cloneNode(true);fresh._pb=0;parkPage(fresh);fresh.style.visibility='';
   B.before(fresh);PRERENDER=true;cur=n;
-  try{renderPage(n);fillMarkers(fresh)}catch(e){}finally{PRERENDER=false;cur=base;const a=pageEls();a[a.length-1].after(fresh)}
+  try{renderPage(n);fillMarkers(fresh)}catch(e){}finally{PRERENDER=false;cur=base;document.body.appendChild(fresh)}
   return PRE[n]=fresh;
 }
 async function prerenderNeighbors(){
@@ -1514,8 +1518,9 @@ function expStripsOn(curEls){if(!EXP)return;const r=curEls[0].getBoundingClientR
 function expStripsOff(){if(expStrips)expStrips.forEach(e=>e.style.display='none')}
 if(EXP)addEventListener('resize',()=>pageEls().forEach(el=>el._b=null));
 function dragReset(){if(rafX){cancelAnimationFrame(rafX);rafX=0}if(!drag)return;const d=drag;drag=null;if(EXP)expStripsOff();if(d.anims)d.anims.forEach(a=>a.cancel());if(d.badge)d.badge.remove();
+  if(d.track)setX(d.track,0);
   d.cur.forEach(el=>{setX(el,0);el.style.transform='';el.style.zIndex='';el.style.willChange=''});
-  d.nb.forEach(el=>{setX(el,0);parkPage(el)})}
+  d.nb.forEach(el=>{setX(el,0);parkPage(el);if(d.track)document.body.appendChild(el)})}
 let tTarget=null,rafX=0;
 /* نرسم آخر موضع لمس مرة واحدة في إطار الشاشة، دون تأخير متغيّر. */
 let tS=[];
@@ -1527,6 +1532,7 @@ function dragPos(d){
 }
 function dragPaint(d,x){
   d.lastX=x;
+  if(d.track){setX(d.track,x);return}
   d.cur.forEach(el=>setX(el,x));
   d.nb.forEach(el=>setX(el,d.off+x));
   if(d.badge)setB(d.badge,d.bx+x);
@@ -1564,7 +1570,10 @@ function startTurn(to,dir,want,nb){
   const G=turnGap();off=pxR(off-dir*G);
   const bx=badge?(dir>0?rB.l-G/2:rB.r+G/2)-badge._w/2:0;if(badge)setB(badge,bx);
   [...curEls,...nb].forEach(el=>el.style.willChange='transform');nb.forEach(el=>setX(el,off));
-  drag={from:cur,to,dir,W:Math.abs(off),off,cur:curEls,nb,badge,bx,t:Date.now(),lastX:0};
+  /* حركة واحدة للمجموعة كلها: لا تتحرك حافتا الفراغ والعلامة بتوقيتات مستقلة. */
+  const track=EXP?null:$('pageTrack');
+  if(track){nb.forEach(el=>track.appendChild(el));if(badge)track.appendChild(badge)}
+  drag={from:cur,to,dir,W:Math.abs(off),off,cur:curEls,nb,badge,bx,track,t:Date.now(),lastX:0};
   return drag;
 }
 async function animateDeferredTurn(){
@@ -1667,9 +1676,12 @@ function settleTurn(d,target,releaseVelocity,finish){
       const animate=(el,transform,offset)=>{
         started.push(el.animate([{transform:transform(offset+start)},{transform:transform(offset+target)}],options));
       };
-      d.cur.forEach(el=>animate(el,pageTransform,0));
-      d.nb.forEach(el=>animate(el,pageTransform,d.off));
-      if(d.badge)animate(d.badge,x=>`translate3d(${pxR(x)}px,${d.badge._y}px,0)`,d.bx);
+      if(d.track)animate(d.track,pageTransform,0);
+      else{
+        d.cur.forEach(el=>animate(el,pageTransform,0));
+        d.nb.forEach(el=>animate(el,pageTransform,d.off));
+        if(d.badge)animate(d.badge,x=>`translate3d(${pxR(x)}px,${d.badge._y}px,0)`,d.bx);
+      }
       d.anims=started;
       Promise.all(started.map(animation=>animation.finished)).then(()=>{
         if(drag===d)paintEnd();
@@ -1696,10 +1708,11 @@ function settleTurn(d,target,releaseVelocity,finish){
 /* إتمام التقليب: الصفحة المجهّزة تصير هي الصفحة الحالية دون إعادة رسم */
 function adoptPage(d){
   drag=null;const{from,to}=d;if(d.anims)d.anims.forEach(a=>a.cancel());if(d.badge)d.badge.remove();
+  if(d.track)setX(d.track,0);
   d.nb.forEach(el=>{el._tx=0;el.style.transition='';el.style.transform='';el.style.zIndex='';el.style.willChange=''});
   /* الصفحات البعيدة تُزال، والصفحة التي قُلبت تبقى مرسومة خلف الخلفية جاهزة للرجوع إليها */
   Object.values(PRE).forEach(el=>{if(!d.nb.includes(el))el.remove()});
-  d.cur.forEach(parkPage);if(EXP)expStripsOff();
+  d.cur.forEach(el=>{parkPage(el);if(d.track)document.body.appendChild(el)});if(EXP)expStripsOff();
   PRE={};d.cur.forEach((el,i)=>PRE[from+i]=el);d.nb.forEach(bindPageEl);COMP=d.nb[1]||null;
   /* الصفحة الظاهرة أول الصفحات ترتيبًا (عليها يُعتمد في بقية التطبيق)، وما قبلها من الصفحات المخفية يُنقل بعدها */
   {const a=pageEls(),i=a.indexOf(d.nb[0]);if(i>0)a[a.length-1].after(...a.slice(0,i))}

@@ -560,11 +560,11 @@ async function show(p){
   if(K.active==='hifz'){K.hifz.page=p;save('khatmas',K)}
   try{await pageFont(p);if(isSpread()&&p<604)await pageFont(p+1)}catch(e){$('lines').textContent='تعذّر تحميل خط الصفحة — تأكد من الاتصال بالإنترنت';return}
   if(p!==cur)return;
-  if(drag)dragReset();PRE={};
+  if(drag)dragReset();clearPre();
   if(COMP){COMP.remove();COMP=null}
   renderPage(p);
   $('page').scrollTop=0;
-  if(isSpread()&&p<604){COMP=prerenderOne(p+1,p);delete PRE[p+1];bindPageEl(COMP);$('page').after(COMP)}
+  if(isSpread()&&p<604){COMP=prerenderOne(p+1,p);delete PRE[p+1];bindPageEl(COMP);COMP.style.zIndex='';if($('page').nextElementSibling!==COMP)$('page').after(COMP)}
   [p+1,p-1,p+2,p+3,p-2].forEach(n=>{if(n>=1&&n<=604)pageFont(n).catch(()=>{})});
   schedulePre();
 }
@@ -854,7 +854,7 @@ function openDiff(s){
   openPanel({title:'خلاف شعبة — '+ayRef(ayahOf(keys[0])),selHTML:sel,body:diffNode(keys),ayah:ayahOf(keys[0]),word:s});
 }
 function fullStep(d){
-  if(!panel.word)return;const all=[...document.querySelectorAll('#lines .w[data-k]')];const i=all.indexOf(panel.word)+d;
+  if(!panel.word)return;const all=[...document.querySelectorAll('#lines .w[data-k]')].filter(w=>{const g=w.closest('[id=page]');return g===$('page')||g===COMP});const i=all.indexOf(panel.word)+d;
   if(i>=0&&i<all.length)(panel.kind==='diff'?openDiff:openMeaning)(all[i]);
 }
 
@@ -1356,7 +1356,7 @@ function applySettings(){
   document.body.classList.toggle('black',!!S.black);document.body.classList.toggle('fill',!!S.fill);document.body.classList.toggle('clk',!!S.clock);updClock();
   const P=PAPERS[S.paper]||PAPERS.def,rs=document.documentElement.style;
   if(S.night){rs.removeProperty('--paper');rs.setProperty('--mk','#34413a')}else{rs.setProperty('--paper',P[1]);rs.setProperty('--mk',P[2])}
-  PRE={};buildBanner();if($('lines')&&$('lines').children.length)requestAnimationFrame(()=>{fillMarkers();if(COMP)fillMarkers(COMP)});
+  clearPre();buildBanner();if($('lines')&&$('lines').children.length)requestAnimationFrame(()=>{fillMarkers();if(COMP)fillMarkers(COMP)});
   document.documentElement.style.setProperty('--tsize',S.tsize+'px');
 }
 function openSettings(){
@@ -1439,10 +1439,15 @@ let sx=null,sy=null,st0=0,drag=null,simpleSwipe=false;
 /* الصفحتان المجاورتان تُجهَّزان مسبقًا (مرسومة كاملة) فلا يُرسم شيء أثناء السحب، فتبقى الحركة سلسة */
 let PRE={},PRERENDER=false;
 function bindPageEl(el){if(el._pb)return;el._pb=1;el.addEventListener('click',toggleBars)}
+/* الصفحات المجاورة تبقى مرسومة في الشاشة خلف خلفية التطبيق (طبقة -1) فلا يُعاد رسمها عند بدء السحب،
+   ولا تُنزع الصفحة الظاهرة من مكانها أثناء تجهيزها فلا يُعاد رسمها هي أيضًا */
+const pageEls=()=>[...document.querySelectorAll('[id=page]')];
+function parkPage(el){el.style.transition='';el.style.transform='';el.style.zIndex='-1';el.style.willChange=''}
+function clearPre(){const B=$('page');Object.values(PRE).forEach(el=>{if(el!==B&&el!==COMP)el.remove()});PRE={}}
 function prerenderOne(n,base){
-  const B=$('page'),fresh=B.cloneNode(true);fresh._pb=0;fresh.style.transform='';fresh.style.transition='';fresh.style.visibility='';fresh.style.zIndex='';
-  B.replaceWith(fresh);PRERENDER=true;cur=n;
-  try{renderPage(n);fillMarkers(fresh)}catch(e){}finally{PRERENDER=false;cur=base;fresh.replaceWith(B)}
+  const B=$('page'),fresh=B.cloneNode(true);fresh._pb=0;parkPage(fresh);fresh.style.visibility='';
+  B.before(fresh);PRERENDER=true;cur=n;
+  try{renderPage(n);fillMarkers(fresh)}catch(e){}finally{PRERENDER=false;cur=base;const a=pageEls();a[a.length-1].after(fresh)}
   return PRE[n]=fresh;
 }
 async function prerenderNeighbors(){
@@ -1480,9 +1485,9 @@ function makeBadge(i,els){
   b._y=Math.max(8,Math.min(innerHeight-bh-8,y-bh/2));b._w=bw;document.body.appendChild(b);return b;
 }
 function setB(b,x,anim){x=pxR(x);const d=anim===true?.26:anim;b.style.transition=d?`transform ${d}s cubic-bezier(.22,.61,.36,1)`:'none';b.style.transform=`translate3d(${x}px,${b._y}px,0)`}
-function dragReset(){if(!drag)return;const d=drag;drag=null;if(d.badge)d.badge.remove();
+function dragReset(){if(!drag)return;const d=drag;drag=null;if(d.anims)d.anims.forEach(a=>a.cancel());if(d.badge)d.badge.remove();
   d.cur.forEach(el=>{setX(el,0);el.style.zIndex='';el.style.willChange=''});
-  d.nb.forEach(el=>{el.remove();setX(el,0);el.style.zIndex='';el.style.willChange=''})}
+  d.nb.forEach(el=>{setX(el,0);parkPage(el)})}
 let tTarget=null,rafX=0;
 function unbindTouch(){if(tTarget){tTarget.removeEventListener('touchmove',onTMove);tTarget.removeEventListener('touchend',onTEnd);tTarget.removeEventListener('touchcancel',onTCancel);tTarget=null}}
 addEventListener('touchstart',e=>{
@@ -1502,7 +1507,7 @@ function onTMove(e){
     const want=sp&&to<604?[to,to+1]:[to],nb=[];
     for(const n of want){let el=PRE[n];if(!el&&document.fonts.check(`20px p${n}`))el=prerenderOne(n,cur);if(!el){simpleSwipe=true;return}nb.push(el)}
     const B=$('page'),curEls=COMP?[B,COMP]:[B];
-    curEls.forEach(el=>el.style.zIndex=2);nb.forEach(el=>{el.style.zIndex=1;setX(el,0)});B.after(...nb);
+    curEls.forEach(el=>el.style.zIndex=2);nb.forEach(el=>{el.style.zIndex=1;setX(el,0)});const out=nb.filter(el=>!el.isConnected);if(out.length)pageEls().pop().after(...out);
     /* المجموعة المجاورة تلتصق بحافة المجموعة الحالية تمامًا */
     const box=els=>{const r=els.map(e=>e.getBoundingClientRect());return{l:Math.min(...r.map(x=>x.left)),r:Math.max(...r.map(x=>x.right))}};
     const rB=box(curEls),rN=box(nb);
@@ -1522,7 +1527,8 @@ function onTMove(e){
   const d=drag;d.lastX=d.dir>0?Math.max(0,dx):Math.min(0,dx);d.t=Date.now();
   /* آخر مواضع الإصبع لحساب سرعته عند الرفع */
   const tn=performance.now();(d.smp||(d.smp=[])).push([tn,d.lastX]);while(d.smp.length>2&&tn-d.smp[0][0]>100)d.smp.shift();
-  if(!rafX)rafX=requestAnimationFrame(()=>{rafX=0;if(!drag)return;const d=drag;d.cur.forEach(el=>setX(el,d.lastX));d.nb.forEach(el=>setX(el,d.off+d.lastX));if(d.badge)setB(d.badge,d.bx+d.lastX)});
+  /* تتحرك الصفحة مع الإصبع فورًا في كل حركة لمس، دون انتظار الإطار التالي */
+  d.cur.forEach(el=>setX(el,d.lastX));d.nb.forEach(el=>setX(el,d.off+d.lastX));if(d.badge)setB(d.badge,d.bx+d.lastX);
 }
 function onTEnd(e){
   unbindTouch();if(sx==null)return;const dx0=e.changedTouches[0].clientX-sx,dy0=e.changedTouches[0].clientY-sy;sx=null;
@@ -1555,6 +1561,17 @@ function springTo(d,target,v0,fin){
     T=Math.max(T,1/60);const N=Math.max(2,Math.round(T*60)),pts=[];
     for(let i=0;i<=N;i++){const t=T*i/N,pr=i===N?1:1-(A+B*t)*Math.exp(-w*t)/A;pts.push(`${pr.toFixed(4)} ${(100*i/N).toFixed(2)}%`)}
     const tr=`transform ${T.toFixed(3)}s linear(${pts.join(', ')})`,els=[...d.cur,...d.nb];
+    /* يُفضَّل أداء الحركة بـ Web Animations: تبدأ مباشرة من موضع الإصبع دون إجبار المتصفح على حساب الأنماط فورًا فلا يتوقف إطار عند رفع الإصبع */
+    if(els[0]&&els[0].animate){const anims=[];try{
+      const ez=`linear(${pts.join(', ')})`,dur=T*1000;
+      const TX=x=>{x=pxR(x);return VAXIS?`translate3d(0,${-x}px,0)`:`translate3d(${x}px,0,0)`};
+      const TB=x=>`translate3d(${pxR(x)}px,${d.badge._y}px,0)`;
+      const run=(el,a,b,f,set)=>{anims.push(el.animate([{transform:f(a)},{transform:f(b)}],{duration:dur,easing:ez}));set(el,b,0)};
+      d.cur.forEach(el=>run(el,x0,target,TX,setX));
+      d.nb.forEach(el=>run(el,d.off+x0,d.off+target,TX,setX));
+      if(d.badge)run(d.badge,d.bx+x0,d.bx+target,TB,setB);
+      d.anims=anims;d.t=Date.now();setTimeout(()=>{if(drag===d){d.t=Date.now();fin()}},dur+30);return;
+    }catch(e){anims.forEach(a=>a.cancel());d.anims=null}}
     pos(x0);if(els[0])getComputedStyle(els[0]).transform;if(d.badge)getComputedStyle(d.badge).transform;
     d.cur.forEach(el=>{setX(el,target,T);el.style.transition=tr});
     d.nb.forEach(el=>{setX(el,d.off+target,T);el.style.transition=tr});
@@ -1568,9 +1585,14 @@ function springTo(d,target,v0,fin){
 }
 /* إتمام التقليب: الصفحة المجهّزة تصير هي الصفحة الحالية دون إعادة رسم */
 function adoptPage(d){
-  drag=null;const{from,to}=d;if(d.badge)d.badge.remove();
-  d.cur.forEach(el=>el.remove());[...d.cur,...d.nb].forEach(el=>{el.style.transition='';el.style.transform='';el.style.zIndex='';el.style.willChange=''});
+  drag=null;const{from,to}=d;if(d.anims)d.anims.forEach(a=>a.cancel());if(d.badge)d.badge.remove();
+  d.nb.forEach(el=>{el.style.transition='';el.style.transform='';el.style.zIndex='';el.style.willChange=''});
+  /* الصفحات البعيدة تُزال، والصفحة التي قُلبت تبقى مرسومة خلف الخلفية جاهزة للرجوع إليها */
+  Object.values(PRE).forEach(el=>{if(!d.nb.includes(el))el.remove()});
+  d.cur.forEach(parkPage);
   PRE={};d.cur.forEach((el,i)=>PRE[from+i]=el);d.nb.forEach(bindPageEl);COMP=d.nb[1]||null;
+  /* الصفحة الظاهرة أول الصفحات ترتيبًا (عليها يُعتمد في بقية التطبيق)، وما قبلها من الصفحات المخفية يُنقل بعدها */
+  {const a=pageEls(),i=a.indexOf(d.nb[0]);if(i>0)a[a.length-1].after(...a.slice(0,i))}
   cur=to;closeAll(true);save('lastPage',to);updBack();if(K.active==='hifz'){K.hifz.page=to;save('khatmas',K)}
   pageChrome(to);
   [to+1,to-1,to+2,to-2,to+3].forEach(n=>{if(n>=1&&n<=604)pageFont(n).catch(()=>{})});
@@ -1585,9 +1607,9 @@ addEventListener('keydown',e=>{if(/INPUT|TEXTAREA|SELECT/.test(e.target.tagName)
 let rsT=0,rsW=innerWidth,rsS=isSpread();
 addEventListener('resize',()=>{clearTimeout(rsT);rsT=setTimeout(()=>{
   if(innerWidth===rsW&&isSpread()===rsS){layout();return}   // تغيّر الطول فقط (كظهور لوحة المفاتيح): لا نعيد الصفحة
-  rsW=innerWidth;rsS=isSpread();PRE={};if(drag)dragReset();show(cur)},160)});
+  rsW=innerWidth;rsS=isSpread();if(drag)dragReset();clearPre();show(cur)},160)});
 /* ---------- إعادة رسم الصفحة بعد تغيير خيار يمس التخطيط ---------- */
-function relayPage(){PRE={};if(drag)dragReset();rsW=innerWidth;rsS=isSpread();show(cur)}
+function relayPage(){if(drag)dragReset();clearPre();rsW=innerWidth;rsS=isSpread();show(cur)}
 /* ---------- الساعة أعلى الصفحة ---------- */
 function updClock(){if(!S.clock)return;const t=new Date().toLocaleTimeString('ar-SA-u-nu-arab',{hour:'numeric',minute:'2-digit'});document.querySelectorAll('.clk').forEach(c=>{if(c.textContent!==t)c.textContent=t})}
 setInterval(updClock,5000);

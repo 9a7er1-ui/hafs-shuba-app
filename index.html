@@ -639,7 +639,7 @@ function layout(){
   const vw=innerWidth,vh=innerHeight;
   /* مقاسات مأخوذة من صفحة تطبيق آية: هامش ٧٫٥٪ من كل جهة، والمسافة بين الأسطر ١١٫١٪ من عرض السطر */
   const phone=Math.min(vw,vh)<600;
-  const phoneLand=(phone||S.one)&&vw>vh;   // الجوال أفقيًا: الصفحة بعرض الشاشة وتُقرأ بالتمرير للأعلى
+  const phoneLand=!!((phone||S.one)&&vw>vh);   // الجوال أفقيًا: الصفحة بعرض الشاشة وتُقرأ بالتمرير للأعلى
   pg.classList.toggle('scrolly',phoneLand);
   const MARG=phone?0.035:0.075,PITCH=0.111;   // الجوال: هوامش أضيق كما في آية
   const barH=$('juz').parentElement.offsetHeight+10;

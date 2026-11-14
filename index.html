@@ -297,6 +297,8 @@ body.night #srch{--s-bg:#1f1f1c;--s-card:#2a2925;--s-seg:#34332d;--s-ol:#a9c27a;
 .hzb{position:fixed;left:0;top:0;z-index:3;pointer-events:none;will-change:transform}
 /* صفحات المصحف طبقات جاهزة للحركة مسبقًا فلا تتعثر بداية السحب (عدا وضع التمرير في الجوال أفقيًا) */
 #page:not(.scrolly){will-change:transform}
+/* لا يسحب المتصفح صفحات المصحف من تلقاء نفسه (الارتداد الرأسي في سفاري الآيباد)؛ التقليب بالجافاسكربت فلا يتأثر */
+#page:not(.scrolly){touch-action:none}
 .hzb img{width:100%;height:100%;display:block;-webkit-user-drag:none}
 .hzb .t{position:absolute;left:15%;right:15%;top:38%;bottom:38%;white-space:nowrap;display:flex;align-items:center;justify-content:center;text-align:center;color:#2b4a2b;font-family:var(--sys);font-weight:700;font-size:calc(var(--hw,90px)*.17);line-height:1.35}
 .hzb .t.s{font-size:calc(var(--hw,90px)*.118)}

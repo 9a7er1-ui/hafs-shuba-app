@@ -1529,11 +1529,13 @@ function onTEnd(e){
   if(!drag)return;
   if(rafX){cancelAnimationFrame(rafX);rafX=0}
   const d=drag,v=Math.abs(dx)/Math.max(1,Date.now()-st0);d.t=Date.now();
-  /* لا تنقلب الصفحة إلا إذا سُحبت أكثر من نصف عرضها، وإلا عادت (لا تقليب بالسرعة وحدها) */
-  const done=Math.sign(d.lastX)===d.dir&&Math.abs(d.lastX)>d.W*0.5;
   /* سرعة الإصبع عند الرفع (نقطة/ث) من آخر ~٨٠ ملّي ثانية؛ صفر إن توقف الإصبع قبل رفعه */
   const tn=performance.now(),sm=(d.smp||[]).filter(p=>tn-p[0]<=80);let v0=0;
   if(sm.length>1&&tn-sm[sm.length-1][0]<50){const a=sm[0],b=sm[sm.length-1];if(b[0]-a[0]>4)v0=(b[1]-a[1])/((b[0]-a[0])/1000)}
+  /* تنقلب الصفحة كتطبيقات الآيفون: إذا سُحبت أكثر من النصف ولم يُرجَع الإصبع بسرعة،
+     أو إذا رُفع الإصبع وهو يتحرك باتجاه التقليب بسرعة ٣٠٠ نقطة/ث فأكثر بعد سحب ٢٠ نقطة على الأقل */
+  const vd=v0*d.dir,dist=Math.sign(d.lastX)===d.dir?Math.abs(d.lastX):0;
+  const done=(dist>d.W*0.5&&vd>-300)||(vd>=300&&dist>=20);
   /* إكمال الحركة بنابض (كتقليب الآيفون): يبدأ بسرعة الإصبع ثم يتسارع قليلًا ثم يتباطأ بنعومة حتى يقف */
   springTo(d,done?-d.off:0,v0,()=>{if(drag===d){done?adoptPage(d):dragReset()}});
 }

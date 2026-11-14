@@ -1523,11 +1523,11 @@ function expStripsOn(curEls){if(!EXP)return;const r=curEls[0].getBoundingClientR
     (VAXIS?`left:0;right:0;height:${EXP_EDGE}px;${i?'bottom':'top'}:0`:`top:0;bottom:0;width:${EXP_EDGE}px;${i?'right':'left'}:0`)})}
 function expStripsOff(){if(expStrips)expStrips.forEach(e=>e.style.display='none')}
 if(EXP)addEventListener('resize',()=>pageEls().forEach(el=>el._b=null));
-/* ---------- تجربة الصورة (?perf&snap) ----------
+/* ---------- التقليب بالصورة (الوضع العادي؛ ‎?nosnap يرجع إلى الطريقة القديمة للمقارنة، وتجربة ٣ ‎?perf&exp بلا صورة إلا مع &snap) ----------
    كل صفحة تُرسم مرة واحدة وقت السكون على لوحة رسم، كلمةً كلمة في مواضعها التي حسبها التطبيق نفسه وبخط الصفحة نفسه.
    أثناء التقليب تتحرك الصورة والنص الحي مخفي تحتها، فلا يحتاج سفاري إلى تحويل النص إلى صورة وقت الحركة؛
    وإذا استقرت الصفحة ظهر النص الحي كما كان. وأي تغيير في الصفحة (تظليل، إعداد، إعادة ترتيب) يُبطل صورتها فتُرسم من جديد */
-const SNAP=/[?&]perf\b/.test(location.search)&&/[?&]snap\b/.test(location.search);
+const SNAP=/[?&]snap\b/.test(location.search)||(!/[?&]nosnap\b/.test(location.search)&&!EXP);
 const SNAPQ=new Set();let snapT=0;
 const snapIdle=()=>!drag&&sx==null&&!pendingTurn;
 const snapShown=el=>el===$('page')||el===COMP;
@@ -1979,7 +1979,7 @@ if(/[?&]perf\b/.test(location.search))(function(){
     const b=(t,f)=>{const x=document.createElement('button');x.textContent=t;x.style.cssText='font:13px -apple-system,sans-serif;padding:4px 10px';x.onclick=f;h.appendChild(x)};
     b('تحديث',draw);b('مسح',()=>{EV.length=0;LONG.length=0;for(const k in TOT)delete TOT[k];draw()});b('إغلاق',()=>pan.style.display='none');
     const txt=document.createElement('div');
-    txt.textContent=`${navigator.userAgent.match(/(iPhone|iPad|Macintosh|Android)[^;)]*/)?.[0]||''}  ${innerWidth}x${innerHeight} dpr=${devicePixelRatio}${EXP?'  [تجربة exp]':''}${SNAP?'  [تجربة snap]':''}\n\n`+
+    txt.textContent=`${navigator.userAgent.match(/(iPhone|iPad|Macintosh|Android)[^;)]*/)?.[0]||''}  ${innerWidth}x${innerHeight} dpr=${devicePixelRatio}${EXP?'  [تجربة exp]':''}${SNAP?'  [صورة]':'  [nosnap]'}\n\n`+
       `== إطارات تأخرت (الأحدث أولًا): الوقت، المدة، ما جرى فيها ==\n${lf||'—'}\n\n== مجموع كل دالة (ملّي ثانية) ==\n${tot||'—'}`;
     pan.append(h,txt)};
   btn.onclick=()=>{if(pan.style.display==='none'){draw();pan.style.display='block'}else pan.style.display='none'};

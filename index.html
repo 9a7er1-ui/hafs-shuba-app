@@ -552,6 +552,7 @@ let COMP=null,BACK=0,PAGE_SHOWN=false;
 function updBack(){const b=$('backBtn');if(!b)return;if(BACK&&BACK!==cur){b.hidden=false;b.querySelector('span').textContent=AR(BACK)}else b.hidden=true}
 function goBack(){if(BACK)show(BACK)}   // الصفحة اليسرى المرافقة في العرض بصفحتين
 async function show(p){
+  pendingTurn=null;
   p=Math.max(1,Math.min(604,p|0||1));
   if(isSpread()&&p%2===0)p=(p===cur+1)?Math.min(603,p+1):p-1;   // «التالية» من صفحة فردية تعني الصفحتين التاليتين
   const prev=cur;
@@ -1436,7 +1437,7 @@ sl.addEventListener('change',()=>{$('bubble').style.display='none';const p=+sl.v
 
 /* ---------- navigation ---------- */
 /* تقليب الصفحات بالسحب المتصل كتطبيق آية: الصفحة تتبع الإصبع والتي بعدها تدخل بجانبها */
-let sx=null,sy=null,st0=0,drag=null,simpleSwipe=false;
+let sx=null,sy=null,st0=0,drag=null,waitingForPage=false,pendingTurn=null;
 /* الصفحتان المجاورتان تُجهَّزان مسبقًا (مرسومة كاملة) فلا يُرسم شيء أثناء السحب، فتبقى الحركة سلسة */
 let PRE={},PRERENDER=false;
 function bindPageEl(el){if(el._pb)return;el._pb=1;el.addEventListener('click',toggleBars)}
@@ -1538,14 +1539,55 @@ function unbindTouch(){if(tTarget){tTarget.removeEventListener('touchmove',onTMo
 addEventListener('touchstart',e=>{
   if(e.touches.length>1){onTCancel();return}
   if(drag&&Date.now()-drag.t>1800)dragReset();
-  if(drag||e.touches.length>1||e.target.closest('.sheet,#pop,#full,#drw,#lib,#bot,#top,.menu,#srch,#tview')){sx=null;return}
-  sx=e.touches[0].clientX;sy=e.touches[0].clientY;st0=Date.now();simpleSwipe=false;tS=[[evT(e),0,0]];
+  if((drag&&!drag.rel)||e.target.closest('.sheet,#pop,#full,#drw,#lib,#bot,#top,.menu,#srch,#tview')){sx=null;return}
+  sx=e.touches[0].clientX;sy=e.touches[0].clientY;st0=Date.now();waitingForPage=false;tS=[[evT(e),0,0]];
   unbindTouch();tTarget=e.target;
   tTarget.addEventListener('touchmove',onTMove,{passive:true});tTarget.addEventListener('touchend',onTEnd,{passive:true});tTarget.addEventListener('touchcancel',onTCancel,{passive:true});
 },{passive:true});
+function startTurn(to,dir,want,nb){
+  const B=$('page'),curEls=COMP?[B,COMP]:[B];
+  curEls.forEach(el=>el.style.zIndex=2);nb.forEach(el=>{el.style.zIndex=1;el._b=null;setX(el,0)});expStripsOn(curEls);const out=nb.filter(el=>!el.isConnected);if(out.length)pageEls().pop().after(...out);
+  /* المجموعة المجاورة تلتصق بحافة المجموعة الحالية تمامًا */
+  const box=els=>{const r=els.map(e=>e.getBoundingClientRect());return{l:Math.min(...r.map(x=>x.left)),r:Math.max(...r.map(x=>x.right))}};
+  const rB=box(curEls),rN=box(nb);
+  /* إن كانت الصفحة اللاحقة فيها بداية حزب أو ربع: فراغ بين الصفحتين تظهر فيه العلامة */
+  const laterPages=dir>0?want:(COMP?[cur,cur+1]:[cur]),laterEls=dir>0?nb:curEls;
+  const qi=quarterOnPages(laterPages);let badge=null;
+  if(qi>=0&&!VAXIS)badge=makeBadge(qi,laterEls);
+  let off=dir>0?rB.l-rN.r:rB.r-rN.l;
+  if(VAXIS){const bv=els=>{const r=els.map(e=>e.getBoundingClientRect());return{t:Math.min(...r.map(x=>x.top)),b:Math.max(...r.map(x=>x.bottom))}};const vB=bv(curEls),vN=bv(nb);off=dir>0?vN.t-vB.b:vN.b-vB.t}
+  /* العلامة على حافة الصفحة التي فيها الربع، في موضع التقاء الصفحتين (كتطبيق آية) فتختفي إذا استقرت الصفحة */
+  /* فراغ ثابت بين الصفحتين في كل تقليب (الآيفون والآيباد): بعرض شعار الحزب مع مجال لأطراف الصفحات، والشعار في وسطه */
+  const G=turnGap();off=pxR(off-dir*G);
+  const bx=badge?(dir>0?rB.l-G/2:rB.r+G/2)-badge._w/2:0;if(badge)setB(badge,bx);
+  [...curEls,...nb].forEach(el=>el.style.willChange='transform');nb.forEach(el=>setX(el,off));
+  drag={from:cur,to,dir,W:Math.abs(off),off,cur:curEls,nb,badge,bx,t:Date.now(),lastX:0};
+  return drag;
+}
+async function animateDeferredTurn(){
+  const turn=pendingTurn;
+  if(!turn||drag||sx!=null||turn.loading)return;
+  if((turn.from!=null&&turn.from!==cur)||turn.axis!==vAxis()){pendingTurn=null;return}
+  const base=cur,spread=isSpread(),to=base+turn.dir*(spread?2:1);
+  if(to<1||to>604){pendingTurn=null;return}
+  const want=spread&&to<604?[to,to+1]:[to];
+  turn.loading=true;
+  try{await Promise.all(want.map(pageFont))}
+  catch(e){if(pendingTurn===turn){pendingTurn=null;toast('تعذّر تحميل خط الصفحة')}return}
+  if(pendingTurn!==turn)return;
+  turn.loading=false;
+  if(cur!==base||isSpread()!==spread||vAxis()!==turn.axis){pendingTurn=null;return}
+  if(drag||sx!=null)return;
+  pendingTurn=null;
+  VAXIS=turn.axis;
+  const nb=want.map(n=>PRE[n]||prerenderOne(n,base));
+  const d=startTurn(to,turn.dir,want,nb);
+  d.rel=true;
+  settleTurn(d,-d.off,0,()=>adoptPage(d));
+}
 function onTMove(e){
   if(e.touches.length!==1){onTCancel();return}
-  if(sx==null||simpleSwipe)return;const dx0=e.touches[0].clientX-sx,dy0=e.touches[0].clientY-sy;
+  if(sx==null||waitingForPage||drag?.rel)return;const dx0=e.touches[0].clientX-sx,dy0=e.touches[0].clientY-sy;
   tS.push([evT(e),dx0,dy0]);if(tS.length>40)tS.shift();
   if(!drag)VAXIS=vAxis();
   const dx=VAXIS?-dy0:dx0,dy=VAXIS?dx0:dy0;   // في الاتجاه الرأسي: السحب للأعلى = الصفحة التالية
@@ -1556,27 +1598,11 @@ function onTMove(e){
     /* السحب يحرّك صفحات مجهّزة فقط، حتى لا نعيد قياس الأسطر أثناء اللمس. */
     if(want.some(n=>!readyFonts.has('p'+n)||!PRE[n])){
       want.forEach(n=>pageFont(n).catch(()=>{}));
-      simpleSwipe=true;
+      waitingForPage=true;
       return;
     }
     for(const n of want)nb.push(PRE[n]);
-    const B=$('page'),curEls=COMP?[B,COMP]:[B];
-    curEls.forEach(el=>el.style.zIndex=2);nb.forEach(el=>{el.style.zIndex=1;el._b=null;setX(el,0)});expStripsOn(curEls);const out=nb.filter(el=>!el.isConnected);if(out.length)pageEls().pop().after(...out);
-    /* المجموعة المجاورة تلتصق بحافة المجموعة الحالية تمامًا */
-    const box=els=>{const r=els.map(e=>e.getBoundingClientRect());return{l:Math.min(...r.map(x=>x.left)),r:Math.max(...r.map(x=>x.right))}};
-    const rB=box(curEls),rN=box(nb);
-    /* إن كانت الصفحة اللاحقة فيها بداية حزب أو ربع: فراغ بين الصفحتين تظهر فيه العلامة */
-    const laterPages=dir>0?want:(COMP?[cur,cur+1]:[cur]),laterEls=dir>0?nb:curEls;
-    const qi=quarterOnPages(laterPages);let badge=null;
-    if(qi>=0&&!VAXIS)badge=makeBadge(qi,laterEls);
-    let off=dir>0?rB.l-rN.r:rB.r-rN.l;
-    if(VAXIS){const bv=els=>{const r=els.map(e=>e.getBoundingClientRect());return{t:Math.min(...r.map(x=>x.top)),b:Math.max(...r.map(x=>x.bottom))}};const vB=bv(curEls),vN=bv(nb);off=dir>0?vN.t-vB.b:vN.b-vB.t}
-    /* العلامة على حافة الصفحة التي فيها الربع، في موضع التقاء الصفحتين (كتطبيق آية) فتختفي إذا استقرت الصفحة */
-    /* فراغ ثابت بين الصفحتين في كل تقليب (الآيفون والآيباد): بعرض شعار الحزب مع مجال لأطراف الصفحات، والشعار في وسطه */
-    const G=turnGap();off=pxR(off-dir*G);
-    const bx=badge?(dir>0?rB.l-G/2:rB.r+G/2)-badge._w/2:0;if(badge)setB(badge,bx);
-    [...curEls,...nb].forEach(el=>el.style.willChange='transform');nb.forEach(el=>setX(el,off));
-    drag={from:cur,to,dir,W:Math.abs(off),off,cur:curEls,nb,badge,bx,t:Date.now(),lastX:0};
+    startTurn(to,dir,want,nb);
   }
   const d=drag,fx=d.dir>0?Math.max(0,dx):Math.min(0,dx);d.t=Date.now();
   /* آخر مواضع الإصبع لحساب سرعته عند الرفع */
@@ -1585,12 +1611,22 @@ function onTMove(e){
   if(!rafX)rafX=requestAnimationFrame(dragLoop);
 }
 function onTEnd(e){
-  unbindTouch();schedulePre();if(sx==null)return;const dx0=e.changedTouches[0].clientX-sx,dy0=e.changedTouches[0].clientY-sy;sx=null;
-  const dx=VAXIS?-dy0:dx0,dy=VAXIS?dx0:dy0;
-  if(simpleSwipe){simpleSwipe=false;if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)*1.3)show(cur+(dx>0?1:-1)*(isSpread()?2:1));return}
-  if(!drag)return;
+  unbindTouch();schedulePre();
+  if(sx==null){animateDeferredTurn();return}
+  const dx0=e.changedTouches[0].clientX-sx,dy0=e.changedTouches[0].clientY-sy;
+  sx=null;
+  const axis=drag?VAXIS:vAxis(),dx=axis?-dy0:dx0,dy=axis?dx0:dy0;
+  if(waitingForPage||!drag||drag.rel){
+    waitingForPage=false;
+    const elapsed=Date.now()-st0;
+    if(Math.abs(dx)>Math.abs(dy)*1.3&&(Math.abs(dx)>=50||(Math.abs(dx)>=20&&Math.abs(dx)>elapsed*0.3))){
+      pendingTurn={dir:Math.sign(dx),axis,from:drag?.rel?null:cur};
+    }
+    animateDeferredTurn();
+    return;
+  }
   if(rafX){cancelAnimationFrame(rafX);rafX=0}
-  const d=drag,v=Math.abs(dx)/Math.max(1,Date.now()-st0);d.t=Date.now();d.rel=true;
+  const d=drag;pendingTurn=null;d.t=Date.now();d.rel=true;
   /* القرار على موضع الإصبع عند الرفع، والحركة النابضية تبدأ من موضع الصفحة المرسوم فعلًا (d.lastX) فلا تقفز */
   const fx=d.dir>0?Math.max(0,dx):Math.min(0,dx);
   /* سرعة الإصبع عند الرفع (نقطة/ث) من آخر ~٨٠ ملّي ثانية؛ صفر إن توقف الإصبع قبل رفعه */
@@ -1601,7 +1637,7 @@ function onTEnd(e){
   const vd=v0*d.dir,dist=Math.sign(fx)===d.dir?Math.abs(fx):0;
   const done=(dist>d.W*0.5&&vd>-300)||(vd>=300&&dist>=20);
   /* نبدأ من الموضع المرسوم ونهدّئ سرعة الإفلات تدريجيًا حتى تستقر الصفحة. */
-  settleTurn(d,done?-d.off:0,v0,()=>{if(drag===d){if(done)adoptPage(d);else{dragReset();schedulePre()}}});
+  settleTurn(d,done?-d.off:0,v0,()=>{if(drag===d){if(done)adoptPage(d);else{dragReset();schedulePre();animateDeferredTurn()}}});
 }
 /* مدة الإكمال تتدرج مع المسافة المتبقية، وتنتهي الحركة بسرعة صفر. */
 function settleTurn(d,target,releaseVelocity,finish){
@@ -1619,11 +1655,13 @@ function settleTurn(d,target,releaseVelocity,finish){
   const duration=returning?170+160*Math.sqrt(remaining):
     250+430*Math.sqrt(remaining);
   const slope=Math.max(0,Math.min(2,releaseVelocity*Math.sign(delta)*duration/(1000*distance)));
-  const started=performance.now();
+  let lastFrame=performance.now(),elapsed=0;
   function step(now){
     rafX=0;
     if(drag!==d)return;
-    const t=Math.max(0,(now-started)/duration);
+    elapsed+=Math.max(0,Math.min(34,now-lastFrame));
+    lastFrame=now;
+    const t=elapsed/duration;
     if(t>=1){paintEnd();return}
     /* منحنى تكعيبي يحدّ سرعة البداية ويتجه إلى الهدف دون ارتداد. */
     const progress=t*(slope+t*(3-2*slope+t*(slope-2)));
@@ -1646,17 +1684,17 @@ function adoptPage(d){
   cur=to;closeAll(true);save('lastPage',to);updBack();if(K.active==='hifz'){K.hifz.page=to;save('khatmas',K)}
   pageChrome(to);
   [to+1,to-1,to+2,to-2,to+3].forEach(n=>{if(n>=1&&n<=604)pageFont(n).catch(()=>{})});
-  schedulePre();
+  schedulePre();animateDeferredTurn();
 }
-function onTCancel(){unbindTouch();sx=null;simpleSwipe=false;dragReset();schedulePre()}
-document.addEventListener('visibilitychange',()=>{if(document.visibilityState!=='visible'){unbindTouch();sx=null;dragReset()}});
+function onTCancel(){unbindTouch();sx=null;waitingForPage=false;pendingTurn=null;dragReset();schedulePre()}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState!=='visible')onTCancel()});
 addEventListener('keydown',e=>{if(/INPUT|TEXTAREA|SELECT/.test(e.target.tagName))return;
   if($('lib').classList.contains('open')){if(e.key==='ArrowLeft')libStep(1);if(e.key==='ArrowRight')libStep(-1);if(e.key==='Escape')closeLib();return}
   const st=isSpread()?2:1;if(e.key==='ArrowLeft')show(cur+st);if(e.key==='ArrowRight')show(cur-st);if(e.key==='Escape')closeAll()});
 /* عند تدوير الجهاز أو تغيير المقاس: تُعاد الصفحة (صفحة أو صفحتان حسب الوضع) */
 let rsT=0,rsW=innerWidth,rsS=isSpread();
 addEventListener('resize',()=>{clearTimeout(rsT);rsT=setTimeout(()=>{
-  if(innerWidth===rsW&&isSpread()===rsS){if(drag)dragReset();layout();return}   // تغيّر الطول فقط (كظهور لوحة المفاتيح): لا نعيد الصفحة
+  if(innerWidth===rsW&&isSpread()===rsS){if(!drag&&sx==null)layout();return}   // تغيّر الطول فقط (كظهور لوحة المفاتيح): لا نعيد الصفحة
   rsW=innerWidth;rsS=isSpread();if(drag)dragReset();clearPre();show(cur)},160)});
 /* ---------- إعادة رسم الصفحة بعد تغيير خيار يمس التخطيط ---------- */
 function relayPage(){if(drag)dragReset();clearPre();rsW=innerWidth;rsS=isSpread();show(cur)}

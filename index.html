@@ -1655,6 +1655,25 @@ function settleTurn(d,target,releaseVelocity,finish){
   const duration=returning?170+160*Math.sqrt(remaining):
     250+430*Math.sqrt(remaining);
   const slope=Math.max(0,Math.min(2,releaseVelocity*Math.sign(delta)*duration/(1000*distance)));
+  /* المتصفح يحرك الطبقات مباشرة، بنفس منحنى التباطؤ المستخدم في المسار الاحتياطي. */
+  if(!EXP&&typeof d.cur[0]?.animate==='function'){
+    const started=[];
+    try{
+      const options={duration,easing:`cubic-bezier(0.333333,${slope/3},0.666667,1)`,fill:'both'};
+      const pageTransform=x=>VAXIS?`translate3d(0,${-pxR(x)}px,0)`:`translate3d(${pxR(x)}px,0,0)`;
+      const animate=(el,transform,offset)=>{
+        started.push(el.animate([{transform:transform(offset+start)},{transform:transform(offset+target)}],options));
+      };
+      d.cur.forEach(el=>animate(el,pageTransform,0));
+      d.nb.forEach(el=>animate(el,pageTransform,d.off));
+      if(d.badge)animate(d.badge,x=>`translate3d(${pxR(x)}px,${d.badge._y}px,0)`,d.bx);
+      d.anims=started;
+      Promise.all(started.map(animation=>animation.finished)).then(()=>{
+        if(drag===d)paintEnd();
+      }).catch(()=>{});
+      return;
+    }catch(e){started.forEach(animation=>animation.cancel())}
+  }
   let lastFrame=performance.now(),elapsed=0;
   function step(now){
     rafX=0;

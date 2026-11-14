@@ -1561,17 +1561,6 @@ function springTo(d,target,v0,fin){
     T=Math.max(T,1/60);const N=Math.max(2,Math.round(T*60)),pts=[];
     for(let i=0;i<=N;i++){const t=T*i/N,pr=i===N?1:1-(A+B*t)*Math.exp(-w*t)/A;pts.push(`${pr.toFixed(4)} ${(100*i/N).toFixed(2)}%`)}
     const tr=`transform ${T.toFixed(3)}s linear(${pts.join(', ')})`,els=[...d.cur,...d.nb];
-    /* يُفضَّل أداء الحركة بـ Web Animations: تبدأ مباشرة من موضع الإصبع دون إجبار المتصفح على حساب الأنماط فورًا فلا يتوقف إطار عند رفع الإصبع */
-    if(els[0]&&els[0].animate){const anims=[];try{
-      const ez=`linear(${pts.join(', ')})`,dur=T*1000;
-      const TX=x=>{x=pxR(x);return VAXIS?`translate3d(0,${-x}px,0)`:`translate3d(${x}px,0,0)`};
-      const TB=x=>`translate3d(${pxR(x)}px,${d.badge._y}px,0)`;
-      const run=(el,a,b,f,set)=>{anims.push(el.animate([{transform:f(a)},{transform:f(b)}],{duration:dur,easing:ez}));set(el,b,0)};
-      d.cur.forEach(el=>run(el,x0,target,TX,setX));
-      d.nb.forEach(el=>run(el,d.off+x0,d.off+target,TX,setX));
-      if(d.badge)run(d.badge,d.bx+x0,d.bx+target,TB,setB);
-      d.anims=anims;d.t=Date.now();setTimeout(()=>{if(drag===d){d.t=Date.now();fin()}},dur+30);return;
-    }catch(e){anims.forEach(a=>a.cancel());d.anims=null}}
     pos(x0);if(els[0])getComputedStyle(els[0]).transform;if(d.badge)getComputedStyle(d.badge).transform;
     d.cur.forEach(el=>{setX(el,target,T);el.style.transition=tr});
     d.nb.forEach(el=>{setX(el,d.off+target,T);el.style.transition=tr});

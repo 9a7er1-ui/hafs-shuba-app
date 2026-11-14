@@ -1000,6 +1000,8 @@ const stripJoint=t=>(t||'').replace(JOINT_RE,'');
 function splitCached(slug,ck,su,ay){
   if(tafSplit[ck]!=null)return tafSplit[ck];
   const raw=tafCache[ck],pre=ck in PRE_J;let x=(NO_SPLIT.has(slug)||pre)?raw:splitTafsirForAyah(raw,su,ay);
+  /* الميسر: «تسمية السورة ومقاصدها» تظهر مع الآية الأولى فقط؛ وبقية الآيات تبدأ بعد «[التفسير]» */
+  if(NO_SPLIT.has(slug)&&ay!==1&&x){const m=x.indexOf('[التفسير]');if(m>=0)x=x.slice(m+9).trim()}
   const j=NO_SPLIT.has(slug)?0:pre?PRE_J[ck]:JOINT[su+':'+ay];
   x=quoteMarks(fixQuotes(x));if(j&&x)x=`فُسِّرت هذه الآية مع الآية ${AR(j)}\n`+x;
   return tafSplit[ck]=x;

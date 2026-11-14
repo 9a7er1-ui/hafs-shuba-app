@@ -1614,7 +1614,10 @@ function settleTurn(d,target,releaseVelocity,finish){
   }
   if(distance<0.5){paintEnd();return}
   const remaining=Math.min(1,distance/d.W);
-  const duration=(target===0?170:250)+(target===0?160:300)*Math.sqrt(remaining);
+  /* أطِل نهاية التقليب بما يتناسب مع المسافة، حتى يبقى الرجوع القصير خفيفًا. */
+  const returning=target===0;
+  const duration=returning?170+160*Math.sqrt(remaining):
+    250+430*Math.sqrt(remaining);
   const slope=Math.max(0,Math.min(2,releaseVelocity*Math.sign(delta)*duration/(1000*distance)));
   const started=performance.now();
   function step(now){

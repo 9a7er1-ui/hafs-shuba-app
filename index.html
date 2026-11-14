@@ -1485,7 +1485,9 @@ function makeBadge(i,els){
   b._y=Math.max(8,Math.min(innerHeight-bh-8,y-bh/2));b._w=bw;document.body.appendChild(b);return b;
 }
 function setB(b,x,anim){x=pxR(x);const d=anim===true?.26:anim;b.style.transition=d?`transform ${d}s cubic-bezier(.22,.61,.36,1)`:'none';b.style.transform=`translate3d(${x}px,${b._y}px,0)`}
-function dragReset(){if(!drag)return;const d=drag;drag=null;if(d.anims)d.anims.forEach(a=>a.cancel());if(d.badge)d.badge.remove();
+const EXP=/[?&]perf\b/.test(location.search)&&/[?&]exp\b/.test(location.search);
+function expEnd(d){if(!EXP)return;document.body.style.background='';(d.away||[]).forEach(el=>{el.style.transition='';el.style.transform=''})}
+function dragReset(){if(!drag)return;const d=drag;drag=null;expEnd(d);if(d.anims)d.anims.forEach(a=>a.cancel());if(d.badge)d.badge.remove();
   d.cur.forEach(el=>{setX(el,0);el.style.zIndex='';el.style.willChange=''});
   d.nb.forEach(el=>{setX(el,0);parkPage(el)})}
 let tTarget=null,rafX=0;
@@ -1521,7 +1523,13 @@ function onTMove(e){
     const want=sp&&to<604?[to,to+1]:[to],nb=[];
     for(const n of want){let el=PRE[n];if(!el&&document.fonts.check(`20px p${n}`))el=prerenderOne(n,cur);if(!el){simpleSwipe=true;return}nb.push(el)}
     const B=$('page'),curEls=COMP?[B,COMP]:[B];
-    curEls.forEach(el=>el.style.zIndex=2);nb.forEach(el=>{el.style.zIndex=1;setX(el,0)});const out=nb.filter(el=>!el.isConnected);if(out.length)pageEls().pop().after(...out);
+    let away=[];
+    if(EXP){
+      /* تجربة (?perf&exp): لا تتغير طبقة أي صفحة؛ تبقى المجاورة في طبقتها (-1) وتُكشف بجعل خلفية body شفافة
+         (خلفية html الخضراء تبقى تحت كل شيء)، وتُزاح الصفحات المخبأة الأخرى جانبًا لئلا تظهر في الفراغ */
+      nb.forEach(el=>setX(el,0));away=pageEls().filter(el=>!curEls.includes(el)&&!nb.includes(el));
+      away.forEach(el=>setX(el,innerWidth*3));document.body.style.background='transparent';
+    }else{curEls.forEach(el=>el.style.zIndex=2);nb.forEach(el=>{el.style.zIndex=1;setX(el,0)})}const out=nb.filter(el=>!el.isConnected);if(out.length)pageEls().pop().after(...out);
     /* المجموعة المجاورة تلتصق بحافة المجموعة الحالية تمامًا */
     const box=els=>{const r=els.map(e=>e.getBoundingClientRect());return{l:Math.min(...r.map(x=>x.left)),r:Math.max(...r.map(x=>x.right))}};
     const rB=box(curEls),rN=box(nb);
@@ -1536,7 +1544,7 @@ function onTMove(e){
     const G=turnGap();off+=dir>0?-G:G;
     const bx=badge?(dir>0?rB.l-G/2:rB.r+G/2)-badge._w/2:0;if(badge)setB(badge,bx);
     [...curEls,...nb].forEach(el=>el.style.willChange='transform');nb.forEach(el=>setX(el,off));
-    drag={from:cur,to,dir,W:Math.abs(off),off,cur:curEls,nb,badge,bx,t:Date.now(),lastX:0};
+    drag={from:cur,to,dir,W:Math.abs(off),off,cur:curEls,nb,badge,bx,t:Date.now(),lastX:0,away};
   }
   const d=drag,fx=d.dir>0?Math.max(0,dx):Math.min(0,dx);d.t=Date.now();
   /* آخر مواضع الإصبع لحساب سرعته عند الرفع */
@@ -1597,7 +1605,7 @@ function adoptPage(d){
   d.nb.forEach(el=>{el.style.transition='';el.style.transform='';el.style.zIndex='';el.style.willChange=''});
   /* الصفحات البعيدة تُزال، والصفحة التي قُلبت تبقى مرسومة خلف الخلفية جاهزة للرجوع إليها */
   Object.values(PRE).forEach(el=>{if(!d.nb.includes(el))el.remove()});
-  d.cur.forEach(parkPage);
+  d.cur.forEach(parkPage);expEnd(d);
   PRE={};d.cur.forEach((el,i)=>PRE[from+i]=el);d.nb.forEach(bindPageEl);COMP=d.nb[1]||null;
   /* الصفحة الظاهرة أول الصفحات ترتيبًا (عليها يُعتمد في بقية التطبيق)، وما قبلها من الصفحات المخفية يُنقل بعدها */
   {const a=pageEls(),i=a.indexOf(d.nb[0]);if(i>0)a[a.length-1].after(...a.slice(0,i))}
@@ -1760,7 +1768,7 @@ if(/[?&]perf\b/.test(location.search))(function(){
     const b=(t,f)=>{const x=document.createElement('button');x.textContent=t;x.style.cssText='font:13px -apple-system,sans-serif;padding:4px 10px';x.onclick=f;h.appendChild(x)};
     b('تحديث',draw);b('مسح',()=>{EV.length=0;LONG.length=0;for(const k in TOT)delete TOT[k];draw()});b('إغلاق',()=>pan.style.display='none');
     const txt=document.createElement('div');
-    txt.textContent=`${navigator.userAgent.match(/(iPhone|iPad|Macintosh|Android)[^;)]*/)?.[0]||''}  ${innerWidth}x${innerHeight} dpr=${devicePixelRatio}\n\n`+
+    txt.textContent=`${navigator.userAgent.match(/(iPhone|iPad|Macintosh|Android)[^;)]*/)?.[0]||''}  ${innerWidth}x${innerHeight} dpr=${devicePixelRatio}${EXP?'  [تجربة exp]':''}\n\n`+
       `== إطارات تأخرت (الأحدث أولًا): الوقت، المدة، ما جرى فيها ==\n${lf||'—'}\n\n== مجموع كل دالة (ملّي ثانية) ==\n${tot||'—'}`;
     pan.append(h,txt)};
   btn.onclick=()=>{if(pan.style.display==='none'){draw();pan.style.display='block'}else pan.style.display='none'};

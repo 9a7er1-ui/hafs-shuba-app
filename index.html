@@ -1565,14 +1565,17 @@ function onTEnd(e){
 }
 /* حركة نابضية بلا ارتداد: موضع واحد يحرّك الصفحة الحالية والمجاورة وشارة الحزب معًا.
    قوة النابض ثابتة في الانقلاب والرجوع، مضبوطة على تطبيق آية (نحو ٠٫٣٥ ثانية في الحالتين) */
+const SPRING_CSS=false;
 function springTo(d,target,v0,fin){
   const x0=d.lastX,A=x0-target,D=Math.abs(A);
   const pos=x=>{d.cur.forEach(el=>setX(el,x));d.nb.forEach(el=>setX(el,d.off+x));if(d.badge)setB(d.badge,d.bx+x)};
   if(D<0.5){pos(target);fin();return}
   const w=18,B=v0+w*A,t0=performance.now();
   /* يُحسب منحنى النابض كاملًا مرة واحدة ثم يؤديه المتصفح نفسه بانتقال CSS بمنحنى linear()،
-     فلا يفوته إطار مهما انشغلت الصفحة؛ وإن لم يدعمه الجهاز بقيت الحركة بالإطارات كما هي */
-  if(window.CSS&&CSS.supports&&CSS.supports('transition-timing-function','linear(0, 1)')){
+     فلا يفوته إطار مهما انشغلت الصفحة؛ وإن لم يدعمه الجهاز بقيت الحركة بالإطارات كما هي.
+     معطّل (SPRING_CSS=false): قيس في تسجيل الآيباد أن سفاري يبدأ الانتقال بإطار واقف ثم قفزة كبيرة ثم شبه توقف،
+     فصارت الحركة بعد الرفع تُرسم إطارًا إطارًا بالمنحنى نفسه كما يُرسم السحب */
+  if(SPRING_CSS&&window.CSS&&CSS.supports&&CSS.supports('transition-timing-function','linear(0, 1)')){
     let T=0;for(;T<1.2;T+=1/120){const e=Math.exp(-w*T);if(Math.abs((A+B*T)*e)<1&&Math.abs((v0-w*B*T)*e)<30)break}
     T=Math.max(T,1/60);const N=Math.max(2,Math.round(T*60)),pts=[];
     for(let i=0;i<=N;i++){const t=T*i/N,pr=i===N?1:1-(A+B*t)*Math.exp(-w*t)/A;pts.push(`${pr.toFixed(4)} ${(100*i/N).toFixed(2)}%`)}
@@ -1583,7 +1586,7 @@ function springTo(d,target,v0,fin){
     if(d.badge){setB(d.badge,d.bx+target,T);d.badge.style.transition=tr}
     d.t=Date.now();setTimeout(()=>{if(drag===d){d.t=Date.now();fin()}},T*1000+30);return;
   }
-  const step=now=>{if(drag!==d)return;const t=(now-t0)/1000,e=Math.exp(-w*t),x=target+(A+B*t)*e,v=(v0-w*B*t)*e;
+  const step=now=>{if(drag!==d)return;const t=Math.max(0,now-t0)/1000,e=Math.exp(-w*t),x=target+(A+B*t)*e,v=(v0-w*B*t)*e;
     if((Math.abs(x-target)<1&&Math.abs(v)<30)||t>1.2){pos(target);d.t=Date.now();fin();return}
     pos(x);d.t=Date.now();requestAnimationFrame(step)};
   requestAnimationFrame(step);

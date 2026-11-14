@@ -999,14 +999,29 @@ const JOINT_RE=/^فُسِّرت هذه الآية مع الآية [٠-٩]+\n/;
 const stripJoint=t=>(t||'').replace(JOINT_RE,'');
 function splitCached(slug,ck,su,ay){
   if(tafSplit[ck]!=null)return tafSplit[ck];
-  const raw=tafCache[ck];let x=NO_SPLIT.has(slug)?raw:splitTafsirForAyah(raw,su,ay);
-  const j=NO_SPLIT.has(slug)?0:JOINT[su+':'+ay];
+  const raw=tafCache[ck],pre=ck in PRE_J;let x=(NO_SPLIT.has(slug)||pre)?raw:splitTafsirForAyah(raw,su,ay);
+  const j=NO_SPLIT.has(slug)?0:pre?PRE_J[ck]:JOINT[su+':'+ay];
   x=quoteMarks(fixQuotes(x));if(j&&x)x=`فُسِّرت هذه الآية مع الآية ${AR(j)}\n`+x;
   return tafSplit[ck]=x;
+}
+/* التفاسير المقسَّمة مسبقًا آيةً آية (مجلد tafsir بجانب التطبيق): كل ملف فيه ٢٥ آية من سورة */
+const PRE_DIR={'ar-tafsir-ibn-kathir':'ibn-kathir','ar-tafsir-al-baghawi':'baghawi','ar-tafsir-al-tabari':'tabari','ar-tafseer-al-saddi':'saadi'};
+const PRE_J={},preFiles={};
+function preChunk(slug,su,c){const k=slug+su+'-'+c;
+  return preFiles[k]||(preFiles[k]=fetch(`tafsir/${PRE_DIR[slug]}/${su}-${c}.json`).then(r=>{if(!r.ok)throw 0;return r.json()}).catch(e=>{delete preFiles[k];throw e}))}
+async function preEntry(slug,su,ay){const d=await preChunk(slug,su,Math.floor((ay-1)/25));return d[ay]}
+async function preAyah(slug,su,ay){
+  let v=await preEntry(slug,su,ay),j=0;
+  if(v&&typeof v==='object'){j=v.j;v=await preEntry(slug,su,j)}
+  if(typeof v!=='string')return null;
+  if((j||ay)===1)v=stripHead(v).trim()||v;
+  return{t:v,j:j&&j!==ay?j:0};
 }
 async function fetchTafsir(slug,su,ay){
   if(slug==='my'){if(!MYT)await loadMy();const mk=myKey(su+':'+ay);return mk?quoteMarks(stripRefs(MYT.e[mk]||'')):''}
   const ck=slug+su+':'+ay;if(tafCache[ck]!=null)return splitCached(slug,ck,+su,+ay);
+  if(PRE_DIR[slug]){try{const r=await preAyah(slug,+su,+ay);if(r){
+    tafCache[ck]=parenToQuran(cleanTafsir(slug,r.t));PRE_J[ck]=r.j;return splitCached(slug,ck,+su,+ay)}}catch(e){}}
   for(const b of TAF_BASE){try{const r=await fetch(`${b}${slug}/${su}/${ay}.json`);if(r.ok){const j=await r.json();tafCache[ck]=parenToQuran(cleanTafsir(slug,j.text||''));return splitCached(slug,ck,+su,+ay)}}catch(e){}}
   throw new Error('fail');
 }

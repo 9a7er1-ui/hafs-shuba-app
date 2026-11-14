@@ -297,8 +297,6 @@ body.night #srch{--s-bg:#1f1f1c;--s-card:#2a2925;--s-seg:#34332d;--s-ol:#a9c27a;
 .hzb{position:fixed;left:0;top:0;z-index:3;pointer-events:none;will-change:transform}
 /* صفحات المصحف طبقات جاهزة للحركة مسبقًا فلا تتعثر بداية السحب (عدا وضع التمرير في الجوال أفقيًا) */
 #page:not(.scrolly){will-change:transform}
-html.exp [id=page]:not(.scrolly){animation:keepPaint 600s linear infinite alternate}
-@keyframes keepPaint{from{translate:0 0}to{translate:.01px 0}}
 /* لا يسحب المتصفح صفحات المصحف من تلقاء نفسه (الارتداد الرأسي في سفاري الآيباد)؛ التقليب بالجافاسكربت فلا يتأثر */
 #page:not(.scrolly){touch-action:none}
 .hzb img{width:100%;height:100%;display:block;-webkit-user-drag:none}
@@ -1444,7 +1442,7 @@ function bindPageEl(el){if(el._pb)return;el._pb=1;el.addEventListener('click',to
 /* الصفحات المجاورة تبقى مرسومة في الشاشة خلف خلفية التطبيق (طبقة -1) فلا يُعاد رسمها عند بدء السحب،
    ولا تُنزع الصفحة الظاهرة من مكانها أثناء تجهيزها فلا يُعاد رسمها هي أيضًا */
 const pageEls=()=>[...document.querySelectorAll('[id=page]')];
-function parkPage(el){el.style.transition='';el.style.transform='';el.style.zIndex='-1';el.style.willChange=''}
+function parkPage(el){el._tx=0;el._b=null;el.style.transition='';el.style.transform='';el.style.zIndex='-1';el.style.willChange=''}
 function clearPre(){const B=$('page');Object.values(PRE).forEach(el=>{if(el!==B&&el!==COMP)el.remove()});PRE={}}
 function prerenderOne(n,base){
   const B=$('page'),fresh=B.cloneNode(true);fresh._pb=0;parkPage(fresh);fresh.style.visibility='';
@@ -1463,7 +1461,7 @@ async function prerenderNeighbors(){
 }
 function schedulePre(){clearTimeout(schedulePre._t);schedulePre._t=setTimeout(prerenderNeighbors,250)}
 const pxR=v=>{const r=devicePixelRatio||1;return Math.round(v*r)/r};
-function setX(el,x,anim){x=pxR(x);const d=anim===true?.26:anim;el.style.transition=d?`transform ${d}s cubic-bezier(.22,.61,.36,1)`:'none';el.style.transform=x?(VAXIS?`translate3d(0,${-x}px,0)`:`translate3d(${x}px,0,0)`):''}
+function setX(el,x,anim){x=pxR(expClamp(el,x));el._tx=x;const d=anim===true?.26:anim;el.style.transition=d?`transform ${d}s cubic-bezier(.22,.61,.36,1)`:'none';el.style.transform=x?(VAXIS?`translate3d(0,${-x}px,0)`:`translate3d(${x}px,0,0)`):''}
 /* اتجاه التمرير الرأسي: الصفحة التالية تأتي من الأسفل (لا يُستعمل في الجوال أفقيًا لأن الصفحة تُمرَّر فيه) */
 let VAXIS=false;
 const vAxis=()=>!!S.vdir&&!$('page').classList.contains('scrolly');
@@ -1488,10 +1486,23 @@ function makeBadge(i,els){
 }
 function setB(b,x,anim){x=pxR(x);const d=anim===true?.26:anim;b.style.transition=d?`transform ${d}s cubic-bezier(.22,.61,.36,1)`:'none';b.style.transform=`translate3d(${x}px,${b._y}px,0)`}
 const EXP=/[?&]perf\b/.test(location.search)&&/[?&]exp\b/.test(location.search);
-/* تجربة (?perf&exp): حركة خفية دائمة (جزء من مئة من النقطة) على كل صفحة، ليُبقي سفاري الصفحة مرسومة كلها
-   فلا يرسم أشرطتها وقت دخولها الشاشة أثناء السحب (كان ذلك يوقف الصفحة ٢–٣ إطارات في موضع ثابت) */
-if(EXP)document.documentElement.classList.add('exp');
-function dragReset(){if(!drag)return;const d=drag;drag=null;if(d.anims)d.anims.forEach(a=>a.cancel());if(d.badge)d.badge.remove();
+/* تجربة (?perf&exp): لا تخرج أي صفحة من الشاشة كلها أبدًا — يبقى منها نقطتان داخل حافة الشاشة،
+   لأن سفاري يتخلص من رسم الطبقة التي تخرج كلها ثم يعيد رسمها كاملة إذا رجعت (تجمّد أول السحب ونهاية التقليب).
+   وإن لم تكن الصفحة تملأ عرض الشاشة يُغطّى الشريطان بخطين بلون الخلفية */
+const EXP_EDGE=2;let expStrips=null;
+function expClamp(el,x){if(!EXP||el.id!=='page')return x;
+  if(!el._b){const r=el.getBoundingClientRect(),t=el._tx||0;el._b=VAXIS?{a:r.top+t,b:r.bottom+t}:{a:r.left-t,b:r.right-t}}
+  const L=VAXIS?innerHeight:innerWidth,b=el._b;
+  if(VAXIS){const y=Math.min(Math.max(-x,-b.b+EXP_EDGE),L-b.a-EXP_EDGE);return -y}
+  return Math.min(Math.max(x,-b.b+EXP_EDGE),L-b.a-EXP_EDGE)}
+function expStripsOn(curEls){if(!EXP)return;const r=curEls[0].getBoundingClientRect(),L=VAXIS?innerHeight:innerWidth;
+  if((VAXIS?r.top:r.left)<=EXP_EDGE+1&&(VAXIS?L-r.bottom:L-r.right)<=EXP_EDGE+1)return;
+  if(!expStrips){expStrips=[0,1].map(i=>{const e=document.createElement('div');document.body.appendChild(e);return e})}
+  expStrips.forEach((e,i)=>{e.style.cssText='position:fixed;z-index:4;pointer-events:none;background:'+getComputedStyle(document.body).backgroundColor+';'+
+    (VAXIS?`left:0;right:0;height:${EXP_EDGE}px;${i?'bottom':'top'}:0`:`top:0;bottom:0;width:${EXP_EDGE}px;${i?'right':'left'}:0`)})}
+function expStripsOff(){if(expStrips)expStrips.forEach(e=>e.style.display='none')}
+if(EXP)addEventListener('resize',()=>pageEls().forEach(el=>el._b=null));
+function dragReset(){if(!drag)return;const d=drag;drag=null;if(EXP)expStripsOff();if(d.anims)d.anims.forEach(a=>a.cancel());if(d.badge)d.badge.remove();
   d.cur.forEach(el=>{setX(el,0);el.style.zIndex='';el.style.willChange=''});
   d.nb.forEach(el=>{setX(el,0);parkPage(el)})}
 let tTarget=null,rafX=0;
@@ -1527,7 +1538,7 @@ function onTMove(e){
     const want=sp&&to<604?[to,to+1]:[to],nb=[];
     for(const n of want){let el=PRE[n];if(!el&&document.fonts.check(`20px p${n}`))el=prerenderOne(n,cur);if(!el){simpleSwipe=true;return}nb.push(el)}
     const B=$('page'),curEls=COMP?[B,COMP]:[B];
-    curEls.forEach(el=>el.style.zIndex=2);nb.forEach(el=>{el.style.zIndex=1;setX(el,0)});const out=nb.filter(el=>!el.isConnected);if(out.length)pageEls().pop().after(...out);
+    curEls.forEach(el=>el.style.zIndex=2);nb.forEach(el=>{el.style.zIndex=1;el._b=null;setX(el,0)});expStripsOn(curEls);const out=nb.filter(el=>!el.isConnected);if(out.length)pageEls().pop().after(...out);
     /* المجموعة المجاورة تلتصق بحافة المجموعة الحالية تمامًا */
     const box=els=>{const r=els.map(e=>e.getBoundingClientRect());return{l:Math.min(...r.map(x=>x.left)),r:Math.max(...r.map(x=>x.right))}};
     const rB=box(curEls),rN=box(nb);
@@ -1600,10 +1611,10 @@ function springTo(d,target,v0,fin){
 /* إتمام التقليب: الصفحة المجهّزة تصير هي الصفحة الحالية دون إعادة رسم */
 function adoptPage(d){
   drag=null;const{from,to}=d;if(d.anims)d.anims.forEach(a=>a.cancel());if(d.badge)d.badge.remove();
-  d.nb.forEach(el=>{el.style.transition='';el.style.transform='';el.style.zIndex='';el.style.willChange=''});
+  d.nb.forEach(el=>{el._tx=0;el.style.transition='';el.style.transform='';el.style.zIndex='';el.style.willChange=''});
   /* الصفحات البعيدة تُزال، والصفحة التي قُلبت تبقى مرسومة خلف الخلفية جاهزة للرجوع إليها */
   Object.values(PRE).forEach(el=>{if(!d.nb.includes(el))el.remove()});
-  d.cur.forEach(parkPage);
+  d.cur.forEach(parkPage);if(EXP)expStripsOff();
   PRE={};d.cur.forEach((el,i)=>PRE[from+i]=el);d.nb.forEach(bindPageEl);COMP=d.nb[1]||null;
   /* الصفحة الظاهرة أول الصفحات ترتيبًا (عليها يُعتمد في بقية التطبيق)، وما قبلها من الصفحات المخفية يُنقل بعدها */
   {const a=pageEls(),i=a.indexOf(d.nb[0]);if(i>0)a[a.length-1].after(...a.slice(0,i))}

@@ -1536,15 +1536,12 @@ function onTEnd(e){
   springTo(d,done?-d.off:0,v0,()=>{if(drag===d){done?adoptPage(d):dragReset()}});
 }
 /* حركة نابضية بلا ارتداد: موضع واحد يحرّك الصفحة الحالية والمجاورة وشارة الحزب معًا.
-   تُضبط قوة النابض حتى تكون أقصى سرعة كتطبيق آية (~١٢٠٠ نقطة/ث في الآيفون) وتتناسب مع عرض الشاشة */
+   قوة النابض ثابتة في الانقلاب والرجوع، فالمسافة القصيرة تُقطع بهدوء (نحو نصف ثانية في الحالتين) */
 function springTo(d,target,v0,fin){
   const x0=d.lastX,A=x0-target,D=Math.abs(A);
   const pos=x=>{d.cur.forEach(el=>setX(el,x));d.nb.forEach(el=>setX(el,d.off+x));if(d.badge)setB(d.badge,d.bx+x)};
   if(D<0.5){pos(target);fin();return}
-  const vCap=Math.max(1200*d.W/470,Math.abs(v0));
-  const peakV=w=>{const B=v0+w*A;let m=0;for(let i=0;i<=120;i++){const t=i/240,v=Math.abs((v0-w*B*t)*Math.exp(-w*t));if(v>m)m=v}return m};
-  let lo=16,hi=45;if(peakV(lo)>=vCap)hi=lo;else for(let i=0;i<25;i++){const m=(lo+hi)/2;if(peakV(m)<vCap)lo=m;else hi=m}
-  const w=hi===16?16:lo,B=v0+w*A,t0=performance.now();
+  const w=14,B=v0+w*A,t0=performance.now();
   const step=now=>{if(drag!==d)return;const t=(now-t0)/1000,e=Math.exp(-w*t),x=target+(A+B*t)*e,v=(v0-w*B*t)*e;
     if((Math.abs(x-target)<0.5&&Math.abs(v)<20)||t>1.2){pos(target);d.t=Date.now();fin();return}
     pos(x);d.t=Date.now();requestAnimationFrame(step)};

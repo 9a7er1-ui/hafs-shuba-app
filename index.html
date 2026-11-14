@@ -1391,6 +1391,7 @@ function openSettings(){
     <div class="set"><label>خلفية سوداء (في الوضع الليلي)</label><input type="checkbox" id="sBlack" ${S.black?'checked':''} style="width:auto"></div>
     <div class="set"><label>تصفح رأسي متحرك (في الوضع الأفقي)</label><input type="checkbox" id="sAuto" ${S.auto?'checked':''} style="width:auto"></div>
     <div class="set"><label>سرعة التصفح المتحرك</label><select id="sAspd">${['بطيء جدًا','بطيء','متوسط','سريع','سريع جدًا'].map((t,i)=>`<option value="${i+1}" ${(i+1)==(S.aspd||3)?'selected':''}>${t}</option>`).join('')}</select></div>
+    <div class="set"><label>سرعة قلب الصفحات</label><select id="sTspd">${['عادية','أسرع قليلًا','سريعة','الأسرع'].map((t,i)=>`<option value="${i+1}" ${(i+1)==(S.tspd||1)?'selected':''}>${t}</option>`).join('')}</select></div>
     <div class="set"><label>تغيير الصفحة تلقائيًا</label><input type="checkbox" id="sApage" ${S.apage!==false?'checked':''} style="width:auto"></div>
     <div class="set"><label>تلوين مواضع خلاف شعبة</label><input type="checkbox" id="sDiff" ${S.diffs?'checked':''} style="width:auto"></div>
     <div class="legend" style="padding:.6em 0">${Object.entries(DIFF_NAMES).map(([c,n])=>`<span><i style="background:var(--c-${c})"></i>${n}</span>`).join('')}</div>
@@ -1419,6 +1420,7 @@ function openSettings(){
   $('sBlack').onchange=e=>{S.black=e.target.checked;save('settings',S);applySettings()};
   $('sAuto').onchange=e=>{S.auto=e.target.checked;save('settings',S);asReset()};
   $('sAspd').onchange=e=>{S.aspd=+e.target.value;save('settings',S)};
+  $('sTspd').onchange=e=>{S.tspd=+e.target.value;save('settings',S)};
   $('sApage').onchange=e=>{S.apage=e.target.checked;save('settings',S)};
   $('sClock').onchange=e=>{S.clock=e.target.checked;save('settings',S);applySettings();relayPage()};
   $('sPull').onchange=e=>{S.pull=e.target.checked;save('settings',S)};
@@ -1767,9 +1769,13 @@ function settleTurn(d,target,releaseVelocity,finish){
   const remaining=Math.min(1,distance/d.W);
   /* أطِل نهاية التقليب بما يتناسب مع المسافة، حتى يبقى الرجوع القصير خفيفًا. */
   const returning=target===0;
-  const duration=returning?170+160*Math.sqrt(remaining):
-    250+430*Math.sqrt(remaining);
-  const slope=Math.max(0,Math.min(2,releaseVelocity*Math.sign(delta)*duration/(1000*distance)));
+  /* سرعة قلب الصفحات من الإعدادات: ١ عادية (كما كانت) ٢ أسرع قليلًا ٣ سريعة ٤ الأسرع.
+     الأسرع: تبدأ الصفحة بسرعة الإصبع (حتى ٣ أضعاف متوسط السرعة) ثم تتباطأ، فتنتهي في نحو ٠٫٤ ثانية. الرجوع لا يتأثر */
+  const tspd=returning?1:(S.tspd||1),vRel=Math.max(0,releaseVelocity*Math.sign(delta));
+  let duration=returning?170+160*Math.sqrt(remaining):
+    (250+430*Math.sqrt(remaining))*(tspd===2?0.88:tspd===3?0.75:1);
+  if(tspd===4)duration=Math.min(180+320*Math.sqrt(remaining),Math.max(180,3000*distance/Math.max(vRel,1)));
+  const slope=Math.max(0,Math.min(tspd===4?3:2,vRel*duration/(1000*distance)));
   /* المتصفح يحرك الطبقات مباشرة، بنفس منحنى التباطؤ المستخدم في المسار الاحتياطي. */
   if(!EXP&&typeof d.cur[0]?.animate==='function'){
     const started=[];

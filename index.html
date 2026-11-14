@@ -57,6 +57,10 @@ body.clk #page .bar{padding-top:1.75em}
 #lines{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;min-height:0}
 #page.scrolly{overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
 #page.scrolly #lines{flex:none;padding-bottom:1.2em}
+/* تجربة الصورة (?perf&snap): صورة الصفحة تحل محل النص الحي أثناء التقليب فقط */
+#page .snapc{display:none;position:absolute;left:0;top:0;z-index:0;pointer-events:none}
+#page.snapped .snapc{display:block}
+#page.snapped #lines{visibility:hidden}
 .line{position:relative;display:flex;align-items:center;white-space:nowrap;direction:rtl;color:var(--ink);-webkit-text-stroke:.006em currentColor}
 .line.just{justify-content:space-between}
 .line.center{justify-content:center}
@@ -1455,6 +1459,7 @@ function parkPage(el){el._tx=0;el._b=null;el.style.transition='';el.style.transf
 function clearPre(){const B=$('page');Object.values(PRE).forEach(el=>{if(el!==B&&el!==COMP)el.remove()});PRE={}}
 function prerenderOne(n,base){
   const B=$('page'),fresh=B.cloneNode(true);fresh._pb=0;parkPage(fresh);fresh.style.visibility='';
+  if(SNAP){fresh.classList.remove('snapped');fresh.querySelectorAll('canvas.snapc').forEach(c=>c.remove())}
   B.before(fresh);PRERENDER=true;cur=n;
   try{renderPage(n);fillMarkers(fresh)}catch(e){}finally{PRERENDER=false;cur=base;document.body.appendChild(fresh)}
   return PRE[n]=fresh;
@@ -1467,6 +1472,7 @@ async function prerenderNeighbors(){
     try{await pageFont(n)}catch(e){return}
     if(cur===base&&!drag&&sx==null&&!PRE[n])prerenderOne(n,base);
   }));
+  if(SNAP)[$('page'),COMP,...Object.values(PRE)].forEach(snapQueue);
 }
 function schedulePre(){clearTimeout(schedulePre._t);schedulePre._t=setTimeout(prerenderNeighbors,80)}
 const pxR=v=>{const r=devicePixelRatio||1;return Math.round(v*r)/r};
@@ -1517,10 +1523,106 @@ function expStripsOn(curEls){if(!EXP)return;const r=curEls[0].getBoundingClientR
     (VAXIS?`left:0;right:0;height:${EXP_EDGE}px;${i?'bottom':'top'}:0`:`top:0;bottom:0;width:${EXP_EDGE}px;${i?'right':'left'}:0`)})}
 function expStripsOff(){if(expStrips)expStrips.forEach(e=>e.style.display='none')}
 if(EXP)addEventListener('resize',()=>pageEls().forEach(el=>el._b=null));
+/* ---------- تجربة الصورة (?perf&snap) ----------
+   كل صفحة تُرسم مرة واحدة وقت السكون على لوحة رسم، كلمةً كلمة في مواضعها التي حسبها التطبيق نفسه وبخط الصفحة نفسه.
+   أثناء التقليب تتحرك الصورة والنص الحي مخفي تحتها، فلا يحتاج سفاري إلى تحويل النص إلى صورة وقت الحركة؛
+   وإذا استقرت الصفحة ظهر النص الحي كما كان. وأي تغيير في الصفحة (تظليل، إعداد، إعادة ترتيب) يُبطل صورتها فتُرسم من جديد */
+const SNAP=/[?&]perf\b/.test(location.search)&&/[?&]snap\b/.test(location.search);
+const SNAPQ=new Set();let snapT=0;
+const snapIdle=()=>!drag&&sx==null&&!pendingTurn;
+const snapShown=el=>el===$('page')||el===COMP;
+function snapQueue(el){if(!SNAP||!el||el._snapOK)return;SNAPQ.add(el);if(!snapT)snapT=setTimeout(snapRun,120)}
+function snapLater(ms){if(!snapT)snapT=setTimeout(snapRun,ms)}
+async function snapRun(){
+  snapT=0;
+  for(const el of [...SNAPQ]){
+    if(!snapIdle()){snapLater(250);return}
+    SNAPQ.delete(el);
+    if(!el.isConnected||el._snapOK)continue;
+    await snapPage(el);
+    await new Promise(r=>setTimeout(r,20));   // فرصة للمس بين صفحة وأخرى
+  }
+}
+function snapStale(el){if(!el)return;el._snapGen=(el._snapGen||0)+1;el._snapOK=false;el.classList.remove('snapped');snapQueue(el)}
+const SNAP_MO=SNAP?new MutationObserver(recs=>{const s=new Set();
+  recs.forEach(r=>{const t=r.target.nodeType===1?r.target:r.target.parentElement,p=t&&t.closest('#page');if(p)s.add(p)});s.forEach(snapStale)}):null;
+function snapWatch(el){if(el._snapW)return;el._snapW=1;const l=el.querySelector('#lines');if(l)SNAP_MO.observe(l,{subtree:true,childList:true,attributes:true,characterData:true})}
+/* تغيير الإعدادات العامة (الوضع الليلي، الألوان، ملء الشاشة…) يُبطل كل الصور */
+if(SNAP)new MutationObserver(()=>pageEls().forEach(snapStale)).observe(document.documentElement,{attributes:true});
+if(SNAP)addEventListener('DOMContentLoaded',()=>new MutationObserver(()=>pageEls().forEach(snapStale)).observe(document.body,{attributes:true,attributeFilter:['class','style']}));
+async function snapPage(el){
+  if(el.classList.contains('scrolly'))return;
+  const lines=el.querySelector('#lines');if(!lines||!lines.children.length)return;
+  if(lines.querySelector('.bsm')&&!readyFonts.has('bsml')){SNAPQ.add(el);snapLater(500);return}
+  snapWatch(el);const gen=el._snapGen||0;
+  await Promise.all([...lines.querySelectorAll('img')].map(i=>i.complete&&i.naturalWidth?0:(i.decode?i.decode().catch(()=>{}):0)));
+  if(gen!==(el._snapGen||0)||!el.isConnected)return;
+  if(!snapIdle()){SNAPQ.add(el);snapLater(250);return}
+  snapDraw(el);
+}
+function snapDraw(el){
+  const W=el.clientWidth,H=el.clientHeight;if(!W||!H)return;
+  const pr=el.getBoundingClientRect(),dpr=Math.min(3,devicePixelRatio||1);
+  let c=el.querySelector(':scope>canvas.snapc');
+  if(!c){c=document.createElement('canvas');c.className='snapc';el.appendChild(c)}
+  c.width=Math.round(W*dpr);c.height=Math.round(H*dpr);c.style.width=W+'px';c.style.height=H+'px';
+  const x=c.getContext('2d');if(!x)return;
+  x.setTransform(dpr,0,0,dpr,-pr.left*dpr,-pr.top*dpr);
+  const lines=el.querySelector('#lines'),clear=v=>!v||v==='transparent'||/rgba\(.*,\s*0\)$/.test(v);
+  /* ١) إطارات أسماء السور */
+  lines.querySelectorAll('.hdr').forEach(h=>{
+    const im=h.querySelector('img');
+    if(im&&im.naturalWidth){const r=im.getBoundingClientRect(),f=getComputedStyle(im).filter;
+      if(f&&f!=='none'&&'filter' in x)x.filter=f;x.drawImage(im,r.left,r.top,r.width,r.height);if('filter' in x)x.filter='none'}
+    const sv=h.querySelector('svg'),pt=sv&&sv.querySelector('path');
+    if(pt){const r=sv.getBoundingClientRect(),vb=sv.viewBox.baseVal,cs=getComputedStyle(pt);
+      if(vb&&vb.width&&vb.height&&r.width){const k=Math.min(r.width/vb.width,r.height/vb.height);
+        x.save();x.translate(r.left+(r.width-vb.width*k)/2,r.top+(r.height-vb.height*k)/2);x.scale(k,k);x.translate(-vb.x,-vb.y);
+        const p2=new Path2D(pt.getAttribute('d'));
+        if(!clear(cs.fill)&&cs.fill!=='none'){x.fillStyle=cs.fill;x.fill(p2)}
+        const sw=parseFloat(cs.strokeWidth)||0;if(sw&&cs.stroke&&cs.stroke!=='none'){x.lineWidth=sw;x.lineJoin='round';x.strokeStyle=cs.stroke;x.stroke(p2)}
+        x.restore()}}
+  });
+  /* ٢) تظليل الكلمات (داخل مساحة النص فقط كما في الصفحة) */
+  const words=[...lines.querySelectorAll('.w')],css=new Map(words.map(w=>[w,getComputedStyle(w)]));
+  words.forEach(w=>{const cs=css.get(w);if(clear(cs.backgroundColor))return;
+    const r=w.getBoundingClientRect(),s=w.offsetWidth?r.width/w.offsetWidth:1;
+    const pl=parseFloat(cs.paddingLeft)*s,pR=parseFloat(cs.paddingRight)*s,rad=parseFloat(cs.borderTopLeftRadius)||0;
+    const bx=r.left+pl,bw=r.width-pl-pR;if(bw<=0)return;
+    x.fillStyle=cs.backgroundColor;x.beginPath();if(x.roundRect)x.roundRect(bx,r.top,bw,r.height,rad);else x.rect(bx,r.top,bw,r.height);x.fill()});
+  /* ٣) أوساط رموز الآيات الملونة، ثم نقاط الخلاف */
+  lines.querySelectorAll('.mkf').forEach(im=>{if(!im.naturalWidth)return;const r=im.getBoundingClientRect();x.drawImage(im,r.left,r.top,r.width,r.height)});
+  lines.querySelectorAll('.dot').forEach(d=>{const r=d.getBoundingClientRect();if(!r.width)return;const cs=getComputedStyle(d);
+    x.fillStyle=cs.backgroundColor;x.beginPath();x.ellipse(r.left+r.width/2,r.top+r.height/2,r.width/2,r.height/2,0,0,Math.PI*2);x.fill()});
+  /* ٤) النص: الكلمات والبسملة */
+  const rg=document.createRange();
+  const text=(node,cs)=>{
+    const t=node&&node.nodeValue;if(!t||!t.trim())return;
+    rg.selectNodeContents(node);const r=rg.getBoundingClientRect();if(!r.width)return;
+    x.font=`${cs.fontSize} ${cs.fontFamily}`;x.direction=cs.direction==='rtl'?'rtl':'ltr';x.textAlign='left';x.textBaseline='alphabetic';
+    const m=x.measureText(t),A=m.fontBoundingBoxAscent,D=m.fontBoundingBoxDescent;if(A==null||D==null||!m.width)return;
+    const base=r.top+(r.height-(A+D))/2+A;
+    x.save();x.translate(r.left,base);x.scale(r.width/m.width,1);
+    x.fillStyle=cs.color;x.fillText(t,0,0);
+    const sw=parseFloat(cs.webkitTextStrokeWidth)||0;
+    if(sw>0){x.lineWidth=sw;x.lineJoin='round';x.strokeStyle=cs.webkitTextStrokeColor||cs.color;x.strokeText(t,0,0)}
+    x.restore()};
+  words.forEach(w=>{for(const n of w.childNodes)if(n.nodeType===3)text(n,css.get(w))});
+  lines.querySelectorAll('.bsm').forEach(b=>{const cs=getComputedStyle(b);for(const n of b.childNodes)if(n.nodeType===3)text(n,cs)});
+  el._snapOK=true;
+  /* الصفحات المجهّزة خلف الخلفية تبقى صورة من الآن؛ والظاهرة تتحول إلى صورة عند بدء السحب فقط */
+  if(!snapShown(el))el.classList.add('snapped');
+}
+function snapOn(els){if(SNAP)els.forEach(el=>{if(el._snapOK)el.classList.add('snapped')})}
+/* إظهار النص الحي بعد أن تستقر الصفحة بقليل، إلا إن بدأ سحب جديد */
+function snapReveal(){if(!SNAP)return;clearTimeout(snapReveal._t);snapReveal._t=setTimeout(()=>{
+  if(drag||sx!=null){snapReveal();return}
+  [$('page'),COMP].forEach(el=>{if(el)el.classList.remove('snapped')});
+  snapQueue($('page'));snapQueue(COMP)},350)}
 function dragReset(){if(rafX){cancelAnimationFrame(rafX);rafX=0}if(!drag)return;const d=drag;drag=null;if(EXP)expStripsOff();if(d.anims)d.anims.forEach(a=>a.cancel());if(d.badge)d.badge.remove();
   if(d.track)setX(d.track,0);
   d.cur.forEach(el=>{setX(el,0);el.style.transform='';el.style.zIndex='';el.style.willChange=''});
-  d.nb.forEach(el=>{setX(el,0);parkPage(el);if(d.track)document.body.appendChild(el)})}
+  d.nb.forEach(el=>{setX(el,0);parkPage(el);if(d.track)document.body.appendChild(el)});snapReveal()}
 let tTarget=null,rafX=0;
 /* نرسم آخر موضع لمس مرة واحدة في إطار الشاشة، دون تأخير متغيّر. */
 let tS=[];
@@ -1555,6 +1657,7 @@ addEventListener('touchstart',e=>{
 },{passive:true});
 function startTurn(to,dir,want,nb){
   const B=$('page'),curEls=COMP?[B,COMP]:[B];
+  snapOn([...curEls,...nb]);
   curEls.forEach(el=>el.style.zIndex=2);nb.forEach(el=>{el.style.zIndex=1;el._b=null;setX(el,0)});expStripsOn(curEls);const out=nb.filter(el=>!el.isConnected);if(out.length)pageEls().pop().after(...out);
   /* المجموعة المجاورة تلتصق بحافة المجموعة الحالية تمامًا */
   const box=els=>{const r=els.map(e=>e.getBoundingClientRect());return{l:Math.min(...r.map(x=>x.left)),r:Math.max(...r.map(x=>x.right))}};
@@ -1717,7 +1820,7 @@ function adoptPage(d){
   /* الصفحة الظاهرة أول الصفحات ترتيبًا (عليها يُعتمد في بقية التطبيق)، وما قبلها من الصفحات المخفية يُنقل بعدها */
   {const a=pageEls(),i=a.indexOf(d.nb[0]);if(i>0)a[a.length-1].after(...a.slice(0,i))}
   cur=to;closeAll(true);save('lastPage',to);updBack();if(K.active==='hifz'){K.hifz.page=to;save('khatmas',K)}
-  pageChrome(to);
+  pageChrome(to);snapReveal();
   [to+1,to-1,to+2,to-2,to+3].forEach(n=>{if(n>=1&&n<=604)pageFont(n).catch(()=>{})});
   schedulePre();animateDeferredTurn();
 }
@@ -1849,7 +1952,7 @@ if(/[?&]perf\b/.test(location.search))(function(){
   const wrap=name=>{const f=window[name];if(typeof f!=='function')return;
     window[name]=function(){const t=performance.now();try{return f.apply(this,arguments)}finally{const ms=performance.now()-t;if(ms>=1)log(name,t,ms)}}};
   ['onTMove','onTEnd','prerenderOne','prerenderNeighbors','renderPage','fillMarkers','adoptPage','dragReset','springTo','makeBadge',
-   'pageChrome','closeAll','show','updBack','save','layout','schedulePre','clearPre','keepAwake','updClock','asTick','toggleBars','buildBanner','loadFont'].forEach(wrap);
+   'pageChrome','closeAll','show','updBack','save','layout','schedulePre','clearPre','keepAwake','updClock','asTick','toggleBars','buildBanner','loadFont','snapDraw'].forEach(wrap);
   /* الخطوط: متى طُلب خط الصفحة ومتى أُضيف إلى الصفحة (إضافته قد تُعيد حساب أنماط الصفحة كلها) */
   const add=document.fonts.add.bind(document.fonts);
   document.fonts.add=function(f){const t=performance.now();try{return add(f)}finally{log('font+ '+f.family,t,performance.now()-t)}};
@@ -1876,7 +1979,7 @@ if(/[?&]perf\b/.test(location.search))(function(){
     const b=(t,f)=>{const x=document.createElement('button');x.textContent=t;x.style.cssText='font:13px -apple-system,sans-serif;padding:4px 10px';x.onclick=f;h.appendChild(x)};
     b('تحديث',draw);b('مسح',()=>{EV.length=0;LONG.length=0;for(const k in TOT)delete TOT[k];draw()});b('إغلاق',()=>pan.style.display='none');
     const txt=document.createElement('div');
-    txt.textContent=`${navigator.userAgent.match(/(iPhone|iPad|Macintosh|Android)[^;)]*/)?.[0]||''}  ${innerWidth}x${innerHeight} dpr=${devicePixelRatio}${EXP?'  [تجربة exp]':''}\n\n`+
+    txt.textContent=`${navigator.userAgent.match(/(iPhone|iPad|Macintosh|Android)[^;)]*/)?.[0]||''}  ${innerWidth}x${innerHeight} dpr=${devicePixelRatio}${EXP?'  [تجربة exp]':''}${SNAP?'  [تجربة snap]':''}\n\n`+
       `== إطارات تأخرت (الأحدث أولًا): الوقت، المدة، ما جرى فيها ==\n${lf||'—'}\n\n== مجموع كل دالة (ملّي ثانية) ==\n${tot||'—'}`;
     pan.append(h,txt)};
   btn.onclick=()=>{if(pan.style.display==='none'){draw();pan.style.display='block'}else pan.style.display='none'};

@@ -295,6 +295,8 @@ body.night #srch{--s-bg:#1f1f1c;--s-card:#2a2925;--s-seg:#34332d;--s-ol:#a9c27a;
 #backBtn[hidden]{display:none}
 #backBtn svg{width:30px;height:30px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
 .hzb{position:fixed;left:0;top:0;z-index:3;pointer-events:none;will-change:transform}
+/* صفحات المصحف طبقات جاهزة للحركة مسبقًا فلا تتعثر بداية السحب (عدا وضع التمرير في الجوال أفقيًا) */
+#page:not(.scrolly){will-change:transform}
 .hzb img{width:100%;height:100%;display:block;-webkit-user-drag:none}
 .hzb .t{position:absolute;left:15%;right:15%;top:38%;bottom:38%;white-space:nowrap;display:flex;align-items:center;justify-content:center;text-align:center;color:#2b4a2b;font-family:var(--sys);font-weight:700;font-size:calc(var(--hw,90px)*.17);line-height:1.35}
 .hzb .t.s{font-size:calc(var(--hw,90px)*.118)}
@@ -1542,6 +1544,19 @@ function springTo(d,target,v0,fin){
   const pos=x=>{d.cur.forEach(el=>setX(el,x));d.nb.forEach(el=>setX(el,d.off+x));if(d.badge)setB(d.badge,d.bx+x)};
   if(D<0.5){pos(target);fin();return}
   const w=18,B=v0+w*A,t0=performance.now();
+  /* يُحسب منحنى النابض كاملًا مرة واحدة ثم يؤديه المتصفح نفسه بانتقال CSS بمنحنى linear()،
+     فلا يفوته إطار مهما انشغلت الصفحة؛ وإن لم يدعمه الجهاز بقيت الحركة بالإطارات كما هي */
+  if(window.CSS&&CSS.supports&&CSS.supports('transition-timing-function','linear(0, 1)')){
+    let T=0;for(;T<1.2;T+=1/120){const e=Math.exp(-w*T);if(Math.abs((A+B*T)*e)<1&&Math.abs((v0-w*B*T)*e)<30)break}
+    T=Math.max(T,1/60);const N=Math.max(2,Math.round(T*60)),pts=[];
+    for(let i=0;i<=N;i++){const t=T*i/N,pr=i===N?1:1-(A+B*t)*Math.exp(-w*t)/A;pts.push(`${pr.toFixed(4)} ${(100*i/N).toFixed(2)}%`)}
+    const tr=`transform ${T.toFixed(3)}s linear(${pts.join(', ')})`,els=[...d.cur,...d.nb];
+    pos(x0);if(els[0])getComputedStyle(els[0]).transform;if(d.badge)getComputedStyle(d.badge).transform;
+    d.cur.forEach(el=>{setX(el,target,T);el.style.transition=tr});
+    d.nb.forEach(el=>{setX(el,d.off+target,T);el.style.transition=tr});
+    if(d.badge){setB(d.badge,d.bx+target,T);d.badge.style.transition=tr}
+    d.t=Date.now();setTimeout(()=>{if(drag===d){d.t=Date.now();fin()}},T*1000+30);return;
+  }
   const step=now=>{if(drag!==d)return;const t=(now-t0)/1000,e=Math.exp(-w*t),x=target+(A+B*t)*e,v=(v0-w*B*t)*e;
     if((Math.abs(x-target)<1&&Math.abs(v)<30)||t>1.2){pos(target);d.t=Date.now();fin();return}
     pos(x);d.t=Date.now();requestAnimationFrame(step)};

@@ -1,0 +1,1887 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no, maximum-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="icon" href="data:image/png;base64,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">
+<meta name="color-scheme" content="light">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri+Quran&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+<title>رِواء</title>
+<meta name="apple-mobile-web-app-title" content="رِواء">
+<meta name="application-name" content="رِواء">
+<link rel="apple-touch-icon" sizes="180x180" href="data:image/jpeg;base64,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">
+<style>
+:root{--paper:#FFF7F3;--edge:#7a9a88;--ink:#000;--muted:#6f8f7f;--sel:rgba(214,170,60,.35);--ui:#fdfaf4;--uitx:#222;--line:#e6e0d2;--acc:#3f6b3f;--acc2:#5f7a3a;
+  --lib:#f2eeea;--card:#fcfaf6;--tlab:#9a8a73;--qv:#8b1f1f;--ref:#a09484;
+  --c-h:#b30000;--c-i:#9a009a;--c-m:#d96f00;--c-w:#005c00;--c-n:#0000b3;
+  --hl-y:rgba(255,214,0,.38);--hl-g:rgba(76,175,80,.30);--hl-b:rgba(66,133,244,.28);--hl-p:rgba(233,30,99,.25);--hl-o:rgba(255,152,0,.32);
+  --sys:-apple-system,"SF Arabic","SF Pro Text",system-ui,"Segoe UI",Tahoma,sans-serif}
+body.night{--paper:#1c1c1a;--edge:#2b3a32;--ink:#e9e4d6;--muted:#9fb8a9;--ui:#262624;--uitx:#eee;--line:#3a3833;--lib:#1f1e1c;--card:#2a2926;--tlab:#b9a98f;--qv:#e08a7a;--ref:#9a8f80}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--edge);overflow:hidden;font-family:var(--sys);-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+button{font:inherit;cursor:pointer;color:inherit}
+svg.i{width:1.35em;height:1.35em;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;vertical-align:middle}
+/* ---------- page ---------- */
+#pageTrack{position:absolute;inset:0;transform:translate3d(0,0,0);will-change:transform;pointer-events:none}
+#pageTrack #page{pointer-events:auto}
+#page{position:absolute;inset:0;margin:auto;background:var(--paper);display:flex;flex-direction:column;padding:env(safe-area-inset-top,0) 0 env(safe-area-inset-bottom,0)}
+#page.odd{border-radius:0 16px 16px 0;box-shadow:3px 0 0 #f4f0e7,4px 0 0 #d8d1c3,7px 0 0 #f4f0e7,8px 0 0 #d8d1c3,11px 0 0 #f4f0e7,12px 0 0 #cfc7b8}
+#page.even{border-radius:16px 0 0 16px;box-shadow:-3px 0 0 #f4f0e7,-4px 0 0 #d8d1c3,-7px 0 0 #f4f0e7,-8px 0 0 #d8d1c3,-11px 0 0 #f4f0e7,-12px 0 0 #cfc7b8}
+body.night #page.odd,body.night #page.even{box-shadow:none}
+/* Isolate decorative edge shimmer without changing page geometry or turn timing. */
+html.plain-turn-edge #page.odd,html.plain-turn-edge #page.even{box-shadow:none}
+.bar{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:.5em;color:var(--acc);font-weight:500;font-size:clamp(12px,1.83vh,18px);padding:.55em 1.4em .15em;white-space:nowrap}
+.bar #sname{justify-self:start;overflow:hidden;text-overflow:ellipsis}
+.bar #juz{justify-self:end;display:inline-flex;align-items:center;gap:.35em}
+.bar .face{height:1.25em;width:auto;flex:none;direction:ltr}
+
+body.night .bar{color:#9fc29f}
+/* خلفية سوداء في الوضع الليلي */
+body.night.black{--paper:#000;--edge:#000}
+/* تصميم الصفحة: ملء الشاشة (دون حواف المصحف) */
+body.fill{--edge:var(--paper)}
+body.fill #page.odd,body.fill #page.even{box-shadow:none;border-radius:0}
+/* الساعة أعلى الصفحة */
+.clk{display:none;position:absolute;top:env(safe-area-inset-top,0px);left:0;right:0;text-align:center;font-size:clamp(10px,1.45vh,14px);line-height:1.7;color:var(--muted);pointer-events:none;direction:rtl}
+body.clk .clk{display:block}
+body.clk #page .bar{padding-top:1.75em}
+/* رمز الحزب داخل الصفحة (في الهامش الداخلي) */
+.hzm{position:absolute;z-index:1;pointer-events:none}
+.hzm img{width:100%;height:100%;display:block;-webkit-user-drag:none}
+.hzm .t{position:absolute;left:15%;right:15%;top:38%;bottom:38%;white-space:nowrap;display:flex;align-items:center;justify-content:center;text-align:center;color:#2b4a2b;font-family:var(--sys);font-weight:700;font-size:calc(var(--hw,90px)*.17);line-height:1.35}
+.hzm .t.s{font-size:calc(var(--hw,90px)*.118)}
+.foot{justify-content:center;padding:.1em 0 .6em}
+#lines{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;min-height:0}
+#page.scrolly{overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+#page.scrolly #lines{flex:none;padding-bottom:1.2em}
+.line{position:relative;display:flex;align-items:center;white-space:nowrap;direction:rtl;color:var(--ink);-webkit-text-stroke:.006em currentColor}
+.line.just{justify-content:space-between}
+.line.center{justify-content:center}
+.line.center .w{margin:0 calc(.07em - .32em)}
+/* بعض حروف خط المصحف تمتد خارج حدود كلمتها (كألف «مَّا»)، فإذا مُدّت الكلمة قُصّ الزائد؛
+   نوسّع مساحة رسم الكلمة دون أن يتغير موضعها أو المسافات بين الكلمات */
+.line .w{padding:0 .32em;margin:0 -.32em;background-clip:content-box}
+.w{cursor:pointer;border-radius:.15em;line-height:1}
+.w.sel{background:var(--sel)!important}
+.w.d-h{color:var(--c-h)}.w.d-i{color:var(--c-i)}.w.d-m{color:var(--c-m)}.w.d-w{color:var(--c-w)}.w.d-n{color:var(--c-n)}
+body.nodiff .w[class*="d-"]{color:inherit}body.nodiff .dot{display:none}
+.w.hl-y{background:var(--hl-y)}.w.hl-g{background:var(--hl-g)}.w.hl-b{background:var(--hl-b)}.w.hl-p{background:var(--hl-p)}.w.hl-o{background:var(--hl-o)}
+.num{color:var(--ink)!important;position:relative;z-index:0}
+.num .mkf{position:absolute;left:0;top:0;z-index:-1;pointer-events:none;max-width:none}
+.ar{width:1em;height:1em;vertical-align:-.15em;fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round;margin:0 .15em}
+.dot{position:absolute;top:50%;width:7px;height:7px;margin-top:-3.5px;border-radius:50%;-webkit-text-stroke:0;pointer-events:none}
+.hdr{position:relative;display:flex;align-items:center;justify-content:center}
+.hdr img{width:100%;height:100%;display:block;filter:brightness(.86) saturate(1.25) contrast(1.06)}
+.hdr.baked img{filter:none}
+.hdr svg{position:absolute;height:62%;top:19%;overflow:visible}
+.hdr svg path{fill:#141414;stroke:var(--mk,#dcebd2);stroke-width:2;stroke-linejoin:round}
+.bsm{display:flex;justify-content:center;align-items:center;font-family:bsml;color:var(--ink);-webkit-text-stroke:.012em var(--paper);paint-order:fill stroke;direction:ltr;unicode-bidi:bidi-override}
+/* ---------- bars ---------- */
+#top{position:fixed;left:0;right:0;top:0;z-index:4;background:var(--ui);color:var(--acc);display:flex;align-items:center;gap:.4em;
+  padding:calc(env(safe-area-inset-top,0) + .55em) 1em .55em;border-bottom:1px solid var(--line);transform:translateY(-110%);transition:transform .2s}
+#top.open,#bot.open{transform:none}
+#top button{background:none;border:0;padding:.25em .45em;font-size:20px;color:var(--acc)}
+#top .sideic{padding:.25em .45em;font-size:20px;color:var(--acc)}
+#top>button,#top .sideic{display:inline-flex;align-items:center;justify-content:center;height:2em;line-height:1}
+#top>button svg.i,#top .sideic svg.i{display:block}
+#sideIc.r .ll,#sideIc.l .rl{display:none}
+#top .sp{flex:1;min-width:0;text-align:center;color:var(--muted);font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cal{position:relative;display:inline-flex;align-items:center;justify-content:center}
+.cal b{position:absolute;font-size:10px;top:52%;transform:translateY(-35%);font-weight:700}
+#bot{position:fixed;left:0;right:0;bottom:0;z-index:4;background:var(--ui);border-top:1px solid var(--line);padding:.8em 1.2em calc(.8em + env(safe-area-inset-bottom,0));
+  transform:translateY(110%);transition:transform .2s;display:flex;align-items:center;gap:.8em}
+/* رقم الصفحة على مؤشر المسطرة */
+.slw{flex:1;position:relative;display:flex;align-items:center}
+#slTag{position:absolute;top:50%;width:46px;height:24px;margin-top:-12px;line-height:24px;text-align:center;direction:ltr;unicode-bidi:isolate;border-radius:12px;background:var(--acc);color:#fff;font-size:14px;font-weight:600;pointer-events:none}
+#slider{flex:1;width:100%;border:0;padding:0;margin:0;border-radius:0;box-shadow:none;outline:none;direction:rtl;-webkit-appearance:none;appearance:none;height:26px;background:transparent}
+#slider::-webkit-slider-runnable-track{height:24px;border-radius:12px;background:var(--line)}
+#slider::-webkit-slider-thumb{-webkit-appearance:none;width:46px;height:24px;border-radius:12px;background:transparent;border:0;box-shadow:none;margin-top:0}
+#slider::-moz-range-thumb{width:46px;height:24px;border:0;background:transparent}
+#bubble{position:fixed;bottom:calc(4.4em + env(safe-area-inset-bottom,0));left:50%;transform:translateX(-50%);background:var(--acc);color:#fff;border-radius:10px;padding:.25em .9em;font-size:15px;display:none;z-index:5}
+#here{background:var(--acc);color:#fff;border:0;border-radius:20px;padding:.35em 1em;font-size:15px;display:none;white-space:nowrap}
+#here.on{display:block}
+/* أيقونة «وصلتُ هنا» وزر التصفح المتحرك */
+#here{padding:.3em .85em;line-height:0}
+#here svg,#autoBtn svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;display:block}
+#autoBtn{flex:none;display:none;background:none;color:var(--acc);border:1.6px solid var(--acc);border-radius:20px;padding:.25em .8em;line-height:0}
+#autoBtn.show{display:block}
+#autoBtn.on{background:var(--acc);color:#fff}
+#autoMenu{min-width:210px}
+#autoMenu button{padding:.6em 1.1em;font-size:16px}
+#autoMenu .ck{color:var(--acc);font-weight:700}
+/* ---------- generic overlays ---------- */
+.dim{position:fixed;inset:0;background:rgba(0,0,0,.42);z-index:6;display:none}
+.dim.open{display:block}
+.sheet{position:fixed;left:0;right:0;bottom:0;background:var(--ui);color:var(--uitx);border-radius:18px 18px 0 0;box-shadow:0 -6px 24px rgba(0,0,0,.18);
+  padding:1em 1.2em calc(1em + env(safe-area-inset-bottom,0));transform:translateY(110%);transition:transform .22s;z-index:7;max-height:80vh;display:flex;flex-direction:column}
+.sheet.open{transform:none}
+.sheet>*{flex:none}.sheet>.bd{flex:1 1 auto;min-height:0}
+.hd{display:flex;align-items:center;gap:.5em;margin-bottom:.5em;font-weight:700;font-size:18px}
+.hd .sp{flex:1}
+.x{border:0;background:none;font-size:24px;color:#999;padding:0 .2em}
+.bd{overflow:auto;font-size:var(--tsize,19px);line-height:1.95;-webkit-user-select:text;user-select:text}
+.just-t{text-align:justify;text-justify:inter-word}
+.k{color:var(--acc);font-weight:700}
+.mini{border:1px solid var(--line);background:none;color:var(--acc);border-radius:20px;padding:.15em .9em;font-size:15px}
+.pill{appearance:none;-webkit-appearance:none;border:0;background:#ebe7df;color:var(--acc2);border-radius:28px;padding:.45em 2.2em .45em 1.3em;font:inherit;font-size:18px;
+  background-image:linear-gradient(45deg,transparent 50%,var(--acc2) 50%),linear-gradient(135deg,var(--acc2) 50%,transparent 50%);background-position:1.0em 55%,1.4em 55%;background-size:.4em .4em;background-repeat:no-repeat}
+body.night .pill{background-color:#3a3833}
+.tabs{display:flex;gap:.35em;overflow-x:auto;padding-bottom:.4em;margin-bottom:.4em;border-bottom:1px solid var(--line)}
+.tabs button{flex:none;border:1px solid var(--line);background:none;border-radius:20px;padding:.2em .9em;font-size:15px}
+.tabs button.on{background:var(--acc);color:#fff;border-color:var(--acc)}
+.acts{display:flex;justify-content:space-around;background:#d8d8c4;color:#3a3a2a;padding:.55em .3em;margin:0 -1.2em -1em;border-radius:0 0 18px 18px}
+body.night .acts{background:#3a3a30;color:#ddd}
+.sheet .acts{margin:.6em -1.2em calc(-1em - env(safe-area-inset-bottom,0));padding-bottom:calc(.55em + env(safe-area-inset-bottom,0));border-radius:0}
+.acts button{background:none;border:0;display:flex;flex-direction:column;align-items:center;gap:.15em;font-size:14px;padding:.1em .5em}
+.acts button.on{color:var(--acc)}
+.shu{margin-top:.2em;padding:.35em .8em;border-radius:10px;background:rgba(77,122,94,.08)}
+.qt{font-family:"Amiri Quran",Amiri,serif;font-size:1.15em}
+.qv{color:var(--qv)}
+.ref{color:var(--ref)}
+/* center pop */
+#pop{position:fixed;left:50%;top:50%;transform:translate(-50%,-46%) scale(.97);opacity:0;pointer-events:none;transition:all .18s;z-index:7;
+  width:min(92vw,600px);max-height:78vh;background:var(--ui);color:var(--uitx);border-radius:20px;box-shadow:0 12px 40px rgba(0,0,0,.25);
+  display:flex;flex-direction:column;padding:1em 1.2em 1em;overflow:hidden}
+#pop.open{opacity:1;pointer-events:auto;transform:translate(-50%,-50%)}
+#pop .top{display:flex;justify-content:center;margin-bottom:.6em}
+#pop .bd{flex:1 1 auto;min-height:0}
+/* full panel (word) */
+#full{position:fixed;inset:0;z-index:7;background:var(--ui);color:var(--uitx);display:none;flex-direction:column;padding:calc(env(safe-area-inset-top,0) + .8em) 1.2em 0}
+#full.open{display:flex}
+#full .ay{font-family:"Amiri Quran",Amiri,serif;font-size:24px;line-height:2;text-align:center;color:#8a8a8a;margin:.4em 0}
+#full .ay .hw{color:var(--qv)}
+#full .big{font-family:"Amiri Quran",Amiri,serif;font-size:64px;text-align:center;color:var(--acc2);margin:.2em 0 .4em}
+#full .bd{flex:1;text-align:center}
+#full .ctl{display:flex;justify-content:space-around;color:var(--acc2);padding:.6em 0;font-size:20px}
+#full .ctl button{background:none;border:0;color:var(--acc2)}
+#full .acts{margin:0 -1.2em;border-radius:0;background:var(--acc2);color:#fff;padding-bottom:calc(.6em + env(safe-area-inset-bottom,0))}
+/* library */
+#lib{position:fixed;inset:0;z-index:8;background:var(--lib);color:var(--uitx);display:none;flex-direction:column;font-family:var(--sys)}
+#lib.open{display:flex}
+#lib .lh{display:flex;align-items:center;padding:calc(env(safe-area-inset-top,0) + .9em) 1.1em .7em;border-bottom:1px solid var(--line)}
+#lib .lh .ttl{flex:1;text-align:center;font-weight:700;font-size:21px}
+#lib .lh .ref2{color:var(--acc);font-size:19px;min-width:6em;text-align:right;display:flex;align-items:center;gap:.2em;justify-content:flex-start}
+#lib .xw{min-width:6em;display:flex;justify-content:flex-end}
+#lib .xc{width:42px;height:42px;border-radius:50%;background:#e2dbd1;border:0;color:#6b5a48;font-size:20px;display:flex;align-items:center;justify-content:center}
+#lib .lb{flex:1;overflow:auto;padding:1.2em 1.1em 2em;-webkit-overflow-scrolling:touch}
+#lib .ayah{text-align:center;direction:rtl;overflow-wrap:break-word;max-width:100%;color:var(--ink);font-size:30px;line-height:2.1;margin:.4em .2em 1.4em;-webkit-text-stroke:.012em currentColor}
+#lib .ayah span{margin:0 .05em;display:inline-block}
+#libBody{overflow-x:hidden}
+.tc{margin-bottom:1.6em}
+.tc .tl{display:flex;justify-content:space-between;align-items:center;color:var(--tlab);font-size:18px;padding:0 .6em .45em}
+.tc .dots{background:none;border:0;color:var(--acc);font-size:22px;letter-spacing:2px;line-height:1;padding:0 .2em}
+.tc .card{background:var(--card);border-radius:18px;padding:1em 1.1em;font-size:var(--tsize,19px);line-height:1.95;text-align:justify;-webkit-user-select:text;user-select:text}
+.tc .card .qh{color:var(--qv);font-family:"Amiri Quran",Amiri,serif;border-bottom:1px solid var(--line);padding-bottom:.5em;margin-bottom:.6em}
+#lib .lf{display:flex;align-items:center;gap:.6em;padding:.7em 1.1em calc(.7em + env(safe-area-inset-bottom,0));border-top:1px solid var(--line);background:var(--lib)}
+#lib .lf .nb{width:3.2em;height:2.6em;border-radius:14px;background:#e6e0d6;border:0;color:var(--acc);font-size:20px}
+#lib .lf .cp{flex:1;height:2.6em;border-radius:14px;background:#e6e0d6;border:0;color:var(--acc);font-size:19px}
+#lib .lf .fs{background:none;border:0;color:var(--acc);font-size:22px;font-weight:700;width:2.4em}
+body.night #lib .lf .nb,body.night #lib .lf .cp,body.night #lib .xc{background:#33312d}
+.menu{position:fixed;z-index:9;background:rgba(245,244,242,.98);border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.25);min-width:240px;overflow:hidden;display:none;color:#222}
+.menu.open{display:block}
+.menu button{display:flex;justify-content:space-between;align-items:center;width:100%;border:0;background:none;padding:.8em 1.1em;font-size:17px;border-bottom:1px solid #ddd;text-align:right}
+.menu button:last-child{border-bottom:0}
+.menu .sepr{height:8px;background:#e4e2de}
+/* drawer */
+#drw{position:fixed;top:0;bottom:0;right:0;width:min(100vw,520px);background:#f3efe9;color:#222;z-index:7;transform:translateX(105%);transition:transform .22s;display:flex;flex-direction:column;box-shadow:-6px 0 24px rgba(0,0,0,.18)}
+body.night #drw{background:#232220;color:#eee}
+#drw.open{transform:none}
+#drw .dh{display:flex;align-items:center;gap:.6em;padding:calc(env(safe-area-inset-top,0) + .7em) 1em .7em;border-bottom:1px solid var(--line)}
+.seg{flex:1;display:flex;background:#e7e2da;border-radius:12px;padding:3px;max-width:420px;margin:auto}
+body.night .seg{background:#33312d}
+.seg button{flex:1;border:0;background:none;border-radius:10px;padding:.4em .2em;font-size:15px}
+.seg button.on{background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+body.night .seg button.on{background:#4a4740}
+.back{width:40px;height:40px;border-radius:50%;border:0;background:#e7e2da;color:var(--acc);font-size:20px;flex:none}
+#drw .db{flex:1;display:flex;min-height:0}
+#dlist{flex:1;overflow:auto;padding:0 1em 1em;-webkit-overflow-scrolling:touch}
+#jstrip{width:30px;display:flex;flex-direction:column;justify-content:center;align-items:center;color:var(--acc);font-size:12px;gap:2px;padding:.5em 0}
+#jstrip span{cursor:pointer;padding:1px 4px}
+.gh{color:#8d7c66;font-size:17px;padding:1.1em .2em .3em}
+.row{display:flex;align-items:center;gap:.9em;padding:.65em .1em;border-bottom:1px solid var(--line);cursor:pointer}
+.row .n{width:2.5em;height:2.5em;border-radius:50%;background:#e7e2da;display:flex;align-items:center;justify-content:center;font-size:14px;flex:none}
+body.night .row .n{background:#33312d}
+.row .n.cur{background:#2f7d3a;color:#fff}
+.row .t{flex:1;min-width:0}.row .t b{display:block;font-size:20px;font-weight:700}
+.row .t small{display:block;color:#8d7c66;font-size:14px;margin-top:.15em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .del{border:0;background:none;color:#a33;font-size:20px}
+#drw .dn{display:flex;justify-content:space-around;border-top:1px solid var(--line);padding:.5em 0 calc(.5em + env(safe-area-inset-bottom,0))}
+#drw .dn button{background:none;border:0;display:flex;flex-direction:column;align-items:center;gap:.2em;font-size:13px;color:#8a8a8a}
+#drw .dn button.on{color:var(--acc)}
+.kh{border:1px solid var(--line);border-radius:12px;padding:.7em .9em;margin:.7em 0;background:rgba(255,255,255,.5)}
+body.night .kh{background:rgba(255,255,255,.04)}
+.kh.on{border-color:var(--acc);box-shadow:0 0 0 1px var(--acc)}
+.kh h3{margin:0 0 .3em;font-size:18px;display:flex;justify-content:space-between;align-items:center}
+.kh .meta{color:#8d7c66;font-size:15px;line-height:1.7}
+.prog{height:6px;background:var(--line);border-radius:3px;overflow:hidden;margin:.4em 0}
+.prog i{display:block;height:100%;background:var(--acc)}
+input,select,textarea{font:inherit;padding:.45em .6em;border-radius:8px;border:1px solid var(--line);background:var(--paper);color:var(--uitx);width:100%}
+textarea{min-height:8em;-webkit-user-select:text;user-select:text}
+.set{display:flex;align-items:center;justify-content:space-between;gap:1em;padding:.6em 0;border-bottom:1px solid var(--line);font-size:17px}
+.set label{flex:1}.set select{width:auto;min-width:9em}
+.legend span{display:inline-block;margin:.15em .4em;font-size:15px}
+.legend i{display:inline-block;width:.9em;height:.9em;border-radius:50%;vertical-align:middle;margin-left:.3em}
+.swatches{display:flex;gap:.8em;justify-content:center;padding:.6em 0}
+.swatches button{width:2.4em;height:2.4em;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px #ccc}
+/* tafsir khatma view */
+#tview{position:fixed;inset:0;background:var(--paper);color:var(--ink);z-index:3;display:none;flex-direction:column}
+#tview.open{display:flex}
+#tview .tp{display:flex;align-items:center;gap:.5em;padding:calc(env(safe-area-inset-top,0) + .5em) 1em .4em;border-bottom:1px solid var(--line);color:var(--muted);font-size:16px;flex:none}
+#tview .tp .sp{flex:1;text-align:center}
+#tview .tabs{padding:.4em 1em;margin:0;flex:none}
+#tvBody{overflow:auto;padding:.6em 1.2em 6em;flex:1;-webkit-overflow-scrolling:touch}
+.tv-a{font-family:"Amiri Quran",Amiri,serif;font-size:calc(var(--tsize,19px)*1.35);line-height:2.1;margin:.8em 0 .2em;color:var(--ink)}
+.tv-a .an{color:var(--acc);font-size:.8em}
+.tv-t{font-size:var(--tsize,19px);line-height:1.95;color:var(--uitx);padding:.2em .8em .8em;border-right:3px solid var(--line);text-align:justify}
+.tv-h{text-align:center;color:var(--acc);font-family:"Amiri Quran",Amiri,serif;font-size:1.4em;margin:.6em 0}
+#tvBtns{position:fixed;left:1em;bottom:calc(1em + env(safe-area-inset-bottom,0));display:flex;gap:.5em;z-index:3}
+#msg{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px}
+#toast{position:fixed;top:30%;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.8);color:#fff;padding:.55em 1.3em;border-radius:10px;z-index:20;display:none;font-size:16px}
+.res{padding:.6em .2em;border-bottom:1px solid var(--line);cursor:pointer}
+.res .qt{display:block;color:var(--ink)}.res small{color:var(--muted)}
+.tx.clamp{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:10;line-clamp:10;overflow:hidden}
+.more{display:inline-flex;align-items:center;gap:.25em;margin-top:.35em;background:none;border:0;padding:.2em 0;color:var(--acc);font-size:.85em;font-family:inherit;cursor:pointer}
+.more svg{width:.7em;height:.7em;transition:transform .2s}.more.up svg{transform:rotate(180deg)}
+body.night .more{color:#8fbf8f}
+.jn{font-size:.8em;color:var(--muted);margin-bottom:.4em}
+
+/* ---------- صفحة البحث ---------- */
+#srch{--s-bg:#FFF8F3;--s-card:#F8EFE5;--s-seg:#E6E2D3;--s-ol:#627536;--s-br:#925711;--s-tx:#122B1A;--s-ic:#D3D3BE;
+  position:fixed;inset:0;z-index:9;background:var(--s-bg);color:#242424;display:none;flex-direction:column;font-family:var(--sys)}
+body.night #srch{--s-bg:#1f1f1c;--s-card:#2a2925;--s-seg:#34332d;--s-ol:#a9c27a;--s-br:#d9a35b;--s-tx:#e8e2cf;--s-ic:#3d4433;color:#eee}
+#srch.open{display:flex}
+#srch .sh{position:relative;padding:calc(env(safe-area-inset-top,0px) + .5em) 1em .4em;text-align:center}
+#srch .sx{position:absolute;left:.8em;top:calc(env(safe-area-inset-top,0px) + .35em);width:36px;height:36px;border:0;border-radius:50%;background:var(--s-seg);color:inherit;display:flex;align-items:center;justify-content:center}
+#srch .sx svg,#srch .sclr svg,#srch .smic svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+#srch .stt{font-size:17px;margin:.15em 0 .45em}
+#srch .seg{display:inline-flex;background:var(--s-seg);border-radius:14px;padding:4px;gap:2px}
+#srch .seg button{border:0;background:none;font:inherit;font-size:18px;color:inherit;padding:.38em 1.5em;border-radius:11px}
+#srch .seg button.on{background:var(--s-bg);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+#srch .sbox{display:flex;align-items:center;gap:.6em;background:var(--s-card);border-radius:16px;padding:0 1em;height:64px;margin-top:.7em}
+#srch input{flex:1;min-width:0;border:0;background:none;outline:none;font:inherit;font-size:19px;color:inherit;padding:0;-webkit-appearance:none}
+#srch input::-webkit-search-cancel-button{display:none}
+#srch .sclr{flex:none;width:30px;height:30px;border-radius:50%;border:0;background:var(--s-ol);color:var(--s-bg);display:flex;align-items:center;justify-content:center;padding:0;visibility:hidden}
+#srch .sclr svg{width:16px;height:16px;stroke-width:3}
+#srch .smic{flex:none;border:0;background:none;color:var(--s-ol);padding:.2em}
+#srch .smic svg{width:26px;height:26px}
+#srch .smic.rec{color:#c0392b}
+#srch .sbody{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:.6em 1em calc(1em + env(safe-area-inset-bottom,0px))}
+#srch .ssum{display:flex;align-items:center;justify-content:space-between;gap:.8em;background:var(--s-seg);border-radius:16px;padding:.8em 1em;margin-bottom:.8em}
+#srch .ssum .sl{display:flex;flex-direction:column;align-items:flex-start;gap:.3em;font-size:15px;opacity:.85}
+#srch .scount{min-width:2.2em;height:2em;padding:0 .5em;border-radius:12px;background:linear-gradient(90deg,#8D5D17,#657030);color:#fff;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700;opacity:1}
+#srch .sopt{display:flex;align-items:center;gap:1em;background:var(--s-bg);border-radius:999px;padding:.55em 1.1em;font-size:16px}
+#srch .sopt label{display:flex;align-items:center;gap:.6em}
+#srch .sopt input{width:22px;height:22px;flex:none;accent-color:var(--s-ol)}
+#srch .smore{border:0;background:none;font:inherit;font-size:18px;letter-spacing:.1em;color:inherit;padding:0 .2em}
+#srch .smenu{position:absolute;z-index:2;background:var(--s-bg);border-radius:14px;box-shadow:0 6px 24px rgba(0,0,0,.18);padding:.3em;min-width:12em}
+#srch .smenu button{display:block;width:100%;text-align:right;border:0;background:none;font:inherit;font-size:16px;color:inherit;padding:.6em .9em;border-radius:10px}
+#srch .smenu button.on{background:var(--s-seg);font-weight:700}
+#srch .scard{background:var(--s-card);border-radius:22px;padding:0 1.1em}
+#srch .sr{padding:1em 0 1.1em;border-bottom:2px solid var(--s-bg);cursor:pointer}
+#srch .sr:last-child{border-bottom:0}
+#srch .srt{display:flex;justify-content:space-between;align-items:center;margin-bottom:.5em}
+#srch .srt .ref{display:flex;align-items:center;gap:.6em;color:var(--s-ol);font-weight:700;font-size:18px}
+#srch .srt .bk{width:38px;height:38px;border-radius:10px;background:var(--s-ic);display:flex;align-items:center;justify-content:center;color:var(--s-ol)}
+#srch .srt .bk svg{width:22px;height:22px}
+#srch .srt .pg{background:var(--s-seg);color:var(--s-br);border-radius:12px;padding:.3em .9em;font-size:16px;font-weight:600}
+#srch .stx{font-family:"Amiri Quran",Amiri,serif;font-size:23px;line-height:1.95;color:var(--s-tx);text-align:justify}
+#srch .sempty{text-align:center;opacity:.6;margin-top:2em}
+.kbtn{display:flex;align-items:center;gap:.5em;width:100%;margin:0 0 .8em;padding:.75em 1em;border:1px solid var(--line);border-radius:12px;background:var(--paper);color:var(--acc);font:inherit;font-size:17px;font-weight:600;cursor:pointer}
+.kbtn .i{width:22px;height:22px}
+.set.tvis{flex-direction:column;align-items:stretch}
+.tchk{display:grid;grid-template-columns:1fr 1fr;gap:.45em .8em;margin-top:.5em}
+.tchk label{display:flex;align-items:center;gap:.4em;font-size:16px;font-weight:400}
+.tchk input{width:20px;height:20px;accent-color:var(--acc)}
+#backBtn{flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;background:none;border:0;color:var(--acc);padding:0 .2em;font:inherit;font-size:17px;font-weight:700;line-height:1;cursor:pointer}
+#backBtn[hidden]{display:none}
+#backBtn svg{width:30px;height:30px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.hzb{position:fixed;left:0;top:0;z-index:3;pointer-events:none;will-change:transform}
+/* صفحات المصحف طبقات جاهزة للحركة مسبقًا فلا تتعثر بداية السحب (عدا وضع التمرير في الجوال أفقيًا) */
+#page:not(.scrolly){will-change:transform;transform:translate3d(0,0,0)}
+/* لا يسحب المتصفح صفحات المصحف من تلقاء نفسه (الارتداد الرأسي في سفاري الآيباد)؛ التقليب بالجافاسكربت فلا يتأثر */
+#page:not(.scrolly){touch-action:none}
+.hzb img{width:100%;height:100%;display:block;-webkit-user-drag:none}
+.hzb .t{position:absolute;left:15%;right:15%;top:38%;bottom:38%;white-space:nowrap;display:flex;align-items:center;justify-content:center;text-align:center;color:#2b4a2b;font-family:var(--sys);font-weight:700;font-size:calc(var(--hw,90px)*.17);line-height:1.35}
+.hzb .t.s{font-size:calc(var(--hw,90px)*.118)}
+:root{color-scheme:light}body.night{color-scheme:dark}
+
+/* ===== تعديلات: شعار الحزب، والزران، ونتائج البحث ===== */
+.hzb .t{top:33%;bottom:33%;left:20%;right:20%;flex-direction:column;line-height:1.1}
+.hzb .t.n2{font-size:calc(var(--hw,63px)*.16)}
+.hzb .t.n3{font-size:calc(var(--hw,63px)*.14)}
+.hzb .t.n4{font-size:calc(var(--hw,63px)*.12)}
+#here,#autoBtn{flex:none;box-sizing:border-box;width:46px;height:24px;padding:0;border-radius:12px;align-items:center;justify-content:center;line-height:0}
+#here.on,#autoBtn.show{display:flex}
+#here svg,#autoBtn svg{width:16px;height:16px}
+@font-face{font-family:"KFGQPC Hafs";src:url("uthmanic_hafs_v22.ttf") format("truetype");font-display:swap}
+#srch{--s-card:#F3E6D4;--s-ay:#1E4A2A;--s-gr:#3B7A3F}
+body.night #srch{--s-ay:#cfe3c4;--s-gr:#9fcf8f}
+#srch .srt .ref{color:var(--s-gr)}
+#srch .srt .bk{background:var(--s-ol);color:#fff}
+body.night #srch .srt .bk{color:#1f1f1c}
+#srch .stx{font-family:"KFGQPC Hafs","Amiri Quran",Amiri,serif;color:var(--s-ay)}
+
+/* ===== خط حفص لكلمتي الخلاف، ومنع التكبير ===== */
+.qt.qh{font-family:"KFGQPC Hafs","Amiri Quran",Amiri,serif;font-size:1.25em;line-height:1.6}
+html,body{touch-action:pan-x pan-y}
+</style>
+</head>
+<body>
+<script>if(new URLSearchParams(location.search).get('edge')==='plain')document.documentElement.classList.add('plain-turn-edge');</script>
+<div id="msg">جارٍ التحميل…</div>
+<div id="pageTrack">
+<div id="page" hidden>
+  <div class="clk"></div>
+  <div class="bar"><span id="sname"></span><span id="pno"></span><span id="juz"></span></div>
+  <div id="lines"></div>
+</div>
+</div>
+
+<div id="top">
+  <button onclick="openDrawer('index')" aria-label="الفهرس"><svg class="i" viewBox="0 0 24 24"><path d="M4 6h12M4 12h16M4 18h12"/><circle cx="20" cy="6" r=".6"/><circle cx="20" cy="18" r=".6"/></svg></button>
+  <button onclick="openSearch()" aria-label="البحث"><svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg></button>
+  <span class="sp" id="topInfo"></span>
+  <span id="sideIc" class="sideic" aria-label="جهة الصفحة"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="1.6"/><path d="M12 5v14"/><path class="rl" d="M14.5 9h4M14.5 12h4M14.5 15h4"/><path class="ll" d="M5.5 9h4M5.5 12h4M5.5 15h4"/></svg></span>
+  <button onclick="openSettings()" aria-label="الإعدادات"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4M5.5 5.5l1.7 1.7M16.8 16.8l1.7 1.7M5.5 18.5l1.7-1.7M16.8 7.2l1.7-1.7"/><circle cx="12" cy="12" r="7"/></svg></button>
+</div>
+<div id="bot">
+  <button id="backBtn" onclick="goBack()" hidden aria-label="الرجوع إلى الصفحة السابقة"><svg viewBox="0 0 24 24"><path d="M4 19v-4a6 6 0 0 1 6-6h10"/><path d="M15 4l5 5-5 5"/></svg><span></span></button>
+  <button id="here" onclick="markHere()" aria-label="وصلتُ هنا"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3.5h10a1 1 0 0 1 1 1V20.5l-6-4-6 4V4.5a1 1 0 0 1 1-1z"/><path d="M9.3 9.9l2 2 3.7-3.8"/></svg></button>
+  <div class="slw"><input type="range" id="slider" min="1" max="604" value="1"><span id="slTag"></span></div>
+  <button id="autoBtn" onclick="openAutoMenu(event)" aria-label="التصفح المتحرك"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 7h9M3.5 12h9M3.5 17h9"/><path d="M18 19.5V5M14.6 8.4L18 5l3.4 3.4"/></svg></button>
+</div>
+<div id="bubble"></div>
+
+<div id="tview"><div class="tp"><button class="mini" onclick="show(cur+1)">التالية<svg class="ar" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button><span class="sp" id="tvTitle"></span><button class="mini" onclick="show(cur-1)"><svg class="ar" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>السابقة</button></div>
+  <div class="tabs" id="tvTabs"></div><div id="tvBody"></div></div>
+<div id="tvBtns" style="display:none">
+  <button class="mini" style="background:var(--ui)" onclick="tvMushaf=true;updateTview()">المصحف</button>
+  <button class="mini" style="background:var(--acc);color:#fff;border-color:var(--acc)" onclick="markHere()">وصلتُ هنا</button>
+  <button class="mini" style="background:var(--ui)" onclick="openDrawer('index')">الفهرس</button></div>
+
+<div class="dim" id="dim" onclick="closeAll()"></div>
+
+<div class="sheet" id="sheet"><div class="hd"><span class="sp" id="shTitle"></span><span id="shSel"></span><button class="x" onclick="closeAll()">×</button></div>
+  <div class="bd" id="shBody"></div><div class="acts" id="shActs"></div></div>
+
+<div id="pop"><div class="top" id="popSel"></div><div class="bd" id="popBody"></div><div class="acts" id="popActs" style="margin-top:.8em"></div></div>
+
+<div id="full"><div class="ay" id="fullAy"></div><div class="big" id="fullBig"></div><div class="bd" id="fullBody"></div>
+  <div class="ctl"><button onclick="openLib(panel.ayah)"><svg class="i" viewBox="0 0 24 24"><path d="M14 4h6v6M10 20H4v-6M20 4l-7 7M4 20l7-7"/></svg></button><button onclick="fullStep(-1)" id="fPrev">›</button><button onclick="fullStep(1)" id="fNext">‹</button><button onclick="shareCurrent()"><svg class="i" viewBox="0 0 24 24"><circle cx="18" cy="5.5" r="2.3"/><circle cx="6" cy="12" r="2.3"/><circle cx="18" cy="18.5" r="2.3"/><path d="M8 11l8-4.3M8 13l8 4.3"/></svg></button><button onclick="closeAll()">✕</button></div>
+  <div class="acts" id="fullActs"></div></div>
+
+<div id="lib">
+  <div class="lh"><span class="ref2" id="libRef"></span><span class="ttl">المكتبة</span><span class="xw"><button class="xc" onclick="closeLib()">✕</button></span></div>
+  <div class="lb" id="libBody"></div>
+  <div class="lf"><button class="nb" onclick="libStep(-1)" aria-label="الآية السابقة"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" style="vertical-align:middle"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button class="cp" id="libPill" onclick="openDrawer('index')"></button><button class="nb" onclick="libStep(1)" aria-label="الآية التالية"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" style="vertical-align:middle"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button class="fs" onclick="cycleSize()">عع</button></div>
+</div>
+<div class="menu" id="autoMenu"></div>
+<div class="menu" id="tmenu">
+  <button onclick="menuAct('img')">مشاركة صورة <svg class="i" viewBox="0 0 24 24"><circle cx="18" cy="5.5" r="2.3"/><circle cx="6" cy="12" r="2.3"/><circle cx="18" cy="18.5" r="2.3"/><path d="M8 11l8-4.3M8 13l8 4.3"/></svg></button>
+  <button onclick="menuAct('txt')">مشاركة نص <svg class="i" viewBox="0 0 24 24"><circle cx="18" cy="5.5" r="2.3"/><circle cx="6" cy="12" r="2.3"/><circle cx="18" cy="18.5" r="2.3"/><path d="M8 11l8-4.3M8 13l8 4.3"/></svg></button>
+  <div class="sepr"></div>
+  <button onclick="menuAct('err')">إبلاغ عن خطأ <svg class="i" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/><path d="M12 8v4M12 14.2v.3"/></svg></button>
+</div>
+
+<div id="drw">
+  <div class="dh"><div class="seg" id="dseg"></div><button class="back" onclick="closeAll()">‹</button></div>
+  <div class="db"><div id="dlist"></div><div id="jstrip"></div></div>
+  <div class="dn">
+    <button data-t="index" onclick="drawerTab('index')"><svg class="i" viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1"/><circle cx="4.5" cy="12" r="1"/><circle cx="4.5" cy="18" r="1"/></svg>الفهرس</button>
+    <button data-t="khatma" onclick="drawerTab('khatma')"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M8 12.3l2.8 2.8L16.3 9.5"/></svg>الختمة</button>
+    <button data-t="marks" onclick="drawerTab('marks')"><svg class="i" viewBox="0 0 24 24"><path d="M6.5 3.5h11v17l-5.5-4-5.5 4z"/></svg>الفواصل</button>
+    <button data-t="hl" onclick="drawerTab('hl')"><svg class="i" viewBox="0 0 24 24"><path d="M14.5 4.5l5 5L10 19H5v-5z"/><path d="M3 21h18"/></svg>التمييزات</button>
+  </div>
+</div>
+
+<div class="sheet" id="aux"><div class="hd"><span class="sp" id="auxTitle"></span><button class="x" onclick="closeAll()">×</button></div><div class="bd" id="auxBody"></div></div>
+<div id="srch"><div class="sh">
+  <button class="sx" onclick="closeSearch()" aria-label="إغلاق"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  <div class="stt">البحث حسب</div>
+  <div class="seg" id="sseg"><button data-m="text" class="on">النص</button><button data-m="root">الجذر</button><button data-m="mean">المعنى</button></div>
+  <div class="sbox"><button class="sclr" id="sclr" aria-label="مسح"><svg viewBox="0 0 24 24"><path d="M8 8l8 8M16 8l-8 8"/></svg></button><input id="sq" type="search" enterkeyhint="search" autocomplete="off" autocorrect="off" spellcheck="false" placeholder="اكتب كلمة أو جزءًا من آية"><button class="smic" id="smic" aria-label="البحث بالصوت"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg></button></div>
+</div><div class="sbody" id="sres"></div></div>
+<div id="toast"></div>
+
+<script>
+const FONT_BASE='https://raw.githubusercontent.com/zonetecde/mushaf-layout/refs/heads/v2/fonts/QPC2/';
+const TAF_BASE=['https://raw.githubusercontent.com/spa5k/tafsir_api/main/tafsir/','https://cdn.jsdelivr.net/gh/spa5k/tafsir_api@main/tafsir/'];
+const TAFSIRS=[['ar-tafsir-al-mukhtasar','المختصر'],['my','تفسيري'],['ar-tafsir-muyassar','التفسير الميسر'],['ar-tafseer-al-saddi','تفسير السعدي'],
+  ['ar-tafsir-ibn-kathir','تفسير ابن كثير'],['ar-tafsir-al-baghawi','تفسير البغوي'],['ar-tafsir-al-tabari','تفسير الطبري']];
+/* تفسيري: ملف my-tafsir.json بجانب التطبيق — يظهر خياره فقط في الآيات التي لها تفسير فيه */
+const MYI=TAFSIRS.findIndex(t=>t[0]==='my');let MYT=null,myLoading=null;
+function loadMy(){return myLoading||(myLoading=fetch('my-tafsir.json').then(r=>r.ok?r.json():null).then(j=>{MYT=j||{e:{},a:{}};return MYT}).catch(()=>{MYT={e:{},a:{}};return MYT}))}
+const myKey=k=>!MYT?null:(MYT.e[k]!=null?k:(MYT.a[k]||null));
+const hasMy=k=>!!myKey(k);
+const DIFF_NAMES={h:'حرف يخالف حفصًا',i:'إدغام كامل',m:'إمالة وصلًا ووقفًا',w:'إمالة وقفًا فقط',n:'إدغام ناقص بغنة'};
+const KH=[['hifz','ختمة الحفظ'],['tilawa','ختمة التلاوة'],['tafsir','ختمة التفسير']];
+const HLC=[['y','أصفر'],['g','أخضر'],['b','أزرق'],['p','وردي'],['o','برتقالي']];
+const AR=n=>String(n).replace(/\d/g,d=>'٠١٢٣٤٥٦٧٨٩'[d]);
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let Q,M,LAYOUT,NAMES={},DIFFS={},QUARTERS=[],AYTOK={},cur=1,surahFirst={},loaded={},selEl=null;
+
+/* ---------- storage ---------- */
+function load(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}}
+function save(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+let S=Object.assign({tafsir:0,tsize:19,night:false,diffs:true,mode:'bottom'},load('settings',{}));
+/* بعد نقل «تفسيري» إلى المرتبة الثانية: يبقى التفسير الافتراضي المحفوظ كما اختاره المستخدم */
+if(S.tord!==2){const OLD=['ar-tafsir-al-mukhtasar','ar-tafsir-muyassar','ar-tafseer-al-saddi','ar-tafsir-ibn-kathir','ar-tafsir-al-baghawi','ar-tafsir-al-tabari','my'];
+  S.tafsir=Math.max(0,TAFSIRS.findIndex(t=>t[0]===OLD[S.tafsir]));S.tord=2;save('settings',S)}
+let K=load('khatmas',{active:'hifz',hifz:{page:1,wird:1},tilawa:{page:1,wird:20},tafsir:{page:1,wird:2}});
+let BM=load('bookmarks',[]),HL=load('highlights',{}),NT=load('notes',{});
+function toast(t){const e=$('toast');e.textContent=t;e.style.display='block';clearTimeout(e._t);e._t=setTimeout(()=>e.style.display='none',1700)}
+
+/* ---------- fonts ---------- */
+const readyFonts=new Set();
+function loadFont(fam,url){
+  if(loaded[fam])return loaded[fam];
+  const f=new FontFace(fam,`url(${url})`);
+  loaded[fam]=f.load().then(x=>{document.fonts.add(x);readyFonts.add(fam);return x}).catch(e=>{delete loaded[fam];throw e});
+  return loaded[fam];
+}
+const pageFont=p=>loadFont('p'+p,FONT_BASE+'p'+String(p).padStart(3,'0')+'.woff2');
+
+/* ---------- helpers ---------- */
+const sname=s=>Q.surahs[s-1][0];
+const ayRef=k=>{const[s,a]=k.split(':');return `${sname(s)}: ${AR(a)}`};
+/* الحزب والربع الذي تكون فيه الصفحة (آخر ربع بدأ فيها أو قبلها) */
+function quarterOf(p){let qi=-1;for(let i=0;i<QUARTERS.length;i++){if(Q.ayahPage[QUARTERS[i]]<=p)qi=i;else break}return qi}
+function ringSVG(q){   // دائرة الربع: يُلوَّن منها ما بلغته الصفحة من الحزب
+  const r=9,c=11,parts=q+1;let fill='';
+  if(parts>=4)fill=`<circle cx="${c}" cy="${c}" r="${r}" fill="currentColor"/>`;
+  else{const a=parts*Math.PI/2,x=c+r*Math.sin(a),y=c-r*Math.cos(a);fill=`<path d="M${c},${c} L${c},${c-r} A${r},${r} 0 ${parts>2?1:0} 1 ${x.toFixed(2)},${y.toFixed(2)} Z" fill="currentColor"/>`}
+  return `<svg class="ring" viewBox="0 0 22 22">${fill}<circle cx="${c}" cy="${c}" r="${r}" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M${c-r} ${c}h${2*r}M${c} ${c-r}v${2*r}" stroke="currentColor" stroke-width=".9" opacity=".55"/></svg>`;
+}
+/* الجزء ورقم الربع فيه من ثمانية، ثم أيقونة «الوجه»: رقما صفحتي المصحف المفتوح داخل الجزء، والحالية مميزة */
+function juzHTML(p){
+  const j=juzOf(p),qi=quarterOf(p);
+  const q=qi<0?0:Math.max(1,Math.min(8,qi-(j-1)*8+1));
+  const js=Q.juzPages[j-1]||1,R0=p%2?p:p-1,L0=R0+1,f=n=>n-js+1;
+  const cell=(n,x)=>{const on=n===p,v=f(n);if(v<1||n>604)return '';
+    return `<rect x="${x}" y="1" width="20" height="16" rx="2" ${on?'fill="currentColor"':'fill="none" stroke="currentColor" stroke-width="1.4"'}/><text x="${x+10}" y="13.2" text-anchor="middle" font-size="11" font-weight="700" fill="${on?'var(--paper)':'currentColor'}">${AR(v)}</text>`};
+  const face=`<svg class="face" viewBox="0 0 42 22"><path d="M2 19.5h17.5l1.5 1.5 1.5-1.5H40" fill="none" stroke="currentColor" stroke-width="1.3"/>${cell(L0,1)}${cell(R0,21)}</svg>`;
+  return `<span>الجزء ${AR(j)}${q?` (٨/${AR(q)})`:''}</span>${face}`}
+function juzOf(p){let j=1;Q.juzPages.forEach((s,i)=>{if(p>=s)j=i+1});return j}
+function firstKey(p){for(const l of LAYOUT[p-1])if(l.w)for(const w of l.w)if(w[0])return w[0];return '1:1:0'}
+const surahOfPage=p=>+firstKey(p).split(':')[0];
+const ayahOf=k=>k.split('|')[0].split(':').slice(0,2).join(':');
+function nextAyah(k,d){let[s,a]=k.split(':').map(Number);a+=d;
+  if(a<1){if(s===1)return null;s--;a=Q.surahs[s-1][2]}else if(a>Q.surahs[s-1][2]){if(s===114)return null;s++;a=1}return s+':'+a}
+/* خانة التفسير: يظهر منها ١٠ أسطر، والباقي بزر «المزيد» */
+const CHEV='<svg viewBox="0 0 10 10" aria-hidden="true"><path d="M2 3.6 5 6.6 8 3.6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+function setTaf(el,t,empty){
+  const jm=(t||'').match(JOINT_RE),h=fmtTafsir(stripJoint(t));if(!h){el.textContent=empty;return}
+  el.innerHTML=(jm?`<div class="jn">${esc(jm[0].trim())}</div>`:'')+`<div class="tx clamp">${h}</div>`;
+  const tx=el.querySelector('.tx');
+  requestAnimationFrame(()=>{if(tx.scrollHeight<=tx.clientHeight+4){tx.classList.remove('clamp');return}
+    const b=document.createElement('button');b.className='more';b.innerHTML='المزيد '+CHEV;
+    b.onclick=ev=>{ev.stopPropagation();const open=tx.classList.toggle('clamp');b.innerHTML=(open?'المزيد ':'أقل ')+CHEV;b.classList.toggle('up',!open);
+      if(open){const r=el.getBoundingClientRect();if(r.top<0)el.scrollIntoView({block:'start',behavior:'smooth'})}};
+    el.appendChild(b)});
+}
+/* الآيات في التفسير: آية واحدة بلا رقم، وآيات متتالية بأرقامها بين قوسين (١) (٢) */
+function quoteMarks(t){
+  const re=/\s*(?:۝\s*([٠-٩0-9]+)|([٠-٩0-9]+)\s*۝|\(\s*([٠-٩0-9]+)\s*\))/g;
+  const toAr=n=>n.replace(/[0-9]/g,d=>'٠١٢٣٤٥٦٧٨٩'[d]);
+  return (t||'').replace(/﴿([^﴾]*)﴾/g,(m,b)=>{
+    const ms=[...b.matchAll(re)];if(!ms.length)return m;
+    const e=ms[ms.length-1];const atEnd=e.index+e[0].length>=b.replace(/\s+$/,'').length;
+    if(ms.length===1&&atEnd)return '﴿'+b.replace(re,'').trim()+'﴾';
+    return '﴿'+b.replace(re,(x,a1,a2,a3)=>' ('+toAr(a1||a2||a3)+')').replace(/\s+/g,' ').trim()+'﴾';
+  });
+}
+function fmtTafsir(t){
+  let note='';t=(t||'').replace(JOINT_RE,m=>{note=`<div class="jn">${esc(m.trim())}</div>`;return ''});
+  let h=esc(t);
+  h=h.replace(/﴿[^﴾]*﴾|\{[^}\n]{2,400}\}/g,m=>`<span class="qv">${m}</span>`).replace(/\[[^\]\n]{1,40}\]/g,m=>`<span class="ref">${m}</span>`);
+  return note+h.replace(/\n+/g,'<br>');
+}
+
+/* ---------- تصحيحات توزيع الأسطر لتطابق طبعة المجمع في تطبيق آية ----------
+   كل سطر: [رقم الصفحة، مفتاح الكلمة، الاتجاه]
+   الاتجاه 1 = تنتقل الكلمة إلى أول السطر التالي، و -1 = تنتقل إلى آخر السطر السابق */
+const LINE_FIXES=[
+  [177,'8:6:10',1],   // الأنفال ٦: «وَهُمۡ» إلى أول السطر التالي
+  [443,'36:52@الرحمن',1],   // يس ٥٢: «ٱلرَّحۡمَٰنُ» إلى أول السطر التالي
+];
+/* مفتاح بصيغة «سورة:آية@كلمة» يُحوَّل إلى رقم الكلمة في الآية */
+function fixKey(key){if(!key.includes('@'))return key;const[sa,w]=key.split('@');const ws=(Q.text[sa]||'').split(' ');
+  const i=ws.findIndex(x=>skel(x)===skel(w));return i<0?'':sa+':'+i}
+function applyLineFixes(){
+  LINE_FIXES.forEach(([p,key0,dir])=>{
+    const key=fixKey(key0);const pg=LAYOUT[p-1];if(!pg||!key)return;
+    const txt=pg.filter(l=>l.w);
+    const has=w=>w[0]&&w[0].split('|').includes(key);
+    const li=txt.findIndex(l=>l.w.some(has));if(li<0)return;
+    const from=txt[li],to=txt[li+dir];if(!to)return;
+    const wi=from.w.findIndex(has);
+    if(dir===1&&wi===from.w.length-1)to.w.unshift(from.w.pop());
+    else if(dir===-1&&wi===0)to.w.push(from.w.shift());
+  });
+}
+
+/* ---------- init ---------- */
+async function init(){
+  try{
+    [Q,M,LAYOUT,NAMES]=await Promise.all(['quran.json','meanings.json','layout.json','surah-names.json']
+      .map(f=>fetch(f).then(r=>{if(!r.ok)throw new Error(f);return r.json()})));
+  }catch(e){$('msg').textContent='تعذّر تحميل: '+e.message;return}
+  loadMy();
+  try{const r=await fetch('diffs.json');if(r.ok)DIFFS=await r.json()}catch(e){}
+  try{const r=await fetch('quarters.json');if(r.ok)QUARTERS=await r.json()}catch(e){}
+  try{document.fonts.load('20px "KFGQPC Hafs"').catch(()=>{})}catch(e){}
+  try{await loadFont('bsml',FONT_BASE.replace('QPC2/','QPC1/')+'QPC1BSML.ttf')}catch(e){}
+  applyLineFixes();
+  LAYOUT.forEach((pg,i)=>{let last=null;pg.forEach(l=>{
+    if(l.h&&!surahFirst[l.h])surahFirst[l.h]=i+1;
+    if(l.w)l.w.forEach(([k,g])=>{const parts=g.split(' ');
+      if(k){last=ayahOf(k);(AYTOK[last]=AYTOK[last]||[]).push([parts[0],i+1,k]);parts.slice(1).forEach(m=>AYTOK[last].push([m,i+1,'']))}
+      else if(last)parts.forEach(m=>AYTOK[last].push([m,i+1,'']))})})});
+  applySettings();
+  try{$('hday').textContent=new Intl.DateTimeFormat('ar-SA-u-ca-islamic-umalqura',{day:'numeric'}).format(new Date())}catch(e){}
+  $('msg').remove();$('page').hidden=false;
+  /* يفتح التطبيق على آخر صفحة وآخر ختمة كنت عليهما */
+  if(!K[K.active])K.active='hifz';
+  await document.fonts.ready;
+  const lp=load('lastPage',0);
+  show(lp||K[K.active].page||1);
+}
+
+/* ---------- page ---------- */
+/* العرض بصفحتين في الآيباد أفقيًا: الفردية يمينًا والزوجية يسارًا */
+const isSpread=()=>!S.one&&innerWidth>innerHeight&&Math.min(innerWidth,innerHeight)>=600;
+let COMP=null,BACK=0,PAGE_SHOWN=false;
+/* زر الرجوع إلى الصفحة التي كنت عليها قبل آخر انتقال */
+function updBack(){const b=$('backBtn');if(!b)return;if(BACK&&BACK!==cur){b.hidden=false;b.querySelector('span').textContent=AR(BACK)}else b.hidden=true}
+function goBack(){if(BACK)show(BACK)}   // الصفحة اليسرى المرافقة في العرض بصفحتين
+async function show(p){
+  pendingTurn=null;
+  p=Math.max(1,Math.min(604,p|0||1));
+  if(isSpread()&&p%2===0)p=(p===cur+1)?Math.min(603,p+1):p-1;   // «التالية» من صفحة فردية تعني الصفحتين التاليتين
+  const prev=cur;
+  if(PAGE_SHOWN&&Math.abs(p-prev)>(isSpread()?2:1)){BACK=prev;}   // انتقال بعيد (فهرس، بحث، مسطرة…): نحفظ موضع الرجوع
+  PAGE_SHOWN=true;
+  cur=p;closeAll(true);save('lastPage',p);updBack();
+  if(K.active==='hifz'){K.hifz.page=p;save('khatmas',K)}
+  try{await pageFont(p);if(isSpread()&&p<604)await pageFont(p+1)}catch(e){$('lines').textContent='تعذّر تحميل خط الصفحة — تأكد من الاتصال بالإنترنت';return}
+  if(p!==cur)return;
+  if(drag)dragReset();clearPre();
+  if(COMP){COMP.remove();COMP=null}
+  renderPage(p);
+  $('page').scrollTop=0;
+  if(isSpread()&&p<604){COMP=prerenderOne(p+1,p);delete PRE[p+1];bindPageEl(COMP);COMP.style.zIndex='';if($('page').nextElementSibling!==COMP)$('page').after(COMP)}
+  [p+1,p-1,p+2,p+3,p-2].forEach(n=>{if(n>=1&&n<=604)pageFont(n).catch(()=>{})});
+  schedulePre();
+}
+/* إطار اسم السورة: يُفتَّح وسطه (موضع الاسم) بلون يناسب لون الصفحة */
+let BANNER_URL='banner.png',BANNER_BAKED=false,BANNER_FOR='',bannerImg=null;
+async function buildBanner(){
+  const mk=getComputedStyle(document.documentElement).getPropertyValue('--mk').trim()||'#e6f0de';const bkey=mk+'|'+(S.theme||'green');if(bkey===BANNER_FOR)return;BANNER_FOR=bkey;
+  try{
+    if(!bannerImg)bannerImg=await new Promise((r,j)=>{const im=new Image();im.onload=()=>r(im);im.onerror=j;im.src='banner.png'});
+    const im=bannerImg,W=im.naturalWidth,H=im.naturalHeight,c=document.createElement('canvas');c.width=W;c.height=H;
+    const x=c.getContext('2d');x.drawImage(im,0,0);const d=x.getImageData(0,0,W,H),px=d.data;
+    /* نفس مرشح العرض السابق: سطوع ٠٫٨٦، تشبع ١٫٢٥، تباين ١٫٠٦ */
+    for(let i=0;i<px.length;i+=4){let r=px[i]*.86,g=px[i+1]*.86,b=px[i+2]*.86;const l=.2126*r+.7152*g+.0722*b;
+      r=l+(r-l)*1.25;g=l+(g-l)*1.25;b=l+(b-l)*1.25;px[i]=(r-128)*1.06+128;px[i+1]=(g-128)*1.06+128;px[i+2]=(b-128)*1.06+128;
+      if(S.theme==='beige'){const L=.2126*px[i]+.7152*px[i+1]+.0722*px[i+2],k=.55+.45*L/255;px[i]=Math.min(255,226*k+L*.12);px[i+1]=Math.min(255,204*k+L*.1);px[i+2]=Math.min(255,164*k+L*.08)}}   // السمة البيج
+    /* تعبئة وسط الإطار انطلاقًا من مركزه */
+    const sx=W>>1,sy=H>>1,s0=(sy*W+sx)*4,R0=px[s0],G0=px[s0+1],B0=px[s0+2];
+    const hx=(S.theme==='beige'?'#f5eddd':mk).replace('#','');const fr=parseInt(hx.slice(0,2),16),fg=parseInt(hx.slice(2,4),16),fb=parseInt(hx.slice(4,6),16);
+    const seen=new Uint8Array(W*H),st=[sy*W+sx];seen[sy*W+sx]=1;
+    while(st.length){const q=st.pop(),i=q*4;const dr=px[i]-R0,dg=px[i+1]-G0,db=px[i+2]-B0;const dist=Math.sqrt(dr*dr+dg*dg+db*db);
+      if(dist>46)continue;const a=dist<26?1:(46-dist)/20;
+      px[i]=px[i]*(1-a)+fr*a;px[i+1]=px[i+1]*(1-a)+fg*a;px[i+2]=px[i+2]*(1-a)+fb*a;
+      const qx=q%W,qy=(q/W)|0;
+      if(qx>0&&!seen[q-1]){seen[q-1]=1;st.push(q-1)}if(qx<W-1&&!seen[q+1]){seen[q+1]=1;st.push(q+1)}
+      if(qy>0&&!seen[q-W]){seen[q-W]=1;st.push(q-W)}if(qy<H-1&&!seen[q+W]){seen[q+W]=1;st.push(q+W)}}
+    x.putImageData(d,0,0);BANNER_URL=c.toDataURL('image/png');BANNER_BAKED=true;
+    document.querySelectorAll('.hdr').forEach(h=>{h.classList.add('baked');const i=h.querySelector('img');if(i)i.src=BANNER_URL});
+  }catch(e){BANNER_FOR=''}
+}
+function renderPage(p){
+  const box=$('lines');box.innerHTML='';
+  const fam='p'+p;let lastAyah=ayahOf(firstKey(p));
+  $('page').classList.toggle('odd',p%2===1);$('page').classList.toggle('even',p%2===0);
+  LAYOUT[p-1].forEach(l=>{
+    const div=document.createElement('div');
+    if(l.h){const[d,x,y,w,h]=NAMES[l.h];div.className='hdr'+(BANNER_BAKED?' baked':'');div.innerHTML=`<img src="${BANNER_URL}" alt=""><svg viewBox="${x} ${y} ${w} ${h}" style="aspect-ratio:${w}/${h}"><path d="${d}"/></svg>`}
+    else if(l.b){div.className='bsm';div.textContent='#"!'}
+    else{
+      div.className='line';div.style.fontFamily=fam;let dotc=null;
+      l.w.forEach(([k,g])=>{
+        const parts=g.split(' ');
+        if(k){
+          const ks=k.split('|'),gl=parts.splice(0,ks.length,'');lastAyah=ayahOf(k);
+          gl.forEach((g,gi)=>{   // كل كلمة في عنصر مستقل حتى في المواضع المدمجة مثل «بعد ما»
+            const kk=gl.length===ks.length?ks[gi]:k;
+            const s=document.createElement('span');s.className='w';s.textContent=g;s.dataset.k=kk;s.dataset.a=lastAyah;
+            const d=kk.split('|').map(x=>DIFFS[x]).find(Boolean);
+            if(d){s.classList.add('d-'+d.c);if(!dotc)dotc=d.c}
+            if(HL[lastAyah])s.classList.add('hl-'+HL[lastAyah]);
+            bindWord(s);div.appendChild(s);
+          });
+        }else parts.unshift('');
+        parts.slice(1).forEach(m=>{const n=document.createElement('span');n.className='w num';n.textContent=m;n.dataset.a=lastAyah;bindMarker(n);div.appendChild(n)});
+      });
+      if(dotc){const dt=document.createElement('span');dt.className='dot';dt.style.background=`var(--c-${dotc})`;div.appendChild(dt)}
+    }
+    box.appendChild(div);
+  });
+  const su=surahOfPage(p);
+  $('sname').textContent=sname(su);
+  $('juz').innerHTML=juzHTML(p);
+  $('pno').textContent=AR(p);
+  layout();if(!PRERENDER)pageChrome(p);
+}
+function pageChrome(p){
+  $('slider').value=p;slTag(p);$('sideIc').className='sideic '+(p%2?'r':'l');$('topInfo').textContent=`${sname(surahOfPage(p))} · ${AR(p)}`;
+  updateBadges();updateTview();
+}
+/* أسطر تتوسط الصفحة كما في تطبيق آية (تُعرف بآخر آية تنتهي في السطر) */
+const CENTER_LINES=new Set(['107:7']);   // آخر سطر في سورة الماعون
+function lineEndAyah(l){const n=l.querySelectorAll('.w');const last=n[n.length-1];return last&&last.classList.contains('num')?last.dataset.a:''}
+function layout(){
+  const pg=$('page'),box=$('lines');if(!box.children.length)return;
+  const vw=innerWidth,vh=innerHeight;
+  /* مقاسات مأخوذة من صفحة تطبيق آية: هامش ٧٫٥٪ من كل جهة، والمسافة بين الأسطر ١١٫١٪ من عرض السطر */
+  const phone=Math.min(vw,vh)<600;
+  const phoneLand=!!((phone||S.one)&&vw>vh);   // الجوال أفقيًا: الصفحة بعرض الشاشة وتُقرأ بالتمرير للأعلى
+  pg.classList.toggle('scrolly',phoneLand);
+  const MARG=phone?0.035:0.075,PITCH=0.111;   // الجوال: هوامش أضيق كما في آية
+  const barH=$('juz').parentElement.offsetHeight+10;
+  const spread=isSpread();
+  const gutter=phone||S.fill?0:Math.max(12,Math.round(vw*(spread?0.04:0.05)));
+  let W=spread?(vw-gutter)/2:vw-gutter;
+  const need=w=>barH+16+15*(w*(1-2*MARG)*PITCH);      // الطول اللازم لصفحة بهذا العرض
+  if(!phoneLand&&need(W)>vh)W=(vh-barH-16)/(15*(1-2*MARG)*PITCH);  // الشاشة أقصر: نصغّر الصفحة كلها بالنسبة نفسها
+  const side=!spread&&W>=vw-gutter-1;
+  pg.style.width=W+'px';
+  if(spread){const odd=cur%2===1;pg.style.marginLeft=odd?(vw/2)+'px':'auto';pg.style.marginRight=odd?'auto':(vw/2)+'px'}
+  else if(side){const odd=cur%2===1;pg.style.marginLeft=odd?'0':'auto';pg.style.marginRight=odd?'auto':'0'}
+  else{pg.style.marginLeft=pg.style.marginRight='auto'}
+  const lines=[...box.children];
+  const margin=Math.round(W*MARG),lineW=W-2*margin;
+  /* الشاشة أطول من الصفحة (كالجوال): تتسع المسافة بين الأسطر لتملأ الطول كله كما في آية */
+  const pitch=phoneLand?lineW*PITCH:Math.max(lineW*PITCH,(vh-barH-16)/15);
+  pg.querySelectorAll('.bar').forEach(b=>{b.style.paddingLeft=b.style.paddingRight=margin+'px'});
+  const centeredPage=cur<=2;
+  let fs=pitch/2;box.style.fontSize=fs+'px';
+  const txt=lines.filter(l=>l.classList.contains('line'));
+  const measure=()=>{txt.forEach(l=>{l.classList.remove('just','center');l.style.fontSize='';l.style.width='auto';l.querySelectorAll('.w').forEach(w=>w.style.transform='')});
+    return new Map(txt.map(l=>[l,l.scrollWidth-0.64*parseFloat(getComputedStyle(l).fontSize)]))};   // دون مساحة الرسم الإضافية حول الكلمات
+  let nats=measure(),maxNat=Math.max(...nats.values(),1);
+  /* حجم الخط: أطول سطر يملأ ٩٦٪ من العرض، مع حدّ أعلى يترك فراغًا مريحًا بين الأسطر */
+  if(!centeredPage&&txt.length){
+    const fit=Math.min(fs*lineW*0.96/maxNat,pitch/1.9);
+    if(Math.abs(fit-fs)>0.2){fs=fit;box.style.fontSize=fs+'px';nats=measure();maxNat=Math.max(...nats.values(),1)}
+  }
+  lines.forEach(l=>{
+    l.style.height=pitch+'px';
+    if(l.classList.contains('hdr')){const bh=lineW*135/1200;l.style.width=lineW+'px';l.style.height=bh+'px';l.style.margin=Math.max(0,(pitch-bh)/2)+'px 0'}
+    else if(l.classList.contains('bsm')){l.style.fontSize=fs*0.95+'px'}
+    else{
+      let nat=nats.get(l);
+      const isCenter=centeredPage||nat<maxNat*0.72||CENTER_LINES.has(lineEndAyah(l));
+      l.classList.add(isCenter?'center':'just');
+      l.style.width=lineW+'px';
+      if(nat>lineW){l.style.fontSize=(fs*lineW/nat*0.995)+'px';nat=lineW}
+      /* تمديد أفقي خفيف جدًا للأسطر التي فيها فراغ واضح */
+      if(!isCenter){
+        const room=lineW*0.97-nat;
+        if(room>lineW*0.02){const words=[...l.querySelectorAll('.w:not(.num)')],wsum=words.reduce((t,w)=>t+w.offsetWidth-0.64*parseFloat(getComputedStyle(w).fontSize),0);
+          const sc=Math.min(1.05,1+room/Math.max(wsum,1));
+          if(sc>1.01)words.forEach(w=>w.style.transform=`scaleX(${sc.toFixed(3)})`)}
+      }
+      const dt=l.querySelector('.dot');
+      if(dt){const off=-(margin/2)-3.5;dt.style.right=dt.style.left='';if(cur%2===1)dt.style.right=off+'px';else dt.style.left=off+'px'}
+    }
+  });
+  hizbMark(pg,margin);
+  if(!PRERENDER)requestAnimationFrame(()=>{if(pg===$('page'))fillMarkers(pg)});
+}
+/* تلوين وسط رموز الآيات: يُرسم الرمز نفسه على لوحة خفية، ويُعرف داخله من شكله،
+   فيُلوَّن الفراغ الأوسط فقط (ومعه فراغات الأرقام داخله) خلف الرمز تمامًا؛ وما ليس رمز آية لا يُلوَّن */
+/* لوحة رسم واحدة مشتركة، والنتيجة صورة محفوظة: لا تتراكم لوحات الرسم في ذاكرة الجهاز
+   (تراكمها كان يُظهر تشويشًا أسود على بعض الكلمات) */
+let MKC=null;const MKCACHE=new Map();
+function markerImage(txt,fam,fsz,w,h,mk,dpr){
+  const sig=[txt,fam,fsz,w,h,mk,dpr].join('|');if(MKCACHE.has(sig))return MKCACHE.get(sig);
+  const fr=parseInt(mk.slice(0,2),16),fg=parseInt(mk.slice(2,4),16),fb=parseInt(mk.slice(4,6),16);
+  const pad=Math.ceil(h*0.3),W=Math.ceil((w+2*pad)*dpr),H=Math.ceil((h+2*pad)*dpr);
+  MKC=MKC||document.createElement('canvas');const c=MKC;c.width=W;c.height=H;
+  const x=c.getContext('2d',{willReadFrequently:true});if(!x)return null;
+  x.clearRect(0,0,W,H);x.font=`${fsz*dpr}px ${fam}`;x.textBaseline='alphabetic';x.direction='ltr';
+  const mt=x.measureText(txt);const A=mt.fontBoundingBoxAscent,D=mt.fontBoundingBoxDescent;if(A==null||D==null)return null;
+  const base=pad*dpr+(h*dpr-(A+D))/2+A;x.fillStyle='#000';x.fillText(txt,(W-mt.width)/2,base);
+  const p=x.getImageData(0,0,W,H).data,N=W*H,solid=new Uint8Array(N),lab=new Int32Array(N);
+  for(let i=0;i<N;i++)solid[i]=p[i*4+3]>90?1:0;
+  const comps=[];let id=0;const st=[];
+  for(let s=0;s<N;s++){if(solid[s]||lab[s])continue;id++;let edge=false,cnt=0,x0=W,x1=0,y0=H,y1=0;st.push(s);lab[s]=id;
+    while(st.length){const q=st.pop(),qx=q%W,qy=(q/W)|0;cnt++;if(qx<x0)x0=qx;if(qx>x1)x1=qx;if(qy<y0)y0=qy;if(qy>y1)y1=qy;
+      if(qx===0||qy===0||qx===W-1||qy===H-1)edge=true;
+      if(qx>0&&!solid[q-1]&&!lab[q-1]){lab[q-1]=id;st.push(q-1)}if(qx<W-1&&!solid[q+1]&&!lab[q+1]){lab[q+1]=id;st.push(q+1)}
+      if(qy>0&&!solid[q-W]&&!lab[q-W]){lab[q-W]=id;st.push(q-W)}if(qy<H-1&&!solid[q+W]&&!lab[q+W]){lab[q+W]=id;st.push(q+W)}}
+    comps.push({id,edge,cnt,x0,x1,y0,y1})}
+  let res=null;const inner=comps.filter(k=>!k.edge);
+  if(inner.length){const big=inner.reduce((a,b)=>b.cnt>a.cnt?b:a),bx=(big.x0+big.x1)/2,by=(big.y0+big.y1)/2;
+    if(!(big.cnt<w*h*dpr*dpr*0.12||Math.abs(bx-W/2)>W*0.15||Math.abs(by-H/2)>H*0.15)){
+      const keep=new Set(inner.filter(k=>k===big||(k.x0>=big.x0&&k.x1<=big.x1&&k.y0>=big.y0&&k.y1<=big.y1)).map(k=>k.id));
+      const out=x.createImageData(W,H),o=out.data;
+      for(let i=0;i<N;i++){if(!keep.has(lab[i]))continue;const qx=i%W,qy=(i/W)|0;
+        for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){const X=qx+dx,Y=qy+dy;if(X<0||Y<0||X>=W||Y>=H)continue;const j=(Y*W+X)*4;o[j]=fr;o[j+1]=fg;o[j+2]=fb;o[j+3]=255}}
+      x.clearRect(0,0,W,H);x.putImageData(out,0,0);res={url:c.toDataURL('image/png'),pad}}}
+  c.width=c.height=1;   // نُفرغ اللوحة فورًا
+  if(MKCACHE.size>600)MKCACHE.delete(MKCACHE.keys().next().value);
+  MKCACHE.set(sig,res);return res;
+}
+function fillMarkers(root){
+  root=(root&&root.querySelectorAll)?root:$('page');if(!root)return;
+  const mk=(getComputedStyle(document.documentElement).getPropertyValue('--mk').trim()||'#e6f0de').replace('#','');
+  const dpr=Math.min(2,window.devicePixelRatio||1);
+  root.querySelectorAll('.num').forEach(n=>{
+    const txt=n.textContent;
+    const cs=getComputedStyle(n),fsz=parseFloat(cs.fontSize),w=n.offsetWidth,h=n.offsetHeight;
+    const sig=[txt,cs.fontFamily,fsz,w,h,mk].join('|'),old=n.querySelector('.mkf');
+    if(old&&old.dataset.sig===sig)return;   // لم يتغير شيء
+    n.querySelectorAll('.mkf').forEach(c=>c.remove());
+    if(!txt.trim()||!w||!h||!fsz)return;
+    const r=markerImage(txt,cs.fontFamily,fsz,w,h,mk,dpr);if(!r)return;
+    const im=document.createElement('img');im.className='mkf';im.alt='';im.src=r.url;im.dataset.sig=sig;
+    im.style.width=(w+2*r.pad)+'px';im.style.height=(h+2*r.pad)+'px';im.style.left=im.style.top=(-r.pad)+'px';n.appendChild(im);
+  });
+}
+
+/* ---------- press handling ---------- */
+function bindPress(el,onTap,onLong){
+  let t=null,long=false,sx=0,sy=0;
+  const start=e=>{long=false;const pt=e.touches?e.touches[0]:e;sx=pt.clientX;sy=pt.clientY;t=setTimeout(()=>{long=true;onLong();if(navigator.vibrate)navigator.vibrate(15)},450)};
+  const move=e=>{const pt=e.touches?e.touches[0]:e;if(Math.abs(pt.clientX-sx)>10||Math.abs(pt.clientY-sy)>10)clearTimeout(t)};
+  const end=()=>clearTimeout(t);
+  el.addEventListener('touchstart',start,{passive:true});el.addEventListener('touchmove',move,{passive:true});el.addEventListener('touchend',end);
+  el.addEventListener('mousedown',start);el.addEventListener('mouseup',end);el.addEventListener('mouseleave',end);
+  el.addEventListener('contextmenu',e=>e.preventDefault());
+  el.addEventListener('click',ev=>{ev.stopPropagation();if(long){long=false;return}onTap()});
+}
+const bindWord=s=>bindPress(s,()=>{if(K.active==='tilawa')toggleBars();else openMeaning(s)},()=>{if(K.active==='tilawa')openMeaning(s,true);else openDiff(s)});
+const bindMarker=n=>bindPress(n,()=>openAyahTafsir(n.dataset.a),()=>openLib(n.dataset.a));
+let selExtra=[];
+function selectWord(s){if(selEl)selEl.classList.remove('sel');selExtra.forEach(e=>e.classList.remove('sel'));selExtra=[];selEl=s;if(s)s.classList.add('sel')}
+
+/* ---------- panel (bottom / center / full) ---------- */
+const panel={ayah:null,word:null,kind:null,shareText:''};
+const ICONS={"menu": "<svg class=\"i\" viewBox=\"0 0 24 24\"><path d=\"M4 6h12M4 12h16M4 18h12\"/><circle cx=\"20\" cy=\"6\" r=\".6\"/><circle cx=\"20\" cy=\"18\" r=\".6\"/></svg>", "search": "<svg class=\"i\" viewBox=\"0 0 24 24\"><circle cx=\"11\" cy=\"11\" r=\"6.5\"/><path d=\"M16 16l4.5 4.5\"/></svg>", "cal": "<svg class=\"i\" viewBox=\"0 0 24 24\"><rect x=\"3.5\" y=\"5\" width=\"17\" height=\"15.5\" rx=\"2.5\"/><path d=\"M3.5 9.5h17M8 3v4M16 3v4\"/></svg>", "gear": "<svg class=\"i\" viewBox=\"0 0 24 24\"><circle cx=\"12\" cy=\"12\" r=\"3.2\"/><path d=\"M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4M5.5 5.5l1.7 1.7M16.8 16.8l1.7 1.7M5.5 18.5l1.7-1.7M16.8 7.2l1.7-1.7\"/><circle cx=\"12\" cy=\"12\" r=\"7\"/></svg>", "share": "<svg class=\"i\" viewBox=\"0 0 24 24\"><circle cx=\"18\" cy=\"5.5\" r=\"2.3\"/><circle cx=\"6\" cy=\"12\" r=\"2.3\"/><circle cx=\"18\" cy=\"18.5\" r=\"2.3\"/><path d=\"M8 11l8-4.3M8 13l8 4.3\"/></svg>", "alert": "<svg class=\"i\" viewBox=\"0 0 24 24\"><path d=\"M4 5h16v11H9l-5 4z\"/><path d=\"M12 8v4M12 14.2v.3\"/></svg>", "expand": "<svg class=\"i\" viewBox=\"0 0 24 24\"><path d=\"M14 4h6v6M10 20H4v-6M20 4l-7 7M4 20l7-7\"/></svg>", "list": "<svg class=\"i\" viewBox=\"0 0 24 24\"><path d=\"M9 6h11M9 12h11M9 18h11\"/><circle cx=\"4.5\" cy=\"6\" r=\"1\"/><circle cx=\"4.5\" cy=\"12\" r=\"1\"/><circle cx=\"4.5\" cy=\"18\" r=\"1\"/></svg>", "check": "<svg class=\"i\" viewBox=\"0 0 24 24\"><circle cx=\"12\" cy=\"12\" r=\"8.5\"/><path d=\"M8 12.3l2.8 2.8L16.3 9.5\"/></svg>", "bookmark": "<svg class=\"i\" viewBox=\"0 0 24 24\"><path d=\"M6.5 3.5h11v17l-5.5-4-5.5 4z\"/></svg>", "marker": "<svg class=\"i\" viewBox=\"0 0 24 24\"><path d=\"M14.5 4.5l5 5L10 19H5v-5z\"/><path d=\"M3 21h18\"/></svg>", "comment": "<svg class=\"i\" viewBox=\"0 0 24 24\"><path d=\"M4 4.5h16v12H10l-4.5 3.5v-3.5H4z\"/></svg>"};
+function icon(n){return ICONS[n]||''}
+function actsHTML(){
+  const a=panel.ayah;const bm=BM.some(b=>b.k===a),hl=!!HL[a],nt=!!NT[a];
+  return `<button class="${nt?'on':''}" onclick="editNote()">${icon('comment')}تعليق</button>
+    <button class="${hl?'on':''}" onclick="pickColor()">${icon('marker')}تلوين</button>
+    <button class="${bm?'on':''}" onclick="toggleBM()">${icon('bookmark')}فاصل</button>
+    <button onclick="shareCurrent()">${icon('share')}شارك</button>`;
+}
+function openPanel({title,selHTML,body,ayah,word}){
+  panel.ayah=ayah;panel.word=word||null;
+  const mode=S.mode;closeAll(true);
+  if(word)selectWord(word);
+  if(mode==='center'){
+    $('popSel').innerHTML=selHTML||`<span class="pill" style="background-image:none;padding:.45em 1.3em">${esc(title)}</span>`;
+    $('popBody').innerHTML='';$('popBody').append(body);$('popActs').innerHTML=actsHTML();
+    $('dim').classList.add('open');$('pop').classList.add('open');
+  }else if(mode==='full'&&word){
+    const keys=(panel.kind==='meaning'&&panel.gkeys)||word.dataset.k.split('|');const[s,a,i]=keys[0].split(':');
+    const ws=Q.text[s+':'+a].split(' ');const idx=keys.map(k=>+k.split(':')[2]);
+    $('fullAy').innerHTML='﴿ '+ws.map((w,j)=>idx.includes(j)?`<span class="hw">${esc(w)}</span>`:esc(w)).join(' ')+' ﴾';
+    $('fullBig').textContent=idx.map(j=>ws[j]).join(' ');
+    $('fullBody').innerHTML='';$('fullBody').append(body);$('fullActs').innerHTML=actsHTML();
+    $('full').classList.add('open');
+  }else{
+    $('shTitle').textContent=title;$('shSel').innerHTML=selHTML||'';
+    $('shBody').innerHTML='';$('shBody').append(body);$('shActs').innerHTML=actsHTML();
+    $('sheet').classList.add('open');
+  }
+}
+function refreshActs(){['popActs','shActs','fullActs'].forEach(id=>{if($(id))$(id).innerHTML=actsHTML()})}
+
+/* الكلمات المرتبطة: كلمة معناها «راجع التفسير…» تأخذ معنى الكلمة قبلها في الآية نفسها،
+   وتُظلَّل معها (مثل «يوم القيامة») إلا ما في NO_GROUP فيُظلَّل وحده ويظهر المعنى للعبارة كاملة */
+const REF_RE=/^\s*(?:انظر|راجع)/;
+const NO_GROUP_W=['الحياة الدنيا'];let NO_GROUP=null;
+const isRef=k=>!!(M[k]&&REF_RE.test(M[k].t||''));
+function meaningGroup(k){
+  const p=k.split(':');if(p.length!==3)return{src:k,keys:[k]};
+  const sa=p[0]+':'+p[1];let i=+p[2];
+  if(!isRef(k)&&!isRef(sa+':'+(i+1)))return{src:k,keys:[k]};
+  while(i>0&&isRef(sa+':'+i))i--;
+  const src=sa+':'+i;if(!M[src]||isRef(src))return{src:k,keys:[k]};
+  const keys=[src];for(let j=i+1;isRef(sa+':'+j);j++)keys.push(sa+':'+j);
+  return{src,keys};
+}
+function groupText(keys){const[s,a]=keys[0].split(':');const ws=(Q.text[s+':'+a]||'').split(' ');return keys.map(k=>ws[+k.split(':')[2]]||'').join(' ')}
+const groupSeparate=keys=>keys.length>1&&(NO_GROUP=NO_GROUP||NO_GROUP_W.map(x=>skel(x))).some(g=>skel(groupText(keys)).endsWith(g));
+function meaningNode(keys){
+  const f=document.createElement('div');panel.shareText='';const done=new Set();
+  keys.forEach(k0=>{
+    const g=meaningGroup(k0);if(done.has(g.src))return;done.add(g.src);const k=g.src;
+    const m=M[k],p=document.createElement('div');
+    if(m){const w=g.keys.length>1?groupText(g.keys):m.w.replace(/^\d+\s+/,'');
+      if(S.mode!=='full'){const b=document.createElement('span');b.className='k';b.textContent=w+': ';p.appendChild(b)}
+      p.appendChild(document.createTextNode(m.t));panel.shareText+=`${w}: ${m.t}\n`}
+    else p.textContent='لا يوجد معنى لهذه الكلمة';
+    f.appendChild(p);
+  });
+  return f;
+}
+function openMeaning(s,withDiff){
+  const keys=s.dataset.k.split('|');panel.kind='meaning';
+  const g=meaningGroup(keys[0]);const grp=(g.keys.length>1&&!groupSeparate(g.keys))?g.keys:null;
+  panel.gkeys=grp;
+  const sel=S.mode==='center'?`<span class="pill" style="background-image:none;padding:.45em 1.4em">المعنى</span>`:'';
+  const body=meaningNode(keys);
+  if(withDiff&&keys.some(k=>DIFFS[k])){const t=panel.shareText;const d=diffNode(keys);d.style.marginTop='.7em';d.style.paddingTop='.6em';d.style.borderTop='1px solid var(--line)';body.appendChild(d);panel.shareText=t+'\n'+panel.shareText}
+  openPanel({title:'معنى الكلمة — '+ayRef(ayahOf(keys[0])),selHTML:sel,body,ayah:ayahOf(keys[0]),word:s});
+  if(grp)grp.forEach(k=>document.querySelectorAll(`#lines .w[data-k="${k}"]`).forEach(e=>{if(e!==s){e.classList.add('sel');selExtra.push(e)}}));
+}
+/* الألف الممدودة «آ» حرفًا واحدًا غير موجودة في خط حفص: تُعرض ألفًا وعليها علامة المد (العرض فقط) */
+const hafsW=t=>(t||'').replace(/\u0622/g,'\u0627\u0653');
+function diffNode(keys){
+  const f=document.createElement('div');const d=keys.map(k=>DIFFS[k]).find(Boolean);
+  if(!d){f.textContent='لا خلاف بين حفص وشعبة في هذه الكلمة.';panel.shareText='';return f}
+  f.style.textAlign='right';
+  f.innerHTML=`<div class="shu" style="border-right:4px solid var(--c-${d.c})"><b style="color:var(--c-${d.c})">${DIFF_NAMES[d.c]}</b></div>
+    <div style="margin:.4em 0"><span class="k">حفص:</span> <span class="qt qh">${esc(hafsW(d.h))}</span>&nbsp;&nbsp; <span class="k">شعبة:</span> <span class="qt qh">${esc(hafsW(d.s))}</span></div>`+
+    d.d.map(t=>`<div>• ${esc(t)}</div>`).join('');
+  panel.shareText=`خلاف شعبة (${DIFF_NAMES[d.c]}): حفص «${d.h}» — شعبة «${d.s}»\n`+d.d.join('\n');
+  return f;
+}
+function openDiff(s){
+  const keys=s.dataset.k.split('|');panel.kind='diff';panel.gkeys=null;
+  const sel=S.mode==='center'?`<span class="pill" style="background-image:none;padding:.45em 1.4em">خلاف شعبة</span>`:'';
+  openPanel({title:'خلاف شعبة — '+ayRef(ayahOf(keys[0])),selHTML:sel,body:diffNode(keys),ayah:ayahOf(keys[0]),word:s});
+}
+function fullStep(d){
+  if(!panel.word)return;const all=[...document.querySelectorAll('#lines .w[data-k]')].filter(w=>{const g=w.closest('[id=page]');return g===$('page')||g===COMP});const i=all.indexOf(panel.word)+d;
+  if(i>=0&&i<all.length)(panel.kind==='diff'?openDiff:openMeaning)(all[i]);
+}
+
+/* ---------- tafsir ---------- */
+/* ---------- تقسيم التفسير المجمّع: كل آية تأخذ ما يشرحها فقط ---------- */
+const skel=s=>(s||'').normalize('NFKD').replace(/[\u064B-\u065F\u0670\u06D6-\u06ED\u0640]/g,'')
+  .replace(/[اأإآٱءئؤوىيٰ]/g,'').replace(/ة/g,'ه').replace(/[^\u0621-\u064A]/g,'');
+let QSK=null,QSKS={};const JOINT={};
+function qSkel(){if(QSK)return QSK;const src=Q.plain||Q.text||{};const parts=[];
+  for(const k in src){const s=skel(src[k]);QSKS[k]=s;parts.push(s)}QSK='|'+parts.join('|')+'|';return QSK}
+/* هيكل النص مع خريطة ترجع كل حرف إلى موضعه في الأصل */
+function skelMap(t){let s='';const m=[];for(let i=0;i<t.length;i++){const c=skel(t[i]);for(const x of c){s+=x;m.push(i)}}return{s,m}}
+const bare=s=>s.normalize('NFKD').replace(/[\u064B-\u065F\u0670\u06D6-\u06ED\u0640]/g,'').replace(/[أإآٱ]/g,'ا');
+const LEAD_RE=/(?:^|[\s(])(?:[وف]?(?:ب)?قوله|تعالى|تعالي|ذكره|تاويل|ثم قال|وقال|فقال|يقول)(?=[\s:،])[^\n.؟!]{0,30}$/;
+/* الآيات المقتبسة بين قوسين عاديين ( ) تصير بأقواس المصحف ﴿ ﴾ */
+function parenToQuran(t){
+  const all=qSkel();
+  return t.replace(/\(([^()\n]{3,700})\)/g,(m,x)=>{
+    if(/^[\s٠-٩0-9\/\-–،,.:]+$/.test(x))return m;
+    const parts=x.split(/\s*\*\s*/).map(skel).filter(Boolean);
+    const ok=parts.length&&parts[0].length>=(parts.length>1?4:7)&&parts.join('').length>=7&&parts.every(p=>p.length>=3&&all.includes(p));
+    return ok?'﴿'+x.trim()+'﴾':m});
+}
+/* تنسيق علامات التنصيص " ": لا فراغ داخلها، وفراغ واحد خارجها */
+function fixQuotes(t){
+  return t.split('\n').map(line=>{
+    const n=(line.match(/"/g)||[]).length;if(!n||n%2)return line;
+    let open=true;
+    return line.replace(/\s*"\s*/g,(m,off,str)=>{const r=open?' "':'" ';open=!open;return r})
+      .replace(/^ /,'').replace(/" ([،.:؛؟!)\]﴾,])/g,'"$1').replace(/([(\[﴿]) "/g,'$1"').replace(/ {2,}/g,' ').trim();
+  }).join('\n');
+}
+/* حذف سطور العنوان في أول السورة: «تفسير سورة كذا»، «وهي مكية»، البسملة */
+function stripHead(seg){const ls=seg.split('\n');
+  while(ls.length){const l=ls[0].trim(),k=skel(l);
+    if(!l||l.replace(/[*\s]/g,'')===''||(k.length<28&&/^(تفسر|سره|بسملله|همك|همدن|مكه|مدنه)/.test(k)))ls.shift();else break}
+  return ls.join('\n')}
+/* إن دخل في النص آخرُ تفسير السورة السابقة: نبدأ من عنوان «تفسير سورة كذا» */
+const preCut=x=>{const m=[...x.matchAll(/(^|\n)[^\n]{0,100}(?=\n|$)/g)].filter(m=>m.index>0&&/^(تفسرسره|تفسرلسره)/.test(skel(m[0])));return m.length?x.slice(m[m.length-1].index):x};
+/* الآية المقتبسة في أول الموضع إن امتدت إلى آيات لها مواضع مستقلة: تُقصر على آيات هذا الموضع */
+function trimLead(seg,su,from,to){
+  const q=seg.match(/﴿([^﴾]*)﴾/);if(!q||q.index>160)return seg;
+  const body=q[1];let cut=-1;
+  const nums=[...body.matchAll(/\(([٠-٩0-9]+)\)/g)];
+  if(nums.length){const m=nums.find(m=>+m[1].replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d))===to);if(m&&m!==nums[nums.length-1])cut=m.index+m[0].length}
+  else{let need='';for(let j=from;j<=to;j++)need+=QSKS[su+':'+j]||'';
+    const M=skelMap(body);if(M.s.length>need.length+2&&M.s.startsWith(need)&&need.length){let i=M.m[need.length-1]+1;while(i<body.length&&body[i]!==' ')i++;cut=i}}
+  if(cut<0)return seg;
+  return seg.slice(0,q.index+1)+body.slice(0,cut).trim()+'﴾'+seg.slice(q.index+q[0].length);
+}
+function splitTafsirForAyah(t,su,ay){
+  delete JOINT[su+':'+ay];
+  if(!t||t.length<300||!Q)return t;
+  const cnt=Q.surahs[su-1]?.[2]||300;qSkel();
+  const sk=j=>QSKS[su+':'+j]||'';
+  const lo=Math.max(1,ay-60),hi=Math.min(cnt,ay+60);
+  const ctx=pos=>{const back=t.lastIndexOf('\n',pos-1)+1;const pre=t.slice(Math.max(back,pos-60),pos);
+    if(LEAD_RE.test(bare(pre)))return 3;
+    return skel(t.slice(back,pos)).replace(/^و/,'')===''?2:0};
+  const cands=[];const spans=[];
+  /* ١) الآيات المقتبسة بين ﴿ ﴾ */
+  for(const q of t.matchAll(/﴿([^﴾]{2,2500})﴾|\(([^()\n]{3,700})\)/g)){
+    const body=q[1]||q[2];spans.push([q.index,q.index+q[0].length]);
+    const c=ctx(q.index);
+    const num=body.match(/\(([٠-٩0-9]+)\)/);
+    if(num){if(q[2])continue;   // عنوان فيه الآيات بأرقامها (الطبري): يبدأ موضع أول آية فيه
+      const n=+num[1].replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d));const p0=skel(body.slice(0,num.index)).slice(0,14);let fj=0;
+      for(let j=Math.max(1,n-12);j<=n;j++){const a=sk(j);if(a&&p0&&(a.startsWith(p0)||p0.startsWith(a))){fj=j;break}}
+      if(fj&&fj>=lo&&fj<=hi)cands.push({j:fj,pos:q.index,sc:Math.max(c,2)+2});
+      continue}
+    const s=skel(body.split(/\s*\*\s*/)[0]);if(s.length<(q[2]?7:3))continue;
+    const p=s.slice(0,Math.min(s.length,14));const hits=[];
+    for(let j=lo;j<=hi;j++){const a=sk(j);if(a&&((a.startsWith(p)&&(p.length>=7||a.length<=p.length+2))||(a.length>=5&&s.startsWith(a))))hits.push(j)}
+    if(!hits.length&&c>=2&&p.length>=4&&p.length<7){   // مقطع قصير من أول الآية بعد «وقوله:»
+      for(let j=lo;j<=hi;j++)if(sk(j).startsWith(p))hits.push(j);
+      if(hits.length!==1)hits.length=0}
+    if(!hits.length&&c>=2&&s.length>=8){   // جزء من وسط الآية بعد «وقوله:» ونحوها
+      for(let j=lo;j<=hi;j++)if(sk(j).includes(s.slice(0,Math.min(s.length,20))))hits.push(j);
+      if(hits.length===1){cands.push({j:hits[0],pos:q.index,sc:c});continue}
+      hits.length=0}
+    if(!hits.length||hits.length>3)continue;
+    hits.forEach(j=>cands.push({j,pos:q.index,sc:c+1}));
+  }
+  /* ٢) آيات مذكورة بلا أقواس في أول السطر أو بعد «قوله/قال تعالى» */
+  const inQ=pos=>spans.some(([a,b])=>pos>=a&&pos<b);
+  const M=skelMap(t);
+  for(let j=lo;j<=hi;j++){const a=sk(j);const p=a.slice(0,Math.min(a.length,16));if(p.length<10)continue;
+    let i=-1,n=0;while((i=M.s.indexOf(p,i+1))>=0&&n<6){n++;const pos=M.m[i];if(inQ(pos))continue;
+      const c=ctx(pos);if(c)cands.push({j,pos,sc:c})}}
+  if(!cands.length){const x=stripHead(preCut(t)).trim();return x||t}
+  /* ٣) أفضل سلسلة متصاعدة في رقم الآية وفي الموضع معًا */
+  cands.sort((x,y)=>x.pos-y.pos||x.j-y.j);
+  const dp=[],pr=[];let best=-1;
+  cands.forEach((c,i)=>{const own=1+0.4*c.sc;dp[i]=own;pr[i]=-1;
+    for(let k=0;k<i;k++){const d=cands[k];if(d.j<c.j&&d.pos<c.pos){const g=c.j-d.j-1;const v=dp[k]+own-0.3*g+(g===0?0.5:0);if(v>dp[i]){dp[i]=v;pr[i]=k}}}
+    if(best<0||dp[i]>dp[best])best=i});
+  const marks=[];for(let i=best;i>=0;i=pr[i])marks.unshift({j:cands[i].j,pos:cands[i].pos});
+  if(marks.every(m=>m.j===ay)){delete JOINT[su+':'+ay];return t}   // تفسير خاص بهذه الآية وحدها
+  /* بداية كل موضع: نرجع إلى «وقوله:» ونحوها، أو إلى أول السطر إن كانت قريبة منه */
+  let prevEnd=0;
+  marks.forEach(mk=>{let s=mk.pos;const back=t.lastIndexOf('\n',s-1);const from=Math.max(back+1,s-70,prevEnd);const cut=t.slice(from,s);
+    const m=cut.search(/(?:وَ?قَوْلُهُ|وَ?قوله|وَقَالَ تَعَالَى|يَقُولُ تَعَالَى|قال تعالى|يقول تعالى|القول في تأويل|ثُمَّ قَالَ|ثم قال)[^\n]*$/);
+    if(m>=0)s=from+m;
+    else{const b=Math.max(cut.lastIndexOf('.'),cut.lastIndexOf('؟'),cut.lastIndexOf('!'));const tail=cut.slice(b+1);
+      if(b>=0&&/:\s*$/.test(tail)&&tail.trim().length<45)s=from+b+1;
+      else if(s-back<70&&back+1>=prevEnd)s=back+1}
+    mk.s=s;prevEnd=mk.pos+1});
+  const tidy=x=>x.replace(/\n[^\n]{0,8}آخر تفسير[^\n]*\s*$/,'').replace(/(\n[\s*]*)+$/,'').trim().replace(/[\s،,؛:\-–]+$/,'').replace(/([^.؟!»"﴾)])$/,'$1.');
+  let k=-1;for(let n=0;n<marks.length;n++)if(marks[n].j<=ay)k=n;
+  if(k<0){const seg=stripHead(preCut(t.slice(0,marks[0].s))).trim();return seg.length>40?tidy(seg):t}   // الآيات قبل أول موضع معروف
+  if(marks[k].j<ay)JOINT[su+':'+ay]=marks[k].j;else delete JOINT[su+':'+ay];
+  const start=(k===0&&(marks[0].j===1||stripHead(preCut(t.slice(0,marks[0].s))).trim().length<40))?0:marks[k].s;
+  const end=k+1<marks.length?marks[k+1].s:t.length;
+  let seg=t.slice(start,end);
+  if(start===0)seg=stripHead(preCut(seg));
+  if(k+1<marks.length)seg=trimLead(seg,su,marks[k].j,marks[k+1].j-1);
+  return seg.trim()?tidy(seg):t;
+}
+
+/* تنظيف تفاسير الطبري وابن كثير والبغوي من حواشي المحققين والأقواس المربعة */
+const CLEAN_TAF=new Set(['ar-tafsir-al-tabari','ar-tafsir-ibn-kathir','ar-tafsir-al-baghawi']);
+/* حذف إحالات الآيات إلى السور مثل [المدثر: ٤٢-٤٣] من جميع التفاسير */
+function stripRefs(t){return t
+  .replace(/\(\s*\(/g,'(').replace(/\)\s*\)/g,')')                       // (( )) تصير ( )
+  .replace(/[ \t]*\[\s*(?:سورة\s*)?[^\[\]\n:]{2,30}?\s*:\s*[٠-٩0-9]+(?:\s*[-–،,و]\s*[٠-٩0-9]+)*\s*\]/g,'')
+  .replace(/[ \t]+([،.:؛؟!)﴾])/g,'$1')}
+function cleanTafsir(slug,t){
+  t=stripRefs(t)
+    .replace(/\{\s*([^{}\[\]\n]{1,600}?)\s*\]/g,'﴿$1﴾').replace(/\[\s*([^{}\[\]\n]{1,600}?)\s*\}/g,'﴿$1﴾') // أقواس مختلطة { ] و [ }
+    .replace(/\{\s*([^{}\n]{1,600}?)\s*\}/g,'﴿$1﴾')                                   // أقواس الآيات { } تصير بأقواس المصحف ﴿ ﴾
+    .replace(/[ \t]*\((?:سورة\s*)?[^()\n]{1,25}?\s*:\s*[٠-٩0-9]+(?:\s*[-–،,]\s*[٠-٩0-9]+)*\s*\)/g,'') // (البقرة: ٢٥)
+    .replace(/[ \t]*\(\s*[٠-٩0-9]+(?:\s*[-–،,]\s*[٠-٩0-9]+)*\s*[-–]\s*[^()\n٠-٩0-9]{2,20}\)/g,'')      // (٨٧-الحجر)
+    .replace(/[ \t]*\(\s*(?:رقم\s*:?\s*)?[٠-٩0-9]+(?:\s*[\/\-–،,]\s*[٠-٩0-9]+)*\s*\)/g,'');         // أرقام المراجع (٥/١٤١) و(٨١٠)
+  if(!CLEAN_TAF.has(slug))return t.replace(/[ \t]{2,}/g,' ');
+  return t
+    .replace(/[ \t]*\[\[[\s\S]*?\]\]/g,'')                                   // حواشي المحقق: تُحذف كلها
+    .replace(/[ \t]*\[[^\[\]\n]{1,40}?:\s*[٠-٩0-9]+(?:\s*[-–،,]\s*[٠-٩0-9]+)*\s*\]/g,'') // إحالات السور مثل [البقرة: ٢١٦]
+    .replace(/\[([^\[\]]*)\]/g,'$1')                                          // الزيادات: تبقى الكلمة بلا أقواس
+    .replace(/[\[\]]/g,'')                                                    // أي قوس مربع شارد
+    .replace(/[ \t]{2,}/g,' ').replace(/ +([،.:؛؟!)﴾])/g,'$1').replace(/ +\n/g,'\n');
+}
+const tafCache={},tafSplit={};
+/* الميسر والمختصر تفسيرهما آية آية فلا يُقسَّمان؛ وما فُسِّر مع آية قبله يُنبَّه عليه في أوله */
+const NO_SPLIT=new Set(['ar-tafsir-muyassar','ar-tafsir-al-mukhtasar']);
+const JOINT_RE=/^فُسِّرت هذه الآية مع الآية [٠-٩]+\n/;
+const stripJoint=t=>(t||'').replace(JOINT_RE,'');
+function splitCached(slug,ck,su,ay){
+  if(tafSplit[ck]!=null)return tafSplit[ck];
+  const raw=tafCache[ck],pre=ck in PRE_J;let x=(NO_SPLIT.has(slug)||pre)?raw:splitTafsirForAyah(raw,su,ay);
+  /* الميسر: «تسمية السورة ومقاصدها» تظهر مع الآية الأولى فقط؛ وبقية الآيات تبدأ بعد «[التفسير]» */
+  if(NO_SPLIT.has(slug)&&ay!==1&&x){const m=x.indexOf('[التفسير]');if(m>=0)x=x.slice(m+9).trim()}
+  const j=NO_SPLIT.has(slug)?0:pre?PRE_J[ck]:JOINT[su+':'+ay];
+  x=quoteMarks(fixQuotes(x));if(j&&x)x=`فُسِّرت هذه الآية مع الآية ${AR(j)}\n`+x;
+  return tafSplit[ck]=x;
+}
+/* التفاسير المقسَّمة مسبقًا آيةً آية (مجلد tafsir بجانب التطبيق): كل ملف فيه ٢٥ آية من سورة */
+const PRE_DIR={'ar-tafsir-ibn-kathir':'ibn-kathir','ar-tafsir-al-baghawi':'baghawi','ar-tafsir-al-tabari':'tabari','ar-tafseer-al-saddi':'saadi'};
+const PRE_J={},preFiles={};
+function preChunk(slug,su,c){const k=slug+su+'-'+c;
+  return preFiles[k]||(preFiles[k]=fetch(`tafsir/${PRE_DIR[slug]}/${su}-${c}.json`).then(r=>{if(!r.ok)throw 0;return r.json()}).catch(e=>{delete preFiles[k];throw e}))}
+async function preEntry(slug,su,ay){const d=await preChunk(slug,su,Math.floor((ay-1)/25));return d[ay]}
+async function preAyah(slug,su,ay){
+  let v=await preEntry(slug,su,ay),j=0;
+  if(v&&typeof v==='object'){j=v.j;v=await preEntry(slug,su,j)}
+  if(typeof v!=='string')return null;
+  if((j||ay)===1)v=stripHead(v).trim()||v;
+  return{t:v,j:j&&j!==ay?j:0};
+}
+async function fetchTafsir(slug,su,ay){
+  if(slug==='my'){if(!MYT)await loadMy();const mk=myKey(su+':'+ay);return mk?quoteMarks(stripRefs(MYT.e[mk]||'')):''}
+  const ck=slug+su+':'+ay;if(tafCache[ck]!=null)return splitCached(slug,ck,+su,+ay);
+  if(PRE_DIR[slug]){try{const r=await preAyah(slug,+su,+ay);if(r){
+    tafCache[ck]=parenToQuran(cleanTafsir(slug,r.t));PRE_J[ck]=r.j;return splitCached(slug,ck,+su,+ay)}}catch(e){}}
+  for(const b of TAF_BASE){try{const r=await fetch(`${b}${slug}/${su}/${ay}.json`);if(r.ok){const j=await r.json();tafCache[ck]=parenToQuran(cleanTafsir(slug,j.text||''));return splitCached(slug,ck,+su,+ay)}}catch(e){}}
+  throw new Error('fail');
+}
+function openAyahTafsir(a){
+  if(S.mode==='full')return openLib(a);
+  panel.kind='tafsir';panel.tafI=S.tafsir;renderAyahTafsir(a);
+}
+function renderAyahTafsir(a){
+  const[su,ay]=a.split(':');if(panel.tafI===MYI&&!hasMy(a))panel.tafI=S.tafsir===MYI?0:S.tafsir;const i=panel.tafI;
+  const sel=`<select class="pill" onchange="panel.tafI=+this.value;renderAyahTafsir('${a}')">${TAFSIRS.map((t,j)=>(j===MYI&&!hasMy(a))||(!tafOn(j)&&j!=i)?'':`<option value="${j}" ${j==i?'selected':''}>${t[1]}</option>`).join('')}</select>`;
+  const body=document.createElement('div');body.className='just-t';body.textContent='جارٍ تحميل التفسير…';
+  const nav=document.createElement('div');nav.style.cssText='display:flex;justify-content:space-between;margin-top:.6em';
+  nav.innerHTML=`<button class="mini" onclick="stepTafsir('${a}',-1)"><svg class="ar" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>السابقة</button><button class="mini" onclick="openLib('${a}')">كل التفاسير</button><button class="mini" onclick="stepTafsir('${a}',1)">التالية<svg class="ar" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>`;
+  const wrap=document.createElement('div');wrap.append(body,nav);
+  openPanel({title:'تفسير '+ayRef(a),selHTML:sel,body:wrap,ayah:a});
+  fetchTafsir(TAFSIRS[i][0],su,ay).then(t=>{if(panel.ayah===a&&panel.tafI===i){body.innerHTML=fmtTafsir(t)||'لا يوجد تفسير لهذه الآية';panel.shareText=`${TAFSIRS[i][1]}:\n${t}`}})
+    .catch(()=>{body.textContent='تعذّر تحميل التفسير — تأكد من الاتصال بالإنترنت'});
+}
+function stepTafsir(a,d){const n=nextAyah(a,d);if(!n)return;const p=Q.ayahPage[n];
+  if(p!==cur){show(p).then(()=>renderAyahTafsir(n))}else renderAyahTafsir(n)}
+
+/* ---------- library (full tafsir page) ---------- */
+let libAyah=null,menuSlug=null;
+function ayahGlyphHTML(a){
+  return (AYTOK[a]||[]).map(([g,p])=>`<span style="font-family:p${p}">${esc(g)}</span>`).join('\u200b');   // فاصل خفي يسمح بنزول الكلمات إلى السطر التالي
+}
+async function openLib(a){
+  libAyah=a;closeAll(true);$('lib').classList.add('open');
+  const pages=[...new Set((AYTOK[a]||[]).map(t=>t[1]))];
+  await Promise.all(pages.map(p=>pageFont(p).catch(()=>{})));
+  $('libRef').innerHTML=`<span style="font-size:24px">›</span> ${esc(ayRef(a))}`;$('libRef').onclick=()=>libStep(-1);
+  $('libPill').textContent=ayRef(a);
+  const b=$('libBody');b.innerHTML=`<div class="ayah">${ayahGlyphHTML(a)}</div>`;b.scrollTop=0;
+  const[su,ay]=a.split(':');
+  TAFSIRS.forEach(([slug,name],i)=>{
+    if(slug==='my'&&!hasMy(a))return;if(!tafOn(i))return;
+    const c=document.createElement('div');c.className='tc';
+    c.innerHTML=`<div class="tl"><span>${name}</span><button class="dots">•••</button></div><div class="card">جارٍ التحميل…</div>`;
+    c.querySelector('.dots').onclick=ev=>{ev.stopPropagation();openMenu(ev,slug)};
+    b.appendChild(c);
+    fetchTafsir(slug,su,ay).then(t=>{if(libAyah===a)setTaf(c.querySelector('.card'),t,'لا يوجد تفسير لهذه الآية في هذا الكتاب')})
+      .catch(()=>{if(libAyah===a)c.querySelector('.card').textContent='تعذّر التحميل — تأكد من الاتصال بالإنترنت'});
+  });
+}
+function closeLib(){$('lib').classList.remove('open');$('tmenu').classList.remove('open')}
+function libStep(d){const n=nextAyah(libAyah,d);if(!n)return;const p=Q.ayahPage[n];if(p!==cur){cur=p;show(p).then(()=>openLib(n))}else openLib(n)}
+function cycleSize(){const s=[17,19,21,24,27];S.tsize=s[(s.indexOf(S.tsize)+1)%s.length];save('settings',S);applySettings();toast('حجم الخط: '+AR(S.tsize))}
+function openMenu(ev,slug){
+  menuSlug=slug;const m=$('tmenu');m.classList.add('open');
+  const r=ev.target.getBoundingClientRect();m.style.top=Math.min(r.bottom+6,innerHeight-220)+'px';m.style.left=Math.max(10,r.left)+'px';
+  setTimeout(()=>document.addEventListener('click',()=>m.classList.remove('open'),{once:true}),0);
+}
+async function menuAct(kind){
+  $('tmenu').classList.remove('open');
+  const[su,ay]=libAyah.split(':');const name=TAFSIRS.find(t=>t[0]===menuSlug)[1];
+  let t='';try{t=await fetchTafsir(menuSlug,su,ay)}catch(e){toast('تعذّر تحميل التفسير');return}
+  const ayText=Q.text[libAyah];
+  if(kind==='txt')return shareText(`﴿${ayText}﴾ [${ayRef(libAyah)}]\n\n${name}:\n${t}`);
+  if(kind==='err'){location.href='mailto:?subject='+encodeURIComponent('إبلاغ عن خطأ — '+name+' — '+ayRef(libAyah))+'&body='+encodeURIComponent('الآية: '+ayRef(libAyah)+'\nالتفسير: '+name+'\n\nوصف الخطأ:\n');return}
+  shareImage(libAyah,name,t);
+}
+
+/* ---------- sharing ---------- */
+async function shareText(txt){
+  try{if(navigator.share){await navigator.share({text:txt});return}}catch(e){if(e.name==='AbortError')return}
+  try{await navigator.clipboard.writeText(txt);toast('تم نسخ النص')}catch(e){toast('تعذّرت المشاركة')}
+}
+function shareCurrent(){
+  const a=panel.ayah;if(!a)return;
+  shareText(`﴿${Q.text[a]}﴾ [${ayRef(a)}]`+(panel.shareText?'\n\n'+panel.shareText:''));
+}
+function wrapLines(ctx,words,maxW,sep){const out=[];let line='';
+  words.forEach(w=>{const t=line?line+sep+w:w;if(ctx.measureText(t).width>maxW&&line){out.push(line);line=w}else line=t});if(line)out.push(line);return out}
+/* نص التفسير في الصورة: الآيات بخط المصحف ولونه، ورقم الآية داخل علامتها كما في التطبيق */
+function richLines(ctx,txt,maxW,sysF){
+  const FT=`36px ${sysF}`,FQ=FT,CT='#111',CQ='#8b1f1f',CR='#a09484';
+  txt=txt.replace(/۝\s+([٠-٩]+)/g,'۝$1');
+  const words=[];
+  txt.split(/\n+/).forEach((para,pi)=>{if(!para.trim())return;if(words.length)words.push({br:1});
+    let mode=0;   // 0 نص، 1 آية، 2 إحالة
+    para.trim().split(/\s+/).forEach(t=>{
+      let m=mode;if(t.includes('﴿'))m=1;else if(mode===0&&t.startsWith('['))m=2;
+      const f=m===1?FQ:FT,c=m===1?CQ:m===2?CR:CT;ctx.font=f;
+      words.push({t,f,c,w:ctx.measureText(t).width,sp:ctx.measureText(' ').width*(m===1?1.2:1)});
+      if(t.includes('﴾'))mode=0;else if(m===1)mode=1;else if(m===2&&t.includes(']'))mode=0;else mode=m;
+    })});
+  const lines=[];let cur=[],lw=0;
+  words.forEach(w=>{if(w.br){if(cur.length)lines.push({w:cur});lines.push({gap:1});cur=[];lw=0;return}
+    if(cur.length&&lw+w.w>maxW){lines.push({w:cur});cur=[];lw=0}cur.push(w);lw+=w.w+w.sp});
+  if(cur.length)lines.push({w:cur});return lines;
+}
+async function shareImage(a,name,txt){
+  const W=1200,P=70,cw=W-2*P;
+  const toks=AYTOK[a]||[];const pages=[...new Set(toks.map(t=>t[1]))];
+  await Promise.all(pages.map(p=>pageFont(p).catch(()=>{})));
+  const banner=await new Promise(r=>{const im=new Image();im.onload=()=>r(im);im.onerror=()=>r(null);im.src=BANNER_URL});
+  const c=document.createElement('canvas');const ctx=c.getContext('2d');
+  const sysF='"SF Arabic",-apple-system,system-ui,Tahoma,sans-serif';
+  // measure
+  const qfs=56;ctx.font=`${qfs}px p${pages[0]}`;
+  const qLines=[];let line=[],lw=0;
+  toks.forEach(t=>{ctx.font=`${qfs}px p${t[1]}`;const w=ctx.measureText(t[0]).width+10;if(lw+w>cw&&line.length){qLines.push(line);line=[];lw=0}line.push([t,w]);lw+=w});if(line.length)qLines.push(line);
+  const tl=richLines(ctx,quoteMarks(stripJoint(txt)),cw-80,sysF),LH=66;
+  const bh=banner?cw*banner.height/banner.width:0;
+  const tH=tl.reduce((s,l)=>s+(l.gap?LH*0.4:LH),0);
+  const H=P+bh+40+qLines.length*qfs*1.9+60+50+tH+80+P;
+  c.width=W;c.height=H;ctx.fillStyle='#fdfbf5';ctx.fillRect(0,0,W,H);
+  let y=P;
+  if(banner){if(!BANNER_BAKED)ctx.filter='brightness(.86) saturate(1.25)';ctx.drawImage(banner,P,y,cw,bh);ctx.filter='none';
+    const s=+a.split(':')[0];const[d,x0,y0,w0,h0]=NAMES[s];const sc=bh*0.62/h0;
+    ctx.save();ctx.translate(W/2-w0*sc/2-x0*sc,y+bh*0.19-y0*sc);ctx.scale(sc,sc);ctx.fillStyle='#141414';ctx.fill(new Path2D(d));ctx.restore();y+=bh+40}
+  ctx.fillStyle='#000';ctx.textBaseline='middle';ctx.direction='rtl';
+  qLines.forEach(l=>{const tw=l.reduce((s,x)=>s+x[1],0);let x=W/2+tw/2;y+=qfs*0.95;
+    l.forEach(([t,w])=>{ctx.font=`${qfs}px p${t[1]}`;ctx.textAlign='right';ctx.fillText(t[0],x,y);x-=w});y+=qfs*0.95});
+  y+=50;ctx.textAlign='right';ctx.font=`34px ${sysF}`;ctx.fillStyle='#9a8a73';ctx.fillText(name,W-P-20,y);y+=40;
+  const ch=tH+60;ctx.fillStyle='#f2eeea';ctx.beginPath();if(ctx.roundRect)ctx.roundRect(P,y,cw,ch,28);else ctx.rect(P,y,cw,ch);ctx.fill();
+  let ty=y+30+LH/2;tl.forEach(l=>{if(l.gap){ty+=LH*0.4;return}let x=W-P-40;
+    l.w.forEach(w=>{ctx.font=w.f;ctx.fillStyle=w.c;ctx.textAlign='right';ctx.fillText(w.t,x,ty);x-=w.w+w.sp});ty+=LH});
+  ctx.textAlign='center';ctx.font=`26px ${sysF}`;ctx.fillStyle='#b9ab95';ctx.fillText('رِواء',W/2,H-P/2-10);
+  const blob=await new Promise(r=>c.toBlob(r,'image/png'));
+  const file=new File([blob],'tafsir.png',{type:'image/png'});
+  try{if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file]});return}}catch(e){if(e.name==='AbortError')return}
+  const url=URL.createObjectURL(blob);const lnk=document.createElement('a');lnk.href=url;lnk.download='tafsir.png';document.body.appendChild(lnk);lnk.click();lnk.remove();
+}
+
+/* ---------- bookmarks / highlights / notes ---------- */
+function toggleBM(){const a=panel.ayah;const i=BM.findIndex(b=>b.k===a);
+  if(i>=0){BM.splice(i,1);toast('أُزيل الفاصل')}else{BM.unshift({k:a,p:Q.ayahPage[a],t:Date.now()});toast('تم حفظ الفاصل')}
+  save('bookmarks',BM);refreshActs()}
+function pickColor(){
+  const a=panel.ayah;
+  aux('تلوين '+ayRef(a),`<div class="swatches">${HLC.map(([c,n])=>`<button title="${n}" style="background:var(--hl-${c})" onclick="setHL('${a}','${c}')"></button>`).join('')}
+    <button title="إزالة" style="background:#fff;font-size:18px" onclick="setHL('${a}',null)">✕</button></div>`);
+}
+function setHL(a,c){if(c)HL[a]=c;else delete HL[a];save('highlights',HL);closeAll();renderPage(cur);toast(c?'تم التلوين':'أُزيل التلوين')}
+function editNote(){
+  const a=panel.ayah;
+  aux('تعليق على '+ayRef(a),`<textarea id="noteTx" placeholder="اكتب فائدتك أو ملاحظتك…">${esc(NT[a]?.t||'')}</textarea>
+    <div style="display:flex;gap:.6em;margin-top:.6em"><button class="mini" style="background:var(--acc);color:#fff;border-color:var(--acc)" onclick="saveNote('${a}')">حفظ</button>
+    ${NT[a]?`<button class="mini" style="color:#a33" onclick="delNote('${a}')">حذف التعليق</button>`:''}</div>`);
+  setTimeout(()=>$('noteTx').focus(),250);
+}
+function saveNote(a){const t=$('noteTx').value.trim();if(t)NT[a]={t,p:Q.ayahPage[a],d:Date.now()};else delete NT[a];save('notes',NT);closeAll();toast(t?'تم حفظ التعليق':'أُزيل التعليق')}
+function delNote(a){delete NT[a];save('notes',NT);closeAll();toast('أُزيل التعليق')}
+function aux(title,html){closeAll(true);$('auxTitle').textContent=title;$('auxBody').innerHTML=html;$('aux').classList.add('open')}
+
+/* ---------- drawer ---------- */
+let dTab='index',ixMode='s';
+function openDrawer(t){closeAll(true);dTab=t||'index';$('drw').classList.add('open');$('dim').classList.add('open');renderDrawer()}
+function drawerTab(t){dTab=t;renderDrawer()}
+function renderDrawer(){
+  document.querySelectorAll('#drw .dn button').forEach(b=>b.classList.toggle('on',b.dataset.t===dTab));
+  const seg=$('dseg'),L=$('dlist'),J=$('jstrip');L.innerHTML='';J.innerHTML='';
+  if(dTab==='index'){
+    seg.style.visibility='visible';
+    seg.innerHTML=[['s','السور'],['j','الأجزاء'],['h','الأحزاب'],['r','الأرباع']].map(([m,n])=>`<button class="${ixMode===m?'on':''}" onclick="ixMode='${m}';renderDrawer()">${n}</button>`).join('');
+    renderIndex(L);
+    for(let j=1;j<=30;j++){const s=document.createElement('span');s.textContent=AR(j);s.onclick=()=>{const e=L.querySelector(`[data-j="${j}"]`);if(e)e.scrollIntoView({block:'start'})};J.appendChild(s)}
+    const c=L.querySelector('.cur');if(c)c.closest('.row').scrollIntoView({block:'center'});
+  }else{seg.style.visibility='hidden';seg.innerHTML='';
+    if(dTab==='khatma')renderKhatma(L);else if(dTab==='marks')renderMarks(L);else renderHL(L)}
+}
+function row(n,title,sub,p,cls,extra){
+  const r=document.createElement('div');r.className='row';
+  r.innerHTML=`<span class="n ${cls||''}">${n}</span><span class="t"><b>${title}</b><small>${sub}</small></span>${extra||''}`;
+  r.onclick=e=>{if(e.target.closest('.del'))return;closeAll();show(p)};return r;
+}
+const JORD=()=>Q.juzOrd;
+function ayahSnippet(k,n){return Q.text[k].split(' ').filter(Boolean).slice(0,n||4).join(' ')}
+function renderIndex(L){
+  const cs=surahOfPage(cur);
+  if(ixMode==='s'){
+    let lastJ=0;
+    Q.surahs.forEach((s,i)=>{const p=surahFirst[i+1],j=juzOf(p);
+      if(j!==lastJ){lastJ=j;const h=document.createElement('div');h.className='gh';h.dataset.j=j;h.textContent='الجزء '+(JORD()[j-1]||AR(j));L.appendChild(h)}
+      L.appendChild(row(AR(i+1),s[0],`الصفحة ${AR(p)} - ${AR(s[2])} آية - ${s[1]==='م'?'مدنية':'مكية'}`,p,i+1===cs?'cur':''))});
+  }else if(ixMode==='j'){
+    Q.juzPages.forEach((p,i)=>{const r=row(AR(i+1),'الجزء '+(JORD()[i]||AR(i+1)),`يبدأ بسورة ${sname(surahOfPage(p))} - الصفحة ${AR(p)}`,p,juzOf(cur)===i+1?'cur':'');r.dataset.j=i+1;L.appendChild(r)});
+  }else{
+    const step=ixMode==='h'?4:1;const qn=['','ربع الحزب','نصف الحزب','ثلاثة أرباع الحزب'];
+    let curQ=0;QUARTERS.forEach((k,i)=>{if(Q.ayahPage[k]<=cur)curQ=i});
+    for(let i=0;i<QUARTERS.length;i+=step){
+      const k=QUARTERS[i],p=Q.ayahPage[k],hz=Math.floor(i/4)+1,qi=i%4;
+      if(ixMode==='r'&&qi===0&&i%8===0){const h=document.createElement('div');h.className='gh';h.dataset.j=i/8+1;h.textContent='الجزء '+(JORD()[i/8]||AR(i/8+1));L.appendChild(h)}
+      const title=ixMode==='h'||qi===0?'الحزب '+AR(hz):qn[qi]+' '+AR(hz);
+      const r=row(ixMode==='h'?AR(hz):['','¼','½','¾'][qi]||AR(hz),title,`${ayahSnippet(k)}… — ${ayRef(k)} - الصفحة ${AR(p)}`,p,
+        (ixMode==='h'?Math.floor(curQ/4)===hz-1:curQ===i)?'cur':'');
+      if(ixMode==='h'&&i%8===0)r.dataset.j=i/8+1;
+      L.appendChild(r);
+    }
+  }
+}
+function renderMarks(L){
+  if(!BM.length){L.innerHTML='<div class="gh">لا توجد فواصل بعد. اضغط على كلمة أو رمز آية ثم «فاصل».</div>';return}
+  BM.forEach((b,i)=>{const r=row(AR(i+1),ayRef(b.k),`${ayahSnippet(b.k,6)}… - الصفحة ${AR(b.p)}`,b.p,'',`<button class="del" title="حذف">✕</button>`);
+    r.querySelector('.del').onclick=()=>{BM.splice(i,1);save('bookmarks',BM);renderDrawer()};L.appendChild(r)});
+}
+function renderHL(L){
+  const hk=Object.keys(HL),nk=Object.keys(NT);
+  if(!hk.length&&!nk.length){L.innerHTML='<div class="gh">لا توجد تمييزات أو تعليقات بعد.</div>';return}
+  const sort=a=>a.sort((x,y)=>{const[a1,b1]=x.split(':').map(Number),[a2,b2]=y.split(':').map(Number);return a1-a2||b1-b2});
+  if(hk.length){const h=document.createElement('div');h.className='gh';h.textContent='الآيات الملوّنة';L.appendChild(h);
+    sort(hk).forEach(k=>{const r=row(`<i style="display:block;width:1.2em;height:1.2em;border-radius:50%;background:var(--hl-${HL[k]})"></i>`,ayRef(k),ayahSnippet(k,6)+'…',Q.ayahPage[k],'',`<button class="del">✕</button>`);
+      r.querySelector('.del').onclick=()=>{delete HL[k];save('highlights',HL);renderDrawer();renderPage(cur)};L.appendChild(r)})}
+  if(nk.length){const h=document.createElement('div');h.className='gh';h.textContent='التعليقات';L.appendChild(h);
+    sort(nk).forEach(k=>{const r=row('✎',ayRef(k),NT[k].t,Q.ayahPage[k],'',`<button class="del">✕</button>`);
+      r.querySelector('.del').onclick=()=>{delete NT[k];save('notes',NT);renderDrawer()};L.appendChild(r)})}
+}
+
+/* ---------- khatmas ---------- */
+function hijri(ts){try{return new Date(ts).toLocaleDateString('ar-SA-u-ca-islamic-umalqura',{day:'numeric',month:'long',year:'numeric'})}catch(e){return new Date(ts).toLocaleDateString('ar')}}
+function showHijri(){toast(hijri(Date.now()))}
+function renderKhatma(L){
+  KH.forEach(([id,name])=>{
+    const k=K[id],left=604-k.page,days=Math.ceil(left/Math.max(1,k.wird));
+    const d=document.createElement('div');d.className='kh'+(K.active===id?' on':'');
+    d.innerHTML=`<h3>${name}<button class="mini">${K.active===id?'الحالية':'انتقل إليها'}</button></h3>
+      <div class="meta">${id==='hifz'?'تُحفظ آخر صفحة تلقائيًا':'تُحفظ بزر «وصلتُ هنا»'} · وصلت إلى صفحة ${AR(k.page)} (${sname(surahOfPage(k.page))})</div>
+      <div class="prog"><i style="width:${(k.page/604*100).toFixed(1)}%"></i></div>
+      <div class="meta">الورد اليومي: <input type="number" min="1" max="604" value="${k.wird}" style="width:5em;display:inline-block"> صفحة
+      <br>الختم المتوقع: ${left<=0?'تمّت الختمة، بارك الله فيك':hijri(Date.now()+days*864e5)+' (بعد '+AR(days)+' يومًا)'}</div>`;
+    d.querySelector('button').onclick=()=>{K.active=id;tvMushaf=false;save('khatmas',K);closeAll();show(K[id].page||1)};
+    d.querySelector('input').onchange=e=>{k.wird=Math.max(1,+e.target.value||1);save('khatmas',K);renderDrawer()};
+    L.appendChild(d);
+  });
+  const r=document.createElement('button');r.className='mini';r.textContent='بدء ختمة جديدة للختمة الحالية';
+  r.onclick=()=>{if(confirm('هل تريد إعادة الختمة الحالية إلى الصفحة الأولى؟')){K[K.active].page=1;save('khatmas',K);closeAll();show(1)}};
+  L.appendChild(r);
+}
+function markHere(){if(K.active==='hifz')return;K[K.active].page=cur;save('khatmas',K);toast('تم حفظ الموضع: صفحة '+AR(cur))}
+function updateBadges(){$('here').classList.toggle('on',K.active!=='hifz')}
+
+/* ---------- tafsir khatma view ---------- */
+let tvMushaf=false,tvTaf=null;
+function ayahsOfPage(p){return Object.keys(Q.ayahPage).filter(k=>Q.ayahPage[k]===p).sort((a,b)=>{const[x,y]=a.split(':').map(Number),[u,v]=b.split(':').map(Number);return x-u||y-v})}
+function updateTview(){
+  const on=K.active==='tafsir'&&!tvMushaf;
+  $('tview').classList.toggle('open',on);$('tvBtns').style.display=on?'flex':'none';
+  if(on)renderTview();
+}
+function renderTview(){
+  if(tvTaf==null)tvTaf=S.tafsir;const p=cur;const myHere=ayahsOfPage(p).some(hasMy);if(tvTaf===MYI&&!myHere)tvTaf=S.tafsir===MYI?0:S.tafsir;const shownMy=new Set();let prevTv=Promise.resolve(null);
+  $('tvTitle').textContent=`${sname(surahOfPage(p))} — صفحة ${AR(p)}`;
+  $('tvTabs').innerHTML='';
+  TAFSIRS.forEach(([slug,name],i)=>{if(i===MYI&&!myHere)return;if(!tafOn(i)&&i!==tvTaf)return;const b=document.createElement('button');b.textContent=name;if(i===tvTaf)b.className='on';b.onclick=()=>{tvTaf=i;renderTview()};$('tvTabs').appendChild(b)});
+  const body=$('tvBody');body.innerHTML='';body.scrollTop=0;const token=p+':'+tvTaf;body.dataset.t=token;
+  ayahsOfPage(p).forEach(k=>{
+    const[su,ay]=k.split(':').map(Number);
+    if(ay===1){const h=document.createElement('div');h.className='tv-h';h.textContent='سورة '+sname(su);body.appendChild(h)}
+    const a=document.createElement('div');a.className='tv-a';a.textContent=Q.text[k]+' ';
+    const n=document.createElement('span');n.className='an';n.textContent='﴿'+AR(ay)+'﴾';a.appendChild(n);
+    const t=document.createElement('div');t.className='tv-t';t.textContent='جارٍ تحميل التفسير…';
+    body.append(a,t);
+    if(tvTaf===MYI){const mk=myKey(k);if(mk&&shownMy.has(mk)){t.textContent='تقدّم تفسيرها مع ما قبلها.';return}if(mk)shownMy.add(mk)}
+    const fp=fetchTafsir(TAFSIRS[tvTaf][0],su,ay),pp=prevTv;prevTv=fp.catch(()=>null);
+    Promise.all([fp,pp]).then(([x,prev])=>{if(body.dataset.t===token){if(x&&prev&&stripJoint(prev)===stripJoint(x))t.textContent='تقدّم تفسيرها مع ما قبلها.';else setTaf(t,x,'لا يوجد تفسير لهذه الآية في هذا الكتاب')}})
+      .catch(()=>{if(body.dataset.t===token)t.textContent='تعذّر تحميل التفسير — تأكد من الاتصال بالإنترنت'});
+  });
+}
+
+/* ---------- search ---------- */
+const normS=s=>s.replace(/[\u064B-\u065F\u0670\u06D6-\u06ED\u0640]/g,'').replace(/[أإآٱ]/g,'ا').replace(/ى/g,'ي').replace(/ة/g,'ه');
+/* صفحة البحث: بالنص أو الجذر أو المعنى، مع المطابقة التامة ونطاق البحث */
+let SMODE='text',ROOTS=null,srRec=null;
+const BOOK_IC='<svg viewBox="0 0 24 24"><path d="M3 5.5c3-1 6-1 9 1v13c-3-2-6-2-9-1z" fill="currentColor" opacity=".9"/><path d="M21 5.5c-3-1-6-1-9 1v13c3-2 6-2 9-1z" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M14.5 9.5h4M14.5 12.5h4" stroke="currentColor" stroke-width="1.3"/></svg>';
+function openSearch(){
+  closeAll(true);$('srch').classList.add('open');
+  const q=$('sq');q.oninput=()=>{clearTimeout(q._t);q._t=setTimeout(doSearch,200);$('sclr').style.visibility=q.value?'visible':'hidden'};
+  q.onkeydown=e=>{if(e.key==='Enter')q.blur()};
+  $('sclr').onclick=()=>{q.value='';q.oninput();doSearch();q.focus()};
+  $('sclr').style.visibility=q.value?'visible':'hidden';
+  $('sseg').querySelectorAll('button').forEach(b=>b.onclick=()=>{SMODE=b.dataset.m;$('sseg').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));
+    q.placeholder=SMODE==='root'?'اكتب الجذر، مثل: رحم':SMODE==='mean'?'اكتب كلمة من المعنى':'اكتب كلمة أو جزءًا من آية';doSearch()});
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  $('smic').onclick=()=>{if(!SR){q.focus();toast('استعمل زر الميكروفون في لوحة المفاتيح');return}
+    if(srRec){srRec.stop();return}srRec=new SR();srRec.lang='ar-SA';srRec.interimResults=false;$('smic').classList.add('rec');
+    srRec.onresult=e=>{q.value=e.results[0][0].transcript;q.oninput()};srRec.onend=()=>{srRec=null;$('smic').classList.remove('rec')};srRec.start()};
+  doSearch();setTimeout(()=>q.focus(),200);
+}
+function closeSearch(){$('sq').blur();if(srRec)srRec.stop();$('srch').classList.remove('open')}
+const NORM_CACHE={};
+async function loadRoots(){if(ROOTS)return ROOTS;try{const r=await fetch('roots.json');ROOTS=r.ok?await r.json():{}}catch(e){ROOTS={}}return ROOTS}
+function inScope(k){const sc=S.sScope||'all';if(sc==='all')return true;const p=Q.ayahPage[k];
+  if(sc==='surah')return +k.split(':')[0]===surahOfPage(cur);if(sc==='juz')return juzOf(p)===juzOf(cur);return true}
+async function doSearch(){
+  const R=$('sres'),raw=$('sq').value,q=normS(raw).replace(/\s+/g,' '),core=q.trim(),exact=!!S.sExact;
+  if(/^[0-9٠-٩]+$/.test(core)&&SMODE==='text'){const p=+core.replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d));if(p>=1&&p<=604){
+    R.innerHTML=`<div class="scard"><div class="sr"><div class="srt"><span class="ref"><span class="bk">${BOOK_IC}</span>الذهاب إلى الصفحة</span><span class="pg">الصفحة ${AR(p)}</span></div></div></div>`;R.querySelector('.sr').onclick=()=>{closeSearch();show(p)}}return}
+  if(core.length<2){R.innerHTML='';return}
+  let hits=[];
+  if(SMODE==='text'){const needle=exact?' '+core+' ':q;
+    for(const k in Q.plain){const t=NORM_CACHE[k]||(NORM_CACHE[k]=' '+normS(Q.plain[k]).replace(/\s+/g,' ')+' ');if(t.includes(needle)&&inScope(k))hits.push(k)}}
+  else if(SMODE==='root'){const RT=await loadRoots();if($('sq').value!==raw)return;
+    const key=core.replace(/\s/g,'');let keys=RT[key]?[key]:(exact?[]:Object.keys(RT).filter(r=>r.startsWith(key)));
+    const seen=new Set();keys.forEach(r=>RT[r].split(',').forEach(k=>{if(!seen.has(k)&&inScope(k)){seen.add(k);hits.push(k)}}));
+    hits.sort((a,b)=>{const[x,y]=a.split(':').map(Number),[u,v]=b.split(':').map(Number);return x-u||y-v})}
+  else{const needle=exact?' '+core+' ':core;const seen=new Set();
+    for(const k in M){const m=M[k];if(!m||!m.t)continue;const t=' '+normS(m.t)+' ';if(!t.includes(needle))continue;
+      const a=k.split(':').slice(0,2).join(':');if(!seen.has(a)&&inScope(a)){seen.add(a);hits.push(a)}}
+    hits.sort((a,b)=>{const[x,y]=a.split(':').map(Number),[u,v]=b.split(':').map(Number);return x-u||y-v})}
+  const total=hits.length;hits=hits.slice(0,300);
+  const scopeName={all:'كل المصحف',surah:'هذه السورة',juz:'هذا الجزء'};
+  R.innerHTML=`<div class="ssum"><div class="sl"><span>نتيجة البحث</span><b class="scount">${AR(total)}</b></div>
+    <div class="sopt"><label><input type="checkbox" id="sexact" ${exact?'checked':''}> مطابقة تامة</label><button class="smore" id="smore" aria-label="خيارات">•••</button></div></div>`+
+    (total?`<div class="scard"></div>`:'<div class="sempty">لا نتائج</div>')+(total>300?'<div class="sempty">تُعرض أول ٣٠٠ نتيجة</div>':'');
+  $('sexact').onchange=e=>{S.sExact=e.target.checked;save('settings',S);doSearch()};
+  $('smore').onclick=e=>{e.stopPropagation();const old=R.querySelector('.smenu');if(old){old.remove();return}
+    const m=document.createElement('div');m.className='smenu';const r=e.currentTarget.getBoundingClientRect(),br=R.getBoundingClientRect();
+    m.style.top=(r.bottom-br.top+R.scrollTop+6)+'px';m.style.left=(r.left-br.left)+'px';
+    m.innerHTML='<div style="font-size:13px;opacity:.6;padding:.4em .9em">نطاق البحث</div>'+Object.entries(scopeName).map(([k,v])=>`<button data-s="${k}" class="${(S.sScope||'all')===k?'on':''}">${v}</button>`).join('');
+    m.querySelectorAll('button').forEach(b=>b.onclick=()=>{S.sScope=b.dataset.s;save('settings',S);doSearch()});R.style.position='relative';R.appendChild(m);
+    setTimeout(()=>document.addEventListener('click',()=>m.remove(),{once:true}),0)};
+  const card=R.querySelector('.scard');if(!card)return;
+  hits.forEach(k=>{const d=document.createElement('div');d.className='sr';
+    d.innerHTML=`<div class="srt"><span class="ref"><span class="bk">${BOOK_IC}</span>${esc(sname(+k.split(':')[0]))} : ${AR(+k.split(':')[1])}</span><span class="pg">الصفحة ${AR(Q.ayahPage[k])}</span></div><div class="stx">${esc(Q.text[k].replace(/كـَلَّ/g,'كَلَّ'))}</div>`;
+    d.onclick=()=>{closeSearch();show(Q.ayahPage[k])};card.appendChild(d)});
+}
+
+/* ---------- settings ---------- */
+/* ألوان الصفحة: [الاسم، لون الورق، لون وسط الإطار ورموز الآيات] */
+const PAPERS={def:['الأصلي','#FFF7F3','#e6f0de'],green:['أخضر فاتح','#F4F7E8','#e4ecd0'],blue:['أزرق فاتح','#F3F8FD','#dceaf8'],pink:['وردي فاتح','#FEF5F9','#f7dfe9']};
+/* التفاسير الظاهرة: يختار المستخدم ما يظهر منها في المكتبة وقوائم التفسير */
+const tafOn=i=>!(S.tafHidden||[]).includes(TAFSIRS[i][0]);
+function applySettings(){
+  document.body.classList.toggle('night',!!S.night);document.body.classList.toggle('nodiff',!S.diffs);
+  document.body.classList.toggle('black',!!S.black);document.body.classList.toggle('fill',!!S.fill);document.body.classList.toggle('clk',!!S.clock);updClock();
+  const P=PAPERS[S.paper]||PAPERS.def,rs=document.documentElement.style;
+  if(S.night){rs.removeProperty('--paper');rs.setProperty('--mk','#34413a')}else{rs.setProperty('--paper',P[1]);rs.setProperty('--mk',P[2])}
+  clearPre();buildBanner();if($('lines')&&$('lines').children.length)requestAnimationFrame(()=>{fillMarkers();if(COMP)fillMarkers(COMP)});
+  document.documentElement.style.setProperty('--tsize',S.tsize+'px');
+}
+function openSettings(){
+  aux('الإعدادات',`
+    <button class="kbtn" onclick="openDrawer('khatma')"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M8 12.3l2.8 2.8L16.3 9.5"/></svg>الختمات</button>
+    <div class="set"><label>طريقة عرض المعنى والتفسير</label><select id="sMode">
+      <option value="bottom" ${S.mode==='bottom'?'selected':''}>نافذة في أسفل الصفحة</option>
+      <option value="center" ${S.mode==='center'?'selected':''}>نافذة في وسط الصفحة</option>
+      <option value="full" ${S.mode==='full'?'selected':''}>صفحة كاملة</option></select></div>
+    <div class="set tvis"><label>التفاسير الظاهرة</label><div class="tchk">${TAFSIRS.map((t,i)=>`<label><input type="checkbox" data-s="${t[0]}" ${tafOn(i)?'checked':''}> ${t[1]}</label>`).join('')}</div></div>
+    <div class="set"><label>التفسير الافتراضي</label><select id="sTaf">${TAFSIRS.map((t,i)=>i===MYI?'':`<option value="${i}" ${i==S.tafsir?'selected':''}>${t[1]}</option>`).join('')}</select></div>
+    <div class="set"><label>حجم خط المعاني والتفسير</label><select id="sSize">${[16,17,19,21,24,27].map(v=>`<option ${v==S.tsize?'selected':''}>${v}</option>`).join('')}</select></div>
+    <div class="set"><label>لون الصفحة</label><select id="sPaper">${Object.entries(PAPERS).map(([k,v])=>`<option value="${k}" ${k===(S.paper||'def')?'selected':''}>${v[0]}</option>`).join('')}</select></div>
+    <div class="set"><label>السمة (إطار اسم السورة)</label><select id="sTheme"><option value="green" ${S.theme!=='beige'?'selected':''}>أخضر</option><option value="beige" ${S.theme==='beige'?'selected':''}>بيج</option></select></div>
+    <div class="set"><label>تصميم الصفحة</label><select id="sFill"><option value="0" ${!S.fill?'selected':''}>محاكاة المصحف</option><option value="1" ${S.fill?'selected':''}>ملء الشاشة</option></select></div>
+    <div class="set"><label>اتجاه التمرير</label><select id="sVdir"><option value="0" ${!S.vdir?'selected':''}>أفقي</option><option value="1" ${S.vdir?'selected':''}>رأسي</option></select></div>
+    <div class="set"><label>تخطيط الوضع الأفقي</label><select id="sOne"><option value="0" ${!S.one?'selected':''}>صفحتان</option><option value="1" ${S.one?'selected':''}>صفحة</option></select></div>
+    <div class="set"><label>الوضع الليلي</label><input type="checkbox" id="sNight" ${S.night?'checked':''} style="width:auto"></div>
+    <div class="set"><label>خلفية سوداء (في الوضع الليلي)</label><input type="checkbox" id="sBlack" ${S.black?'checked':''} style="width:auto"></div>
+    <div class="set"><label>تصفح رأسي متحرك (في الوضع الأفقي)</label><input type="checkbox" id="sAuto" ${S.auto?'checked':''} style="width:auto"></div>
+    <div class="set"><label>سرعة التصفح المتحرك</label><select id="sAspd">${['بطيء جدًا','بطيء','متوسط','سريع','سريع جدًا'].map((t,i)=>`<option value="${i+1}" ${(i+1)==(S.aspd||3)?'selected':''}>${t}</option>`).join('')}</select></div>
+    <div class="set"><label>تغيير الصفحة تلقائيًا</label><input type="checkbox" id="sApage" ${S.apage!==false?'checked':''} style="width:auto"></div>
+    <div class="set"><label>تلوين مواضع خلاف شعبة</label><input type="checkbox" id="sDiff" ${S.diffs?'checked':''} style="width:auto"></div>
+    <div class="legend" style="padding:.6em 0">${Object.entries(DIFF_NAMES).map(([c,n])=>`<span><i style="background:var(--c-${c})"></i>${n}</span>`).join('')}</div>
+    <div class="set"><label>إظهار الساعة</label><input type="checkbox" id="sClock" ${S.clock?'checked':''} style="width:auto"></div>
+    <div class="set"><label>اسحب للأسفل للبحث (مع الاتجاه الأفقي)</label><input type="checkbox" id="sPull" ${S.pull?'checked':''} style="width:auto"></div>
+    <div class="set"><label>إظهار رمز الحزب داخل الصفحة</label><input type="checkbox" id="sHzin" ${S.hzin?'checked':''} style="width:auto"></div>
+    <div class="set"><label>عدم قفل الشاشة عند استخدام التطبيق</label><input type="checkbox" id="sWake" ${S.wake!==false?'checked':''} style="width:auto"></div>
+    <div class="set"><label>نسخ احتياطي</label><span style="display:flex;gap:.5em"><button class="kbtn" style="margin:0" onclick="backupData()">حفظ نسخة</button><button class="kbtn" style="margin:0" onclick="$('rfile').click()">استعادة</button><input type="file" id="rfile" accept=".json,application/json" style="display:none" onchange="restoreData(this)"></span></div>
+    <div style="color:var(--muted);font-size:15px;line-height:1.8">• ضغطة سريعة على الكلمة: معناها (وفي ختمة التلاوة: ضغطة مطوّلة).<br>• ضغطة مطوّلة على الكلمة: خلاف شعبة.<br>• ضغطة على رمز الآية: تفسيرها.<br>• ضغطة مطوّلة على رمز الآية: صفحة التفاسير كاملة.</div>`);
+  $('sMode').onchange=e=>{S.mode=e.target.value;save('settings',S)};
+  $('sTaf').onchange=e=>{S.tafsir=+e.target.value;tvTaf=null;save('settings',S)};
+  $('sSize').onchange=e=>{S.tsize=+e.target.value;save('settings',S);applySettings()};
+  document.querySelectorAll('.tchk input').forEach(cb=>cb.onchange=()=>{
+    const all=[...document.querySelectorAll('.tchk input')],on=all.filter(x=>x.checked);
+    if(!on.length){cb.checked=true;toast('يلزم إبقاء تفسير واحد على الأقل');return}
+    S.tafHidden=all.filter(x=>!x.checked).map(x=>x.dataset.s);
+    const d=TAFSIRS[S.tafsir];if(d&&S.tafHidden.includes(d[0])){S.tafsir=TAFSIRS.findIndex((t,i)=>i!==MYI&&tafOn(i));if(S.tafsir<0)S.tafsir=0;const st=$('sTaf');if(st)st.value=S.tafsir}
+    save('settings',S)});
+  $('sPaper').onchange=e=>{S.paper=e.target.value;save('settings',S);applySettings()};
+  $('sNight').onchange=e=>{S.night=e.target.checked;save('settings',S);applySettings()};
+  $('sDiff').onchange=e=>{S.diffs=e.target.checked;save('settings',S);applySettings()};
+  $('sTheme').onchange=e=>{S.theme=e.target.value;save('settings',S);applySettings()};
+  $('sFill').onchange=e=>{S.fill=e.target.value==='1';save('settings',S);applySettings();relayPage()};
+  $('sVdir').onchange=e=>{S.vdir=e.target.value==='1';save('settings',S)};
+  $('sOne').onchange=e=>{S.one=e.target.value==='1';save('settings',S);relayPage()};
+  $('sBlack').onchange=e=>{S.black=e.target.checked;save('settings',S);applySettings()};
+  $('sAuto').onchange=e=>{S.auto=e.target.checked;save('settings',S);asReset()};
+  $('sAspd').onchange=e=>{S.aspd=+e.target.value;save('settings',S)};
+  $('sApage').onchange=e=>{S.apage=e.target.checked;save('settings',S)};
+  $('sClock').onchange=e=>{S.clock=e.target.checked;save('settings',S);applySettings();relayPage()};
+  $('sPull').onchange=e=>{S.pull=e.target.checked;save('settings',S)};
+  $('sHzin').onchange=e=>{S.hzin=e.target.checked;save('settings',S);relayPage()};
+  $('sWake').onchange=e=>{S.wake=e.target.checked;save('settings',S);if(S.wake)keepAwake();else if(wakeLock){try{wakeLock.release()}catch(x){}wakeLock=null}};
+}
+
+/* ---------- overlays & bars ---------- */
+function closeAll(keepBars){
+  ['sheet','aux'].forEach(id=>$(id).classList.remove('open'));
+  ['pop','full','drw','dim','srch'].forEach(id=>$(id)&&$(id).classList.remove('open'));
+  $('tmenu').classList.remove('open');
+  if(!keepBars){$('top').classList.remove('open');$('bot').classList.remove('open')}
+  selectWord(null);
+}
+const anyOpen=()=>document.querySelector('.sheet.open,#pop.open,#full.open,#drw.open,#lib.open');
+function toggleBars(){
+  if(anyOpen()){closeAll();return}
+  const o=!$('top').classList.contains('open');$('top').classList.toggle('open',o);$('bot').classList.toggle('open',o);
+}
+bindPageEl($('page'));
+const sl=$('slider');
+function slTag(p){const t=$('slTag'),w=sl.clientWidth||$('bot').clientWidth;t.textContent=AR(p);t.style.left=((1-(p-1)/603)*(w-46))+'px'}
+addEventListener('resize',()=>slTag(+sl.value));
+sl.addEventListener('input',()=>{const p=+sl.value;slTag(p);const b=$('bubble');b.style.display='block';b.textContent=`${AR(p)} — ${sname(surahOfPage(p))}`});
+sl.addEventListener('change',()=>{$('bubble').style.display='none';const p=+sl.value;cur=p;show(p).then(()=>{$('top').classList.add('open');$('bot').classList.add('open')})});
+
+/* ---------- navigation ---------- */
+/* تقليب الصفحات بالسحب المتصل كتطبيق آية: الصفحة تتبع الإصبع والتي بعدها تدخل بجانبها */
+let sx=null,sy=null,st0=0,drag=null,waitingForPage=false,pendingTurn=null;
+/* الصفحتان المجاورتان تُجهَّزان مسبقًا (مرسومة كاملة) فلا يُرسم شيء أثناء السحب، فتبقى الحركة سلسة */
+let PRE={},PRERENDER=false;
+function bindPageEl(el){if(el._pb)return;el._pb=1;el.addEventListener('click',toggleBars)}
+/* الصفحات المجاورة تبقى مرسومة في الشاشة خلف خلفية التطبيق (طبقة -1) فلا يُعاد رسمها عند بدء السحب،
+   ولا تُنزع الصفحة الظاهرة من مكانها أثناء تجهيزها فلا يُعاد رسمها هي أيضًا */
+const pageEls=()=>[...document.querySelectorAll('[id=page]')];
+function parkPage(el){el._tx=0;el._b=null;el.style.transition='';el.style.transform='';el.style.zIndex='-1';el.style.willChange=''}
+function clearPre(){const B=$('page');Object.values(PRE).forEach(el=>{if(el!==B&&el!==COMP)el.remove()});PRE={}}
+function prerenderOne(n,base){
+  const B=$('page'),fresh=B.cloneNode(true);fresh._pb=0;parkPage(fresh);fresh.style.visibility='';
+  B.before(fresh);PRERENDER=true;cur=n;
+  try{renderPage(n);fillMarkers(fresh)}catch(e){}finally{PRERENDER=false;cur=base;document.body.appendChild(fresh)}
+  return PRE[n]=fresh;
+}
+async function prerenderNeighbors(){
+  const base=cur;
+  const neighbors=(isSpread()?[base+2,base+3,base-2,base-1]:[base+1,base-1])
+    .filter(n=>n>=1&&n<=604&&!PRE[n]);
+  await Promise.all(neighbors.map(async n=>{
+    try{await pageFont(n)}catch(e){return}
+    if(cur===base&&!drag&&sx==null&&!PRE[n])prerenderOne(n,base);
+  }));
+}
+function schedulePre(){clearTimeout(schedulePre._t);schedulePre._t=setTimeout(prerenderNeighbors,80)}
+const pxR=v=>{const r=devicePixelRatio||1;return Math.round(v*r)/r};
+function setX(el,x,anim){x=pxR(expClamp(el,x));el._tx=x;const d=anim===true?.26:anim;el.style.transition=d?`transform ${d}s cubic-bezier(.22,.61,.36,1)`:'none';el.style.transform=VAXIS?`translate3d(0,${-x}px,0)`:`translate3d(${x}px,0,0)`}
+/* اتجاه التمرير الرأسي: الصفحة التالية تأتي من الأسفل (لا يُستعمل في الجوال أفقيًا لأن الصفحة تُمرَّر فيه) */
+let VAXIS=false;
+const vAxis=()=>!!S.vdir&&!$('page').classList.contains('scrolly');
+/* علامة الحزب أو الربع: تظهر في الفراغ بين الصفحتين أثناء التقليب فقط */
+const HZB_IMG='data:image/png;base64,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';
+/* جهّز صورة العلامة قبل التقليب لتقليل العمل عند ظهور الشريط الأخضر. */
+const turnBadgeImage=new Image();
+turnBadgeImage.src=HZB_IMG;
+if(turnBadgeImage.decode)turnBadgeImage.decode().catch(()=>{});
+function quarterOnPages(pages){for(let i=0;i<QUARTERS.length;i++){if(pages.includes(Q.ayahPage[QUARTERS[i]]))return i}return -1}
+/* عرض شعار الحزب: ٧٠٪ من مقاسه السابق */
+const badgeW=()=>Math.round(Math.max(59,Math.min(91,innerWidth*0.105)));
+/* عرض الفراغ بين الصفحتين: عرض الشعار + مجال لأطراف الصفحات من الجهتين */
+const turnGap=()=>badgeW()+24;
+function makeBadge(i,els){
+  const bw=badgeW(),bh=Math.round(bw*1.9);
+  const h=AR(Math.floor(i/4)+1),q=i%4;
+  const words=[...(['','ربع','نصف','ثلاثة أرباع'][q]).split(' ').filter(Boolean),'الحزب',h];
+  const txt=words.join('<br>');
+  const b=document.createElement('div');b.className='hzb';b.style.setProperty('--hw',bw+'px');b.style.width=bw+'px';b.style.height=bh+'px';
+  b.innerHTML=`<div class="t n${words.length}">${txt}</div>`;
+  const img=turnBadgeImage.cloneNode();
+  img.alt='';img.draggable=false;b.prepend(img);
+  /* على ارتفاع السطر الذي يبدأ فيه الربع */
+  const[s,a]=QUARTERS[i].split(':');let y=innerHeight/2;
+  for(const el of els){const w=el.querySelector(`.w[data-k^="${s}:${a}:"]`);if(w){const r=w.getBoundingClientRect();y=r.top+r.height/2;break}}
+  b._y=Math.max(8,Math.min(innerHeight-bh-8,y-bh/2));b._w=bw;document.body.appendChild(b);return b;
+}
+function setB(b,x,anim){x=pxR(x);const d=anim===true?.26:anim;b.style.transition=d?`transform ${d}s cubic-bezier(.22,.61,.36,1)`:'none';b.style.transform=`translate3d(${x}px,${b._y}px,0)`}
+const EXP=/[?&]perf\b/.test(location.search)&&/[?&]exp\b/.test(location.search);
+/* تجربة (?perf&exp): لا تخرج أي صفحة من الشاشة كلها أبدًا — يبقى منها نقطتان داخل حافة الشاشة،
+   لأن سفاري يتخلص من رسم الطبقة التي تخرج كلها ثم يعيد رسمها كاملة إذا رجعت (تجمّد أول السحب ونهاية التقليب).
+   وإن لم تكن الصفحة تملأ عرض الشاشة يُغطّى الشريطان بخطين بلون الخلفية */
+const EXP_EDGE=2;let expStrips=null;
+function expClamp(el,x){if(!EXP||el.id!=='page')return x;
+  if(!el._b){const r=el.getBoundingClientRect(),t=el._tx||0;el._b=VAXIS?{a:r.top+t,b:r.bottom+t}:{a:r.left-t,b:r.right-t}}
+  const L=VAXIS?innerHeight:innerWidth,b=el._b;
+  if(VAXIS){const y=Math.min(Math.max(-x,-b.b+EXP_EDGE),L-b.a-EXP_EDGE);return -y}
+  return Math.min(Math.max(x,-b.b+EXP_EDGE),L-b.a-EXP_EDGE)}
+function expStripsOn(curEls){if(!EXP)return;const r=curEls[0].getBoundingClientRect(),L=VAXIS?innerHeight:innerWidth;
+  if((VAXIS?r.top:r.left)<=EXP_EDGE+1&&(VAXIS?L-r.bottom:L-r.right)<=EXP_EDGE+1)return;
+  if(!expStrips){expStrips=[0,1].map(i=>{const e=document.createElement('div');document.body.appendChild(e);return e})}
+  expStrips.forEach((e,i)=>{e.style.cssText='position:fixed;z-index:4;pointer-events:none;background:'+getComputedStyle(document.body).backgroundColor+';'+
+    (VAXIS?`left:0;right:0;height:${EXP_EDGE}px;${i?'bottom':'top'}:0`:`top:0;bottom:0;width:${EXP_EDGE}px;${i?'right':'left'}:0`)})}
+function expStripsOff(){if(expStrips)expStrips.forEach(e=>e.style.display='none')}
+if(EXP)addEventListener('resize',()=>pageEls().forEach(el=>el._b=null));
+function dragReset(){if(rafX){cancelAnimationFrame(rafX);rafX=0}if(!drag)return;const d=drag;drag=null;if(EXP)expStripsOff();if(d.anims)d.anims.forEach(a=>a.cancel());if(d.badge)d.badge.remove();
+  if(d.track)setX(d.track,0);
+  d.cur.forEach(el=>{setX(el,0);el.style.transform='';el.style.zIndex='';el.style.willChange=''});
+  d.nb.forEach(el=>{setX(el,0);parkPage(el);if(d.track)document.body.appendChild(el)})}
+let tTarget=null,rafX=0;
+/* نرسم آخر موضع لمس مرة واحدة في إطار الشاشة، دون تأخير متغيّر. */
+let tS=[];
+const evT=e=>performance.now();
+function dragPos(d){
+  const point=tS[tS.length-1]||[0,0,0];
+  const x=VAXIS?-point[2]:point[1];
+  return d.dir*Math.max(0,Math.min(d.W,x*d.dir));
+}
+function dragPaint(d,x){
+  d.lastX=x;
+  if(d.track){setX(d.track,x);return}
+  d.cur.forEach(el=>setX(el,x));
+  d.nb.forEach(el=>setX(el,d.off+x));
+  if(d.badge)setB(d.badge,d.bx+x);
+}
+function dragLoop(){
+  rafX=0;
+  const d=drag;
+  if(!d||d.rel)return;
+  const x=dragPos(d);
+  if(x!==d.lastX)dragPaint(d,x);
+}
+function unbindTouch(){if(tTarget){tTarget.removeEventListener('touchmove',onTMove);tTarget.removeEventListener('touchend',onTEnd);tTarget.removeEventListener('touchcancel',onTCancel);tTarget=null}}
+addEventListener('touchstart',e=>{
+  if(e.touches.length>1){onTCancel();return}
+  if(drag&&Date.now()-drag.t>1800)dragReset();
+  if((drag&&!drag.rel)||e.target.closest('.sheet,#pop,#full,#drw,#lib,#bot,#top,.menu,#srch,#tview')){sx=null;return}
+  sx=e.touches[0].clientX;sy=e.touches[0].clientY;st0=Date.now();waitingForPage=false;tS=[[evT(e),0,0]];
+  unbindTouch();tTarget=e.target;
+  tTarget.addEventListener('touchmove',onTMove,{passive:true});tTarget.addEventListener('touchend',onTEnd,{passive:true});tTarget.addEventListener('touchcancel',onTCancel,{passive:true});
+},{passive:true});
+function startTurn(to,dir,want,nb){
+  const B=$('page'),curEls=COMP?[B,COMP]:[B];
+  curEls.forEach(el=>el.style.zIndex=2);nb.forEach(el=>{el.style.zIndex=1;el._b=null;setX(el,0)});expStripsOn(curEls);const out=nb.filter(el=>!el.isConnected);if(out.length)pageEls().pop().after(...out);
+  /* المجموعة المجاورة تلتصق بحافة المجموعة الحالية تمامًا */
+  const box=els=>{const r=els.map(e=>e.getBoundingClientRect());return{l:Math.min(...r.map(x=>x.left)),r:Math.max(...r.map(x=>x.right))}};
+  const rB=box(curEls),rN=box(nb);
+  /* إن كانت الصفحة اللاحقة فيها بداية حزب أو ربع: فراغ بين الصفحتين تظهر فيه العلامة */
+  const laterPages=dir>0?want:(COMP?[cur,cur+1]:[cur]),laterEls=dir>0?nb:curEls;
+  const qi=quarterOnPages(laterPages);let badge=null;
+  if(qi>=0&&!VAXIS)badge=makeBadge(qi,laterEls);
+  let off=dir>0?rB.l-rN.r:rB.r-rN.l;
+  if(VAXIS){const bv=els=>{const r=els.map(e=>e.getBoundingClientRect());return{t:Math.min(...r.map(x=>x.top)),b:Math.max(...r.map(x=>x.bottom))}};const vB=bv(curEls),vN=bv(nb);off=dir>0?vN.t-vB.b:vN.b-vB.t}
+  /* العلامة على حافة الصفحة التي فيها الربع، في موضع التقاء الصفحتين (كتطبيق آية) فتختفي إذا استقرت الصفحة */
+  /* فراغ ثابت بين الصفحتين في كل تقليب (الآيفون والآيباد): بعرض شعار الحزب مع مجال لأطراف الصفحات، والشعار في وسطه */
+  const G=turnGap();off=pxR(off-dir*G);
+  const bx=badge?(dir>0?rB.l-G/2:rB.r+G/2)-badge._w/2:0;if(badge)setB(badge,bx);
+  [...curEls,...nb].forEach(el=>el.style.willChange='transform');nb.forEach(el=>setX(el,off));
+  /* حركة واحدة للمجموعة كلها: لا تتحرك حافتا الفراغ والعلامة بتوقيتات مستقلة. */
+  const track=EXP?null:$('pageTrack');
+  if(track){nb.forEach(el=>track.appendChild(el));if(badge)track.appendChild(badge)}
+  drag={from:cur,to,dir,W:Math.abs(off),off,cur:curEls,nb,badge,bx,track,t:Date.now(),lastX:0};
+  return drag;
+}
+async function animateDeferredTurn(){
+  const turn=pendingTurn;
+  if(!turn||drag||sx!=null||turn.loading)return;
+  if((turn.from!=null&&turn.from!==cur)||turn.axis!==vAxis()){pendingTurn=null;return}
+  const base=cur,spread=isSpread(),to=base+turn.dir*(spread?2:1);
+  if(to<1||to>604){pendingTurn=null;return}
+  const want=spread&&to<604?[to,to+1]:[to];
+  turn.loading=true;
+  try{await Promise.all(want.map(pageFont))}
+  catch(e){if(pendingTurn===turn){pendingTurn=null;toast('تعذّر تحميل خط الصفحة')}return}
+  if(pendingTurn!==turn)return;
+  turn.loading=false;
+  if(cur!==base||isSpread()!==spread||vAxis()!==turn.axis){pendingTurn=null;return}
+  if(drag||sx!=null)return;
+  pendingTurn=null;
+  VAXIS=turn.axis;
+  const nb=want.map(n=>PRE[n]||prerenderOne(n,base));
+  const d=startTurn(to,turn.dir,want,nb);
+  d.rel=true;
+  settleTurn(d,-d.off,0,()=>adoptPage(d));
+}
+function onTMove(e){
+  if(e.touches.length!==1){onTCancel();return}
+  if(sx==null||waitingForPage||drag?.rel)return;const dx0=e.touches[0].clientX-sx,dy0=e.touches[0].clientY-sy;
+  tS.push([evT(e),dx0,dy0]);if(tS.length>40)tS.shift();
+  if(!drag)VAXIS=vAxis();
+  const dx=VAXIS?-dy0:dx0,dy=VAXIS?dx0:dy0;   // في الاتجاه الرأسي: السحب للأعلى = الصفحة التالية
+  if(!drag){
+    if(Math.abs(dx)<10||Math.abs(dx)<Math.abs(dy)*1.3){if(Math.abs(dy)>20)sx=null;return}
+    const sp=isSpread(),step=sp?2:1,dir=dx>0?1:-1,to=cur+dir*step;if(to<1||to>604){sx=null;return}
+    const want=sp&&to<604?[to,to+1]:[to],nb=[];
+    /* السحب يحرّك صفحات مجهّزة فقط، حتى لا نعيد قياس الأسطر أثناء اللمس. */
+    if(want.some(n=>!readyFonts.has('p'+n)||!PRE[n])){
+      want.forEach(n=>pageFont(n).catch(()=>{}));
+      waitingForPage=true;
+      return;
+    }
+    for(const n of want)nb.push(PRE[n]);
+    startTurn(to,dir,want,nb);
+  }
+  const d=drag,fx=d.dir>0?Math.max(0,dx):Math.min(0,dx);d.t=Date.now();
+  /* آخر مواضع الإصبع لحساب سرعته عند الرفع */
+  const tn=performance.now();(d.smp||(d.smp=[])).push([tn,fx]);while(d.smp.length>2&&tn-d.smp[0][0]>100)d.smp.shift();
+  /* نجمع أحداث اللمس المتتالية في تحديث واحد لكل إطار. */
+  if(!rafX)rafX=requestAnimationFrame(dragLoop);
+}
+function onTEnd(e){
+  unbindTouch();schedulePre();
+  if(sx==null){animateDeferredTurn();return}
+  const dx0=e.changedTouches[0].clientX-sx,dy0=e.changedTouches[0].clientY-sy;
+  sx=null;
+  const axis=drag?VAXIS:vAxis(),dx=axis?-dy0:dx0,dy=axis?dx0:dy0;
+  if(waitingForPage||!drag||drag.rel){
+    waitingForPage=false;
+    const elapsed=Date.now()-st0;
+    if(Math.abs(dx)>Math.abs(dy)*1.3&&(Math.abs(dx)>=50||(Math.abs(dx)>=20&&Math.abs(dx)>elapsed*0.3))){
+      pendingTurn={dir:Math.sign(dx),axis,from:drag?.rel?null:cur};
+    }
+    animateDeferredTurn();
+    return;
+  }
+  if(rafX){cancelAnimationFrame(rafX);rafX=0}
+  const d=drag;pendingTurn=null;d.t=Date.now();d.rel=true;
+  /* القرار على موضع الإصبع عند الرفع، والحركة النابضية تبدأ من موضع الصفحة المرسوم فعلًا (d.lastX) فلا تقفز */
+  const fx=d.dir>0?Math.max(0,dx):Math.min(0,dx);
+  /* سرعة الإصبع عند الرفع (نقطة/ث) من آخر ~٨٠ ملّي ثانية؛ صفر إن توقف الإصبع قبل رفعه */
+  const tn=performance.now(),sm=(d.smp||[]).filter(p=>tn-p[0]<=80);let v0=0;
+  if(sm.length>1&&tn-sm[sm.length-1][0]<50){const a=sm[0],b=sm[sm.length-1];if(b[0]-a[0]>4)v0=(b[1]-a[1])/((b[0]-a[0])/1000)}
+  /* تنقلب الصفحة كتطبيقات الآيفون: إذا سُحبت أكثر من النصف ولم يُرجَع الإصبع بسرعة،
+     أو إذا رُفع الإصبع وهو يتحرك باتجاه التقليب بسرعة ٣٠٠ نقطة/ث فأكثر بعد سحب ٢٠ نقطة على الأقل */
+  const vd=v0*d.dir,dist=Math.sign(fx)===d.dir?Math.abs(fx):0;
+  const done=(dist>d.W*0.5&&vd>-300)||(vd>=300&&dist>=20);
+  /* نبدأ من الموضع المرسوم ونهدّئ سرعة الإفلات تدريجيًا حتى تستقر الصفحة. */
+  settleTurn(d,done?-d.off:0,v0,()=>{if(drag===d){if(done)adoptPage(d);else{dragReset();schedulePre();animateDeferredTurn()}}});
+}
+/* مدة الإكمال تتدرج مع المسافة المتبقية، وتنتهي الحركة بسرعة صفر. */
+function settleTurn(d,target,releaseVelocity,finish){
+  if(rafX){cancelAnimationFrame(rafX);rafX=0}
+  const start=d.lastX,delta=target-start,distance=Math.abs(delta);
+  function paintEnd(){
+    dragPaint(d,target);
+    /* اعرض إطار الاستقرار قبل تبديل طبقات الصفحات وإزالة العلامة. */
+    rafX=requestAnimationFrame(()=>{rafX=0;if(drag===d)finish()});
+  }
+  if(distance<0.5){paintEnd();return}
+  const remaining=Math.min(1,distance/d.W);
+  /* أطِل نهاية التقليب بما يتناسب مع المسافة، حتى يبقى الرجوع القصير خفيفًا. */
+  const returning=target===0;
+  const duration=returning?170+160*Math.sqrt(remaining):
+    250+430*Math.sqrt(remaining);
+  const slope=Math.max(0,Math.min(2,releaseVelocity*Math.sign(delta)*duration/(1000*distance)));
+  /* المتصفح يحرك الطبقات مباشرة، بنفس منحنى التباطؤ المستخدم في المسار الاحتياطي. */
+  if(!EXP&&typeof d.cur[0]?.animate==='function'){
+    const started=[];
+    try{
+      const options={duration,easing:`cubic-bezier(0.333333,${slope/3},0.666667,1)`,fill:'both'};
+      const pageTransform=x=>VAXIS?`translate3d(0,${-pxR(x)}px,0)`:`translate3d(${pxR(x)}px,0,0)`;
+      const animate=(el,transform,offset)=>{
+        started.push(el.animate([{transform:transform(offset+start)},{transform:transform(offset+target)}],options));
+      };
+      if(d.track)animate(d.track,pageTransform,0);
+      else{
+        d.cur.forEach(el=>animate(el,pageTransform,0));
+        d.nb.forEach(el=>animate(el,pageTransform,d.off));
+        if(d.badge)animate(d.badge,x=>`translate3d(${pxR(x)}px,${d.badge._y}px,0)`,d.bx);
+      }
+      d.anims=started;
+      Promise.all(started.map(animation=>animation.finished)).then(()=>{
+        if(drag===d)paintEnd();
+      }).catch(()=>{});
+      return;
+    }catch(e){started.forEach(animation=>animation.cancel())}
+  }
+  let lastFrame=performance.now(),elapsed=0;
+  function step(now){
+    rafX=0;
+    if(drag!==d)return;
+    elapsed+=Math.max(0,Math.min(34,now-lastFrame));
+    lastFrame=now;
+    const t=elapsed/duration;
+    if(t>=1){paintEnd();return}
+    /* منحنى تكعيبي يحدّ سرعة البداية ويتجه إلى الهدف دون ارتداد. */
+    const progress=t*(slope+t*(3-2*slope+t*(slope-2)));
+    dragPaint(d,start+delta*progress);
+    d.t=Date.now();
+    rafX=requestAnimationFrame(step);
+  }
+  rafX=requestAnimationFrame(step);
+}
+/* إتمام التقليب: الصفحة المجهّزة تصير هي الصفحة الحالية دون إعادة رسم */
+function adoptPage(d){
+  drag=null;const{from,to}=d;if(d.anims)d.anims.forEach(a=>a.cancel());if(d.badge)d.badge.remove();
+  if(d.track)setX(d.track,0);
+  d.nb.forEach(el=>{el._tx=0;el.style.transition='';el.style.transform='';el.style.zIndex='';el.style.willChange=''});
+  /* الصفحات البعيدة تُزال، والصفحة التي قُلبت تبقى مرسومة خلف الخلفية جاهزة للرجوع إليها */
+  Object.values(PRE).forEach(el=>{if(!d.nb.includes(el))el.remove()});
+  d.cur.forEach(el=>{parkPage(el);if(d.track)document.body.appendChild(el)});if(EXP)expStripsOff();
+  PRE={};d.cur.forEach((el,i)=>PRE[from+i]=el);d.nb.forEach(bindPageEl);COMP=d.nb[1]||null;
+  /* الصفحة الظاهرة أول الصفحات ترتيبًا (عليها يُعتمد في بقية التطبيق)، وما قبلها من الصفحات المخفية يُنقل بعدها */
+  {const a=pageEls(),i=a.indexOf(d.nb[0]);if(i>0)a[a.length-1].after(...a.slice(0,i))}
+  cur=to;closeAll(true);save('lastPage',to);updBack();if(K.active==='hifz'){K.hifz.page=to;save('khatmas',K)}
+  pageChrome(to);
+  [to+1,to-1,to+2,to-2,to+3].forEach(n=>{if(n>=1&&n<=604)pageFont(n).catch(()=>{})});
+  schedulePre();animateDeferredTurn();
+}
+function onTCancel(){unbindTouch();sx=null;waitingForPage=false;pendingTurn=null;dragReset();schedulePre()}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState!=='visible')onTCancel()});
+addEventListener('keydown',e=>{if(/INPUT|TEXTAREA|SELECT/.test(e.target.tagName))return;
+  if($('lib').classList.contains('open')){if(e.key==='ArrowLeft')libStep(1);if(e.key==='ArrowRight')libStep(-1);if(e.key==='Escape')closeLib();return}
+  const st=isSpread()?2:1;if(e.key==='ArrowLeft')show(cur+st);if(e.key==='ArrowRight')show(cur-st);if(e.key==='Escape')closeAll()});
+/* عند تدوير الجهاز أو تغيير المقاس: تُعاد الصفحة (صفحة أو صفحتان حسب الوضع) */
+let rsT=0,rsW=innerWidth,rsS=isSpread();
+addEventListener('resize',()=>{clearTimeout(rsT);rsT=setTimeout(()=>{
+  if(innerWidth===rsW&&isSpread()===rsS){if(!drag&&sx==null)layout();return}   // تغيّر الطول فقط (كظهور لوحة المفاتيح): لا نعيد الصفحة
+  rsW=innerWidth;rsS=isSpread();if(drag)dragReset();clearPre();show(cur)},160)});
+/* ---------- إعادة رسم الصفحة بعد تغيير خيار يمس التخطيط ---------- */
+function relayPage(){if(drag)dragReset();clearPre();rsW=innerWidth;rsS=isSpread();show(cur)}
+/* ---------- الساعة أعلى الصفحة ---------- */
+function updClock(){if(!S.clock)return;const t=new Date().toLocaleTimeString('ar-SA-u-nu-arab',{hour:'numeric',minute:'2-digit'});document.querySelectorAll('.clk').forEach(c=>{if(c.textContent!==t)c.textContent=t})}
+setInterval(updClock,5000);
+/* ---------- رمز الحزب داخل الصفحة: في الهامش الداخلي عند سطر بداية الربع ---------- */
+function hizbMark(pg,margin){
+  pg.querySelectorAll('.hzm').forEach(x=>x.remove());
+  if(!S.hzin||typeof QUARTERS==='undefined')return;
+  const pr=pg.getBoundingClientRect();
+  for(let i=0;i<QUARTERS.length;i++){
+    if(Q.ayahPage[QUARTERS[i]]!==cur)continue;
+    const[s,a]=QUARTERS[i].split(':'),w=pg.querySelector(`.w[data-k^="${s}:${a}:"]`),ln=w&&w.closest('.line');if(!ln)continue;
+    const r=ln.getBoundingClientRect(),bw=Math.max(12,Math.round(margin*0.85)),bh=Math.round(bw*1.9);
+    const h=AR(Math.floor(i/4)+1),q=i%4,txt=q===0?`الحزب<br>${h}`:`${['','ربع','نصف','ثلاثة أرباع'][q]}<br>الحزب ${h}`;
+    const m=document.createElement('div');m.className='hzm';m.style.setProperty('--hw',bw+'px');m.style.width=bw+'px';m.style.height=bh+'px';
+    m.innerHTML=`<img src="${HZB_IMG}" alt="" draggable="false">`+(bw>=40?`<div class="t${q===3?' s':''}">${txt}</div>`:'');
+    m.style.top=Math.round(r.top-pr.top+pg.scrollTop+r.height/2-bh/2)+'px';
+    const x=Math.round((margin-bw)/2)+'px';if(cur%2===1)m.style.left=x;else m.style.right=x;   // الهامش الداخلي (جهة الكعب)
+    pg.appendChild(m);
+  }
+}
+/* ---------- اسحب للأسفل للبحث (مع الاتجاه الأفقي) ---------- */
+let psY=null,psX=0;
+addEventListener('touchstart',e=>{psY=null;if(!S.pull||e.touches.length>1||vAxis()||anyOpen()||!e.target.closest('#page'))return;
+  if($('page').scrollTop>0)return;psY=e.touches[0].clientY;psX=e.touches[0].clientX},{passive:true});
+addEventListener('touchend',e=>{if(psY==null)return;const dy=e.changedTouches[0].clientY-psY,dx=e.changedTouches[0].clientX-psX;psY=null;
+  if(dy>90&&Math.abs(dx)<dy*0.5&&!drag)openSearch()},{passive:true});
+/* ---------- نسخ احتياطي واستعادة ---------- */
+const BK_KEYS=['settings','khatmas','bookmarks','highlights','notes','lastPage'];
+async function backupData(){
+  const o={app:'rewaa',date:new Date().toISOString()};BK_KEYS.forEach(k=>{const v=localStorage.getItem(k);if(v!=null)o[k]=JSON.parse(v)});
+  const name=`rewaa-backup-${new Date().toISOString().slice(0,10)}.json`,blob=new Blob([JSON.stringify(o)],{type:'application/json'});
+  try{const f=new File([blob],name,{type:'application/json'});if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:name});return}}catch(e){if(e&&e.name==='AbortError')return}
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1500);
+}
+function restoreData(inp){
+  const f=inp.files&&inp.files[0];if(!f)return;const r=new FileReader();
+  r.onload=()=>{try{const o=JSON.parse(r.result);if(!o||o.app!=='rewaa')throw 0;
+    if(!confirm('ستحلّ النسخة المحفوظة محل الختمات والعلامات والتظليل والملاحظات والإعدادات الحالية. أتريد المتابعة؟'))return;
+    BK_KEYS.forEach(k=>{if(k in o)save(k,o[k])});location.reload()}catch(e){toast('الملف ليس نسخة احتياطية صحيحة')}inp.value=''};
+  r.readAsText(f);
+}
+/* ---------- التصفح الرأسي المتحرك (الصفحة المعروضة بعرض الشاشة في الوضع الأفقي) ---------- */
+const AS_LPM=[4,6,9,13,18];   // السرعات: عدد الأسطر في الدقيقة
+let asPage=0,asPos=0,asWait=0,asLast=0,asTouch=false,asNext=false;
+function asReset(){asPage=0;asNext=false}
+/* قائمة زر التصفح المتحرك: تشغيل أو إيقاف، والسرعات الخمس (مرتبطة بخيارات الإعدادات نفسها) */
+const AS_NAMES=['بطيء جدًا','بطيء','متوسط','سريع','سريع جدًا'];
+function openAutoMenu(ev){
+  ev.stopPropagation();const m=$('autoMenu');
+  if(m.classList.contains('open')){m.classList.remove('open');return}
+  const ck='<span class="ck">✓</span>';
+  m.innerHTML=`<button onclick="autoSet('toggle')">${S.auto?'إيقاف التصفح المتحرك':'تشغيل التصفح المتحرك'}</button><div class="sepr"></div>`+
+    AS_NAMES.map((n,i)=>`<button onclick="autoSet(${i+1})">${n}${(S.aspd||3)===i+1?ck:''}</button>`).join('');
+  m.classList.add('open');
+  const r=$('autoBtn').getBoundingClientRect();m.style.top='';m.style.left=Math.max(10,r.left)+'px';
+  m.style.bottom=(innerHeight-r.top+8)+'px';
+  setTimeout(()=>document.addEventListener('click',()=>m.classList.remove('open'),{once:true}),0);
+}
+function autoSet(v){
+  if(v==='toggle')S.auto=!S.auto;else{S.aspd=v;S.auto=true}   // اختيار سرعة يشغّل التحريك
+  save('settings',S);asReset();$('autoMenu').classList.remove('open');
+  closeAll();   // تُخفى الأشرطة فيبدأ التحريك
+  toast(S.auto?'التصفح المتحرك: '+AS_NAMES[(S.aspd||3)-1]:'أُوقف التصفح المتحرك');
+}
+function asPaused(){
+  return asTouch||drag||document.visibilityState!=='visible'||anyOpen()||
+    ['srch','tmenu','autoMenu','tview','top'].some(id=>$(id)&&$(id).classList.contains('open'));
+}
+function asTick(t){
+  requestAnimationFrame(asTick);
+  const dt=asLast?Math.min(100,t-asLast):0;asLast=t;
+  if(drag)return;
+  const pg=$('page');
+  const ab=$('autoBtn');if(ab){const sh=!!(pg&&pg.classList.contains('scrolly'));ab.classList.toggle('show',sh);ab.classList.toggle('on',!!S.auto)}
+  if(!S.auto||!pg||!pg.classList.contains('scrolly')){asPage=0;return}
+  if(asPage!==cur){asPage=cur;asNext=false;pg.scrollTop=0;asPos=0;asWait=t+1500;return}   // صفحة جديدة: من أعلاها بعد ثانية ونصف
+  if(asNext)return;
+  if(asPaused()){asWait=Math.max(asWait,t+800);return}   // بعد التوقف: لحظة قصيرة ثم يكمل
+  if(t<asWait){asPos=pg.scrollTop;return}
+  const max=pg.scrollHeight-pg.clientHeight;
+  if(pg.scrollTop>=max-1){
+    if(cur>=604||S.apage===false)return;
+    asNext=true;setTimeout(()=>{if(S.auto&&asNext&&!asPaused()&&$('page').classList.contains('scrolly'))show(cur+1);else asNext=false},1200);
+    return;
+  }
+  const ln=$('lines')&&$('lines').querySelector('.line'),pitch=ln?ln.offsetHeight:40;
+  if(Math.abs(asPos-pg.scrollTop)>2)asPos=pg.scrollTop;   // إن مرّر المستخدم بيده: يكمل من موضعه
+  asPos=Math.min(max,asPos+pitch*AS_LPM[(S.aspd||3)-1]/60*dt/1000);
+  pg.scrollTop=asPos;
+}
+addEventListener('touchstart',()=>{asTouch=true},{passive:true});
+addEventListener('touchend',e=>{if(!e.touches.length)asTouch=false},{passive:true});
+addEventListener('touchcancel',()=>{asTouch=false},{passive:true});
+requestAnimationFrame(asTick);
+/* ---------- إبقاء الشاشة مضاءة ما دام التطبيق مفتوحًا ---------- */
+let wakeLock=null;
+async function keepAwake(){if(S.wake===false||!('wakeLock' in navigator)||document.visibilityState!=='visible')return;
+  if(wakeLock&&!wakeLock.released)return;try{wakeLock=await navigator.wakeLock.request('screen')}catch(e){}}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')keepAwake()});
+addEventListener('touchend',keepAwake,{passive:true});addEventListener('click',keepAwake);
+keepAwake();
+init();
+
+/* منع التكبير والتصغير بإصبعين (Safari يتجاهل user-scalable=no) */
+['gesturestart','gesturechange','gestureend'].forEach(t=>document.addEventListener(t,e=>e.preventDefault(),{passive:false}));
+document.addEventListener('touchmove',e=>{if(e.touches.length>1)e.preventDefault()},{passive:false});
+
+/* ---------- وضع القياس المخفي: لا يعمل إلا إذا أُضيف ?perf إلى الرابط ----------
+   يسجّل مدة كل دالة من دوال التقليب والرسم والخطوط، وكل إطار تأخر أكثر من ٣٤ ملّي ثانية وما جرى فيه */
+if(/[?&]perf\b/.test(location.search))(function(){
+  const T0=performance.now(),EV=[],LONG=[],TOT={};
+  const log=(name,t,ms)=>{EV.push([t,name,ms]);if(EV.length>3000)EV.splice(0,1000);
+    const s=TOT[name]||(TOT[name]={n:0,sum:0,max:0});s.n++;s.sum+=ms;if(ms>s.max)s.max=ms};
+  const wrap=name=>{const f=window[name];if(typeof f!=='function')return;
+    window[name]=function(){const t=performance.now();try{return f.apply(this,arguments)}finally{const ms=performance.now()-t;if(ms>=1)log(name,t,ms)}}};
+  ['onTMove','onTEnd','prerenderOne','prerenderNeighbors','renderPage','fillMarkers','adoptPage','dragReset','springTo','makeBadge',
+   'pageChrome','closeAll','show','updBack','save','layout','schedulePre','clearPre','keepAwake','updClock','asTick','toggleBars','buildBanner','loadFont'].forEach(wrap);
+  /* الخطوط: متى طُلب خط الصفحة ومتى أُضيف إلى الصفحة (إضافته قد تُعيد حساب أنماط الصفحة كلها) */
+  const add=document.fonts.add.bind(document.fonts);
+  document.fonts.add=function(f){const t=performance.now();try{return add(f)}finally{log('font+ '+f.family,t,performance.now()-t)}};
+  /* أحداث اللمس التي وصلت متأخرة (الصفحة كانت مشغولة قبلها) */
+  ['touchstart','touchmove','touchend'].forEach(k=>addEventListener(k,e=>{const n=performance.now(),d=n-e.timeStamp;
+    if(e.timeStamp>0&&d>=20&&d<5000)log('late '+k,n,d)},{capture:true,passive:true}));
+  let last=0;
+  const fr=now=>{if(last&&now-last>34){const ev=EV.filter(x=>x[0]>=last-2&&x[0]<now).map(x=>x[1]+' '+x[2].toFixed(0));
+      LONG.push([last-T0,now-last,ev,!!drag]);if(LONG.length>200)LONG.shift()}
+    last=now;requestAnimationFrame(fr)};
+  requestAnimationFrame(fr);
+  const css='position:fixed;z-index:2147483647;font:12px/1.35 -apple-system,sans-serif;';
+  const btn=document.createElement('div');btn.textContent='⏱';
+  btn.style.cssText=css+'left:6px;bottom:calc(6px + env(safe-area-inset-bottom,0));width:34px;height:34px;border-radius:17px;background:rgba(0,0,0,.55);color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px';
+  const pan=document.createElement('div');pan.dir='ltr';
+  pan.style.cssText=css+'left:6px;right:6px;top:calc(6px + env(safe-area-inset-top,0));bottom:calc(46px + env(safe-area-inset-bottom,0));background:rgba(255,255,255,.97);color:#111;overflow:auto;padding:8px;border-radius:10px;box-shadow:0 4px 20px rgba(0,0,0,.3);display:none;white-space:pre-wrap;word-break:break-word';
+  const stop=e=>e.stopPropagation();
+  [btn,pan].forEach(el=>['touchstart','touchmove','touchend','click'].forEach(k=>el.addEventListener(k,stop,{passive:true})));
+  const draw=()=>{const tot=Object.entries(TOT).sort((a,b)=>b[1].sum-a[1].sum)
+      .map(([k,s])=>`${k}: n=${s.n} sum=${s.sum.toFixed(0)} max=${s.max.toFixed(0)}`).join('\n');
+    const lf=LONG.slice(-60).reverse().map(([t,g,ev,dr])=>`${(t/1000).toFixed(2)}s  ${g.toFixed(0)}ms${dr?' [drag]':''}  ${ev.join(', ')||'—'}`).join('\n');
+    pan.innerHTML='';const h=document.createElement('div');
+    h.style.cssText='display:flex;gap:8px;margin-bottom:6px';
+    const b=(t,f)=>{const x=document.createElement('button');x.textContent=t;x.style.cssText='font:13px -apple-system,sans-serif;padding:4px 10px';x.onclick=f;h.appendChild(x)};
+    b('تحديث',draw);b('مسح',()=>{EV.length=0;LONG.length=0;for(const k in TOT)delete TOT[k];draw()});b('إغلاق',()=>pan.style.display='none');
+    const txt=document.createElement('div');
+    txt.textContent=`${navigator.userAgent.match(/(iPhone|iPad|Macintosh|Android)[^;)]*/)?.[0]||''}  ${innerWidth}x${innerHeight} dpr=${devicePixelRatio}${EXP?'  [تجربة exp]':''}\n\n`+
+      `== إطارات تأخرت (الأحدث أولًا): الوقت، المدة، ما جرى فيها ==\n${lf||'—'}\n\n== مجموع كل دالة (ملّي ثانية) ==\n${tot||'—'}`;
+    pan.append(h,txt)};
+  btn.onclick=()=>{if(pan.style.display==='none'){draw();pan.style.display='block'}else pan.style.display='none'};
+  document.body.append(pan,btn);
+})();
+</script>
+</body>
+</html>

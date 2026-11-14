@@ -1600,45 +1600,34 @@ function onTEnd(e){
      أو إذا رُفع الإصبع وهو يتحرك باتجاه التقليب بسرعة ٣٠٠ نقطة/ث فأكثر بعد سحب ٢٠ نقطة على الأقل */
   const vd=v0*d.dir,dist=Math.sign(fx)===d.dir?Math.abs(fx):0;
   const done=(dist>d.W*0.5&&vd>-300)||(vd>=300&&dist>=20);
-  /* إكمال الحركة بنابض (كتقليب الآيفون): يبدأ بسرعة الإصبع ثم يتسارع قليلًا ثم يتباطأ بنعومة حتى يقف */
-  springTo(d,done?-d.off:0,v0,()=>{if(drag===d){if(done)adoptPage(d);else{dragReset();schedulePre()}}});
+  /* نبدأ من الموضع المرسوم ونهدّئ سرعة الإفلات تدريجيًا حتى تستقر الصفحة. */
+  settleTurn(d,done?-d.off:0,v0,()=>{if(drag===d){if(done)adoptPage(d);else{dragReset();schedulePre()}}});
 }
-/* حركة نابضية بلا ارتداد: موضع واحد يحرّك الصفحة الحالية والمجاورة وشارة الحزب معًا.
-   قوة النابض ثابتة في الانقلاب والرجوع، مضبوطة على تطبيق آية (نحو ٠٫٣٥ ثانية في الحالتين) */
-const SPRING_CSS=false;
-function springTo(d,target,v0,fin){
+/* مدة الإكمال تتدرج مع المسافة المتبقية، وتنتهي الحركة بسرعة صفر. */
+function settleTurn(d,target,releaseVelocity,finish){
   if(rafX){cancelAnimationFrame(rafX);rafX=0}
-  const x0=d.lastX,A=x0-target,D=Math.abs(A);
-  const pos=x=>{d.cur.forEach(el=>setX(el,x));d.nb.forEach(el=>setX(el,d.off+x));if(d.badge)setB(d.badge,d.bx+x)};
-  if(D<0.5){pos(target);fin();return}
-  const w=18;
-  /* نحصر السرعة باتجاه الهدف وبحد يمنع عبور الهدف ثم الرجوع إليه. */
-  const direction=Math.sign(target-x0);
-  v0=direction*Math.max(0,Math.min(v0*direction,w*D));
-  const B=v0+w*A,t0=performance.now();
-  /* يُحسب منحنى النابض كاملًا مرة واحدة ثم يؤديه المتصفح نفسه بانتقال CSS بمنحنى linear()،
-     فلا يفوته إطار مهما انشغلت الصفحة؛ وإن لم يدعمه الجهاز بقيت الحركة بالإطارات كما هي.
-     معطّل (SPRING_CSS=false): قيس في تسجيل الآيباد أن سفاري يبدأ الانتقال بإطار واقف ثم قفزة كبيرة ثم شبه توقف،
-     فصارت الحركة بعد الرفع تُرسم إطارًا إطارًا بالمنحنى نفسه كما يُرسم السحب */
-  if(SPRING_CSS&&window.CSS&&CSS.supports&&CSS.supports('transition-timing-function','linear(0, 1)')){
-    let T=0;for(;T<1.2;T+=1/120){const e=Math.exp(-w*T);if(Math.abs((A+B*T)*e)<1&&Math.abs((v0-w*B*T)*e)<30)break}
-    T=Math.max(T,1/60);const N=Math.max(2,Math.round(T*60)),pts=[];
-    for(let i=0;i<=N;i++){const t=T*i/N,pr=i===N?1:1-(A+B*t)*Math.exp(-w*t)/A;pts.push(`${pr.toFixed(4)} ${(100*i/N).toFixed(2)}%`)}
-    const tr=`transform ${T.toFixed(3)}s linear(${pts.join(', ')})`,els=[...d.cur,...d.nb];
-    pos(x0);if(els[0])getComputedStyle(els[0]).transform;if(d.badge)getComputedStyle(d.badge).transform;
-    d.cur.forEach(el=>{setX(el,target,T);el.style.transition=tr});
-    d.nb.forEach(el=>{setX(el,d.off+target,T);el.style.transition=tr});
-    if(d.badge){setB(d.badge,d.bx+target,T);d.badge.style.transition=tr}
-    d.t=Date.now();setTimeout(()=>{if(drag===d){d.t=Date.now();fin()}},T*1000+30);return;
+  const start=d.lastX,delta=target-start,distance=Math.abs(delta);
+  function paintEnd(){
+    dragPaint(d,target);
+    /* اعرض إطار الاستقرار قبل تبديل طبقات الصفحات وإزالة العلامة. */
+    rafX=requestAnimationFrame(()=>{rafX=0;if(drag===d)finish()});
   }
-  const step=now=>{rafX=0;if(drag!==d)return;const t=Math.max(0,now-t0)/1000,e=Math.exp(-w*t),x=target+(A+B*t)*e,v=(v0-w*B*t)*e;
-    if((Math.abs(x-target)<1&&Math.abs(v)<30)||t>1.2){
-      pos(target);
-      /* اعرض إطار الاستقرار قبل تبديل طبقات الصفحات وإزالة العلامة. */
-      rafX=requestAnimationFrame(()=>{rafX=0;if(drag===d)fin()});
-      return;
-    }
-    pos(x);d.t=Date.now();rafX=requestAnimationFrame(step)};
+  if(distance<0.5){paintEnd();return}
+  const remaining=Math.min(1,distance/d.W);
+  const duration=(target===0?170:250)+(target===0?160:300)*Math.sqrt(remaining);
+  const slope=Math.max(0,Math.min(2,releaseVelocity*Math.sign(delta)*duration/(1000*distance)));
+  const started=performance.now();
+  function step(now){
+    rafX=0;
+    if(drag!==d)return;
+    const t=Math.max(0,(now-started)/duration);
+    if(t>=1){paintEnd();return}
+    /* منحنى تكعيبي يحدّ سرعة البداية ويتجه إلى الهدف دون ارتداد. */
+    const progress=t*(slope+t*(3-2*slope+t*(slope-2)));
+    dragPaint(d,start+delta*progress);
+    d.t=Date.now();
+    rafX=requestAnimationFrame(step);
+  }
   rafX=requestAnimationFrame(step);
 }
 /* إتمام التقليب: الصفحة المجهّزة تصير هي الصفحة الحالية دون إعادة رسم */

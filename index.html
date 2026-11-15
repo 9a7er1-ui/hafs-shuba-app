@@ -576,7 +576,7 @@ async function show(p){
   if(drag)dragReset();clearPre();
   if(COMP){COMP.remove();COMP=null}
   renderPage(p);
-  $('page').scrollTop=0;
+  $('page').scrollTop=0;$('page').style.willChange=pageWC();
   if(isSpread()&&p<604){COMP=prerenderOne(p+1,p);delete PRE[p+1];bindPageEl(COMP);COMP.style.zIndex='';if($('page').nextElementSibling!==COMP)$('page').after(COMP)}
   [p+1,p-1,p+2,p+3,p-2].forEach(n=>{if(n>=1&&n<=604)pageFont(n).catch(()=>{})});
   schedulePre();
@@ -1457,13 +1457,17 @@ function bindPageEl(el){if(el._pb)return;el._pb=1;el.addEventListener('click',to
 /* الصفحات المجاورة تبقى مرسومة في الشاشة خلف خلفية التطبيق (طبقة -1) فلا يُعاد رسمها عند بدء السحب،
    ولا تُنزع الصفحة الظاهرة من مكانها أثناء تجهيزها فلا يُعاد رسمها هي أيضًا */
 const pageEls=()=>[...document.querySelectorAll('[id=page]')];
-function parkPage(el){el._tx=0;el._b=null;el.style.transition='';el.style.transform='';el.style.zIndex='-1';el.style.willChange=''}
+/* الصفحات تبقى داخل طبقة الحركة (#pageTrack) بطبقة رسم خاصة بكل صفحة (will-change)، فيرسمها سفاري كاملة وقت السكون
+   وهي تحت الصفحة الظاهرة؛ وعند بدء السحب يتغير موضعها فقط ولا تُنقل، فلا تظهر الخلفية الخضراء مكان جزء لم يُرسم منها بعد.
+   تجربة ‎?perf&exp كما كانت (في الجسم وبلا will-change) */
+const pageWC=()=>EXP?'':'transform',parkHost=()=>EXP?document.body:$('pageTrack');
+function parkPage(el){el._tx=0;el._b=null;el.style.transition='';el.style.transform='';el.style.zIndex='-1';el.style.willChange=pageWC()}
 function clearPre(){const B=$('page');Object.values(PRE).forEach(el=>{if(el!==B&&el!==COMP)el.remove()});PRE={}}
 function prerenderOne(n,base){
   const B=$('page'),fresh=B.cloneNode(true);fresh._pb=0;parkPage(fresh);fresh.style.visibility='';
   if(SNAP){fresh.classList.remove('snapped');fresh.querySelectorAll('canvas.snapc').forEach(c=>c.remove())}
   B.before(fresh);PRERENDER=true;cur=n;
-  try{renderPage(n);fillMarkers(fresh)}catch(e){}finally{PRERENDER=false;cur=base;document.body.appendChild(fresh)}
+  try{renderPage(n);fillMarkers(fresh)}catch(e){}finally{PRERENDER=false;cur=base;parkHost().appendChild(fresh)}
   return PRE[n]=fresh;
 }
 async function prerenderNeighbors(){
@@ -1616,6 +1620,10 @@ function snapDraw(el){
   if(!snapShown(el))el.classList.add('snapped');
 }
 function snapOn(els){if(SNAP)els.forEach(el=>{if(el._snapOK)el.classList.add('snapped')})}
+/* الصفحة الظاهرة تتحول إلى صورة من لحظة اللمس (لا من أول حركة) فلا يُعاد رسمها في أول إطار من السحب؛
+   وإن رُفع الإصبع دون تقليب عاد النص الحي فورًا قبل حدث النقر، فيبقى النقر والضغط المطوّل على الكلمات كما كانا */
+const shownEls=()=>[$('page'),COMP].filter(Boolean);
+function snapOff(){if(SNAP&&!drag)shownEls().forEach(el=>el.classList.remove('snapped'))}
 /* إظهار النص الحي بعد أن تستقر الصفحة بقليل، إلا إن بدأ سحب جديد */
 function snapReveal(){if(!SNAP)return;clearTimeout(snapReveal._t);snapReveal._t=setTimeout(()=>{
   if(drag||sx!=null){snapReveal();return}
@@ -1623,8 +1631,8 @@ function snapReveal(){if(!SNAP)return;clearTimeout(snapReveal._t);snapReveal._t=
   snapQueue($('page'));snapQueue(COMP)},350)}
 function dragReset(){if(rafX){cancelAnimationFrame(rafX);rafX=0}if(!drag)return;const d=drag;drag=null;if(EXP)expStripsOff();if(d.anims)d.anims.forEach(a=>a.cancel());if(d.badge)d.badge.remove();
   if(d.track)setX(d.track,0);
-  d.cur.forEach(el=>{setX(el,0);el.style.transform='';el.style.zIndex='';el.style.willChange=''});
-  d.nb.forEach(el=>{setX(el,0);parkPage(el);if(d.track)document.body.appendChild(el)});snapReveal()}
+  d.cur.forEach(el=>{setX(el,0);el.style.transform='';el.style.zIndex='';el.style.willChange=pageWC()});
+  d.nb.forEach(el=>{setX(el,0);parkPage(el)});snapReveal()}
 let tTarget=null,rafX=0;
 /* نرسم آخر موضع لمس مرة واحدة في إطار الشاشة، دون تأخير متغيّر. */
 let tS=[];
@@ -1654,6 +1662,7 @@ addEventListener('touchstart',e=>{
   if(drag&&Date.now()-drag.t>1800)dragReset();
   if((drag&&!drag.rel)||e.target.closest('.sheet,#pop,#full,#drw,#lib,#bot,#top,.menu,#srch,#tview')){sx=null;return}
   sx=e.touches[0].clientX;sy=e.touches[0].clientY;st0=Date.now();waitingForPage=false;tS=[[evT(e),0,0]];
+  if(!drag)snapOn(shownEls());
   unbindTouch();tTarget=e.target;
   tTarget.addEventListener('touchmove',onTMove,{passive:true});tTarget.addEventListener('touchend',onTEnd,{passive:true});tTarget.addEventListener('touchcancel',onTCancel,{passive:true});
 },{passive:true});
@@ -1677,7 +1686,7 @@ function startTurn(to,dir,want,nb){
   [...curEls,...nb].forEach(el=>el.style.willChange='transform');nb.forEach(el=>setX(el,off));
   /* حركة واحدة للمجموعة كلها: لا تتحرك حافتا الفراغ والعلامة بتوقيتات مستقلة. */
   const track=EXP?null:$('pageTrack');
-  if(track){nb.forEach(el=>track.appendChild(el));if(badge)track.appendChild(badge)}
+  if(track){nb.forEach(el=>{if(el.parentNode!==track)track.appendChild(el)});if(badge)track.appendChild(badge)}
   drag={from:cur,to,dir,W:Math.abs(off),off,cur:curEls,nb,badge,bx,track,t:Date.now(),lastX:0};
   return drag;
 }
@@ -1728,7 +1737,7 @@ function onTMove(e){
   if(!rafX)rafX=requestAnimationFrame(dragLoop);
 }
 function onTEnd(e){
-  unbindTouch();schedulePre();
+  unbindTouch();schedulePre();snapOff();
   if(sx==null){animateDeferredTurn();return}
   const dx0=e.changedTouches[0].clientX-sx,dy0=e.changedTouches[0].clientY-sy;
   sx=null;
@@ -1818,10 +1827,10 @@ function settleTurn(d,target,releaseVelocity,finish){
 function adoptPage(d){
   drag=null;const{from,to}=d;if(d.anims)d.anims.forEach(a=>a.cancel());if(d.badge)d.badge.remove();
   if(d.track)setX(d.track,0);
-  d.nb.forEach(el=>{el._tx=0;el.style.transition='';el.style.transform='';el.style.zIndex='';el.style.willChange=''});
+  d.nb.forEach(el=>{el._tx=0;el.style.transition='';el.style.transform='';el.style.zIndex='';el.style.willChange=pageWC()});
   /* الصفحات البعيدة تُزال، والصفحة التي قُلبت تبقى مرسومة خلف الخلفية جاهزة للرجوع إليها */
   Object.values(PRE).forEach(el=>{if(!d.nb.includes(el))el.remove()});
-  d.cur.forEach(el=>{parkPage(el);if(d.track)document.body.appendChild(el)});if(EXP)expStripsOff();
+  d.cur.forEach(el=>parkPage(el));if(EXP)expStripsOff();
   PRE={};d.cur.forEach((el,i)=>PRE[from+i]=el);d.nb.forEach(bindPageEl);COMP=d.nb[1]||null;
   /* الصفحة الظاهرة أول الصفحات ترتيبًا (عليها يُعتمد في بقية التطبيق)، وما قبلها من الصفحات المخفية يُنقل بعدها */
   {const a=pageEls(),i=a.indexOf(d.nb[0]);if(i>0)a[a.length-1].after(...a.slice(0,i))}
@@ -1830,7 +1839,7 @@ function adoptPage(d){
   [to+1,to-1,to+2,to-2,to+3].forEach(n=>{if(n>=1&&n<=604)pageFont(n).catch(()=>{})});
   schedulePre();animateDeferredTurn();
 }
-function onTCancel(){unbindTouch();sx=null;waitingForPage=false;pendingTurn=null;dragReset();schedulePre()}
+function onTCancel(){unbindTouch();sx=null;waitingForPage=false;pendingTurn=null;dragReset();snapOff();schedulePre()}
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState!=='visible')onTCancel()});
 addEventListener('keydown',e=>{if(/INPUT|TEXTAREA|SELECT/.test(e.target.tagName))return;
   if($('lib').classList.contains('open')){if(e.key==='ArrowLeft')libStep(1);if(e.key==='ArrowRight')libStep(-1);if(e.key==='Escape')closeLib();return}

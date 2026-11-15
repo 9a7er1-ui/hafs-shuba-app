@@ -26,7 +26,9 @@ button{font:inherit;cursor:pointer;color:inherit}
 svg.i{width:1.35em;height:1.35em;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;vertical-align:middle}
 /* ---------- page ---------- */
 #pageTrack{position:absolute;inset:0;transform:translate3d(0,0,0);will-change:transform;pointer-events:none}
-#pageTrack #page{pointer-events:auto}
+#pageTrack #page:not(.parked){pointer-events:auto}
+/* تبقى الصفحة المهيأة قابلة للقياس والرسم، لكنها لا تظهر من وراء الورقة المتحركة. */
+#page.parked{opacity:0;pointer-events:none}
 #page{position:absolute;inset:0;margin:auto;background:var(--paper);display:flex;flex-direction:column;padding:env(safe-area-inset-top,0) 0 env(safe-area-inset-bottom,0)}
 #page.odd{border-radius:0 16px 16px 0;box-shadow:3px 0 0 #f4f0e7,4px 0 0 #d8d1c3,7px 0 0 #f4f0e7,8px 0 0 #d8d1c3,11px 0 0 #f4f0e7,12px 0 0 #cfc7b8}
 #page.even{border-radius:16px 0 0 16px;box-shadow:-3px 0 0 #f4f0e7,-4px 0 0 #d8d1c3,-7px 0 0 #f4f0e7,-8px 0 0 #d8d1c3,-11px 0 0 #f4f0e7,-12px 0 0 #cfc7b8}
@@ -577,7 +579,7 @@ async function show(p){
   if(COMP){COMP.remove();COMP=null}
   renderPage(p);
   $('page').scrollTop=0;$('page').style.willChange=pageWC();
-  if(isSpread()&&p<604){COMP=prerenderOne(p+1,p);delete PRE[p+1];bindPageEl(COMP);COMP.style.zIndex='';if($('page').nextElementSibling!==COMP)$('page').after(COMP)}
+  if(isSpread()&&p<604){COMP=prerenderOne(p+1,p);delete PRE[p+1];bindPageEl(COMP);COMP.classList.remove('parked');COMP.style.zIndex='';if($('page').nextElementSibling!==COMP)$('page').after(COMP)}
   [p+1,p-1,p+2,p+3,p-2].forEach(n=>{if(n>=1&&n<=604)pageFont(n).catch(()=>{})});
   schedulePre();
 }
@@ -1461,7 +1463,7 @@ const pageEls=()=>[...document.querySelectorAll('[id=page]')];
    وهي تحت الصفحة الظاهرة؛ وعند بدء السحب يتغير موضعها فقط ولا تُنقل، فلا تظهر الخلفية الخضراء مكان جزء لم يُرسم منها بعد.
    تجربة ‎?perf&exp كما كانت (في الجسم وبلا will-change) */
 const pageWC=()=>EXP?'':'transform',parkHost=()=>EXP?document.body:$('pageTrack');
-function parkPage(el){el._tx=0;el._b=null;el.style.transition='';el.style.transform='';el.style.zIndex='-1';el.style.willChange=pageWC()}
+function parkPage(el){el.classList.add('parked');el._tx=0;el._b=null;el.style.transition='';el.style.transform='';el.style.zIndex='-1';el.style.willChange=pageWC()}
 function clearPre(){const B=$('page');Object.values(PRE).forEach(el=>{if(el!==B&&el!==COMP)el.remove()});PRE={}}
 function prerenderOne(n,base){
   const B=$('page'),fresh=B.cloneNode(true);fresh._pb=0;parkPage(fresh);fresh.style.visibility='';
@@ -1685,7 +1687,7 @@ function startTurn(to,dir,want,nb){
   /* فراغ ثابت بين الصفحتين في كل تقليب (الآيفون والآيباد): بعرض شعار الحزب مع مجال لأطراف الصفحات، والشعار في وسطه */
   const G=turnGap();off=pxR(off-dir*G);
   const bx=badge?(dir>0?rB.l-G/2:rB.r+G/2)-badge._w/2:0;if(badge)setB(badge,bx);
-  [...curEls,...nb].forEach(el=>el.style.willChange='transform');nb.forEach(el=>setX(el,off));
+  [...curEls,...nb].forEach(el=>el.style.willChange='transform');nb.forEach(el=>{setX(el,off);el.classList.remove('parked')});
   /* حركة واحدة للمجموعة كلها: لا تتحرك حافتا الفراغ والعلامة بتوقيتات مستقلة. */
   const track=EXP?null:$('pageTrack');
   if(track){nb.forEach(el=>{if(el.parentNode!==track)track.appendChild(el)});if(badge)track.appendChild(badge)}

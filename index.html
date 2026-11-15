@@ -334,7 +334,7 @@ html,body{touch-action:pan-x pan-y}
 </style>
 </head>
 <body>
-<script>if(new URLSearchParams(location.search).get('edge')==='plain')document.documentElement.classList.add('plain-turn-edge');</script>
+<script>if(new URLSearchParams(location.search).get('edge')!=='layered')document.documentElement.classList.add('plain-turn-edge');</script>
 <div id="msg">جارٍ التحميل…</div>
 <div id="pageTrack">
 <div id="page" hidden>
@@ -613,7 +613,7 @@ function renderPage(p){
   $('page').classList.toggle('odd',p%2===1);$('page').classList.toggle('even',p%2===0);
   LAYOUT[p-1].forEach(l=>{
     const div=document.createElement('div');
-    if(l.h){const[d,x,y,w,h]=NAMES[l.h];div.className='hdr'+(BANNER_BAKED?' baked':'');div.innerHTML=`<img src="${BANNER_URL}" alt=""><svg viewBox="${x} ${y} ${w} ${h}" style="aspect-ratio:${w}/${h}"><path d="${d}"/></svg>`}
+    if(l.h){const[d,x,y,w,h]=NAMES[l.h];div.className='hdr'+(BANNER_BAKED?' baked':'');div.innerHTML=`<img src="${BANNER_URL}" alt=""><svg role="img" aria-label="سورة ${esc(sname(l.h))}" viewBox="${x} ${y} ${w} ${h}" style="aspect-ratio:${w}/${h}"><path d="${d}"/></svg>`}
     else if(l.b){div.className='bsm';div.textContent='#"!'}
     else{
       div.className='line';div.style.fontFamily=fam;let dotc=null;
@@ -1567,13 +1567,15 @@ async function snapPage(el){
   snapDraw(el);
 }
 function snapDraw(el){
-  const W=el.clientWidth,H=el.clientHeight;if(!W||!H)return;
-  const pr=el.getBoundingClientRect(),dpr=Math.min(3,devicePixelRatio||1);
+  const pr=el.getBoundingClientRect();
+  const W=pr.width,H=pr.height;if(!W||!H)return;
+  const dpr=Math.min(3,devicePixelRatio||1);
   let c=el.querySelector(':scope>canvas.snapc');
   if(!c){c=document.createElement('canvas');c.className='snapc';el.appendChild(c)}
   c.width=Math.round(W*dpr);c.height=Math.round(H*dpr);c.style.width=W+'px';c.style.height=H+'px';
   const x=c.getContext('2d');if(!x)return;
-  x.setTransform(dpr,0,0,dpr,-pr.left*dpr,-pr.top*dpr);
+  const scaleX=c.width/W,scaleY=c.height/H;
+  x.setTransform(scaleX,0,0,scaleY,-pr.left*scaleX,-pr.top*scaleY);
   const lines=el.querySelector('#lines'),clear=v=>!v||v==='transparent'||/rgba\(.*,\s*0\)$/.test(v);
   /* ١) إطارات أسماء السور */
   lines.querySelectorAll('.hdr').forEach(h=>{

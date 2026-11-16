@@ -1624,6 +1624,16 @@ function snapDraw(el){
   /* الصفحات المجهّزة خلف الخلفية تبقى صورة من الآن؛ والظاهرة تتحول إلى صورة عند بدء السحب فقط */
   if(!snapShown(el))el.classList.add('snapped');
 }
+/* رسم صورة الصفحة فورًا إن لم تكن جاهزة وكانت شروط رسمها متحققة (الخطوط والصور محمّلة) */
+function snapNow(el){
+  try{
+    if(!el||el._snapOK||!el.isConnected||el.classList.contains('scrolly'))return;
+    const lines=el.querySelector('#lines');if(!lines||!lines.children.length)return;
+    if(lines.querySelector('.bsm')&&!readyFonts.has('bsml'))return;
+    if([...lines.querySelectorAll('img')].some(i=>!(i.complete&&i.naturalWidth)))return;
+    snapWatch(el);snapDraw(el);
+  }catch(e){}
+}
 function snapOn(els){if(SNAP)els.forEach(el=>{if(el._snapOK)el.classList.add('snapped')})}
 /* الصفحة الظاهرة تتحول إلى صورة من لحظة اللمس (لا من أول حركة) فلا يُعاد رسمها في أول إطار من السحب؛
    وإن رُفع الإصبع دون تقليب عاد النص الحي فورًا قبل حدث النقر، فيبقى النقر والضغط المطوّل على الكلمات كما كانا */
@@ -1665,9 +1675,12 @@ function dragPos(d,now){
   if(d.lag<0.3)d.lag=0;
   return d.dir*Math.max(0,Math.min(d.W,f-d.lag));
 }
-function dragPaint(d,x){
+function dragPaint(d,x,raw){
   d.lastX=x;
-  if(d.track){setX(d.track,x);return}
+  if(d.track){
+    if(raw){const t=d.track;t._tx=x;t.style.transition='none';t.style.transform=VAXIS?`translate3d(0,${-x}px,0)`:`translate3d(${x}px,0,0)`}
+    else setX(d.track,x);
+    return}
   d.cur.forEach(el=>setX(el,x));
   d.nb.forEach(el=>setX(el,d.off+x));
   if(d.badge)setB(d.badge,d.bx+x);
@@ -1693,6 +1706,7 @@ addEventListener('touchstart',e=>{
 },{passive:true});
 function startTurn(to,dir,want,nb){
   const B=$('page'),curEls=COMP?[B,COMP]:[B];
+  if(SNAP)[...curEls,...nb].forEach(snapNow);
   snapOn([...curEls,...nb]);
   curEls.forEach(el=>el.style.zIndex=2);nb.forEach(el=>{el.style.zIndex=1;el._b=null;setX(el,0)});expStripsOn(curEls);const out=nb.filter(el=>!el.isConnected);if(out.length)pageEls().pop().after(...out);
   /* المجموعة المجاورة تلتصق بحافة المجموعة الحالية تمامًا */
@@ -1792,6 +1806,9 @@ function onTEnd(e){
   /* نبدأ من الموضع المرسوم ونهدّئ سرعة الإفلات تدريجيًا حتى تستقر الصفحة. */
   settleTurn(d,done?-d.off:0,v0,()=>{if(drag===d){if(done)adoptPage(d);else{dragReset();schedulePre();animateDeferredTurn()}}});
 }
+/* في سفاري تظهر حركة المتصفح الجاهزة (animate) متأخرة إطارًا أو إطارين وساعتها تعمل، فيقفز أول إطار منها ضعفين أو ثلاثة.
+   لذلك تُحسب حركة الإكمال هنا إطارًا إطارًا من الزمن المنقضي، متصلة بآخر إطار من السحب؛ و‎?waapi يرجع إلى الطريقة السابقة للمقارنة */
+const WAAPI=/[?&]waapi\b/.test(location.search);
 /* مدة الإكمال تتدرج مع المسافة المتبقية، وتنتهي الحركة بسرعة صفر. */
 function settleTurn(d,target,releaseVelocity,finish){
   if(rafX){cancelAnimationFrame(rafX);rafX=0}
@@ -1813,7 +1830,7 @@ function settleTurn(d,target,releaseVelocity,finish){
   if(tspd===4)duration=Math.min(180+320*Math.sqrt(remaining),Math.max(180,3000*distance/Math.max(vRel,1)));
   const slope=Math.max(0,Math.min(tspd===4?3:2,vRel*duration/(1000*distance)));
   /* المتصفح يحرك الطبقات مباشرة، بنفس منحنى التباطؤ المستخدم في المسار الاحتياطي. */
-  if(!EXP&&typeof d.cur[0]?.animate==='function'){
+  if(WAAPI&&!EXP&&typeof d.cur[0]?.animate==='function'){
     const started=[];
     try{
       const options={duration,easing:`cubic-bezier(0.333333,${slope/3},0.666667,1)`,fill:'both'};
@@ -1834,7 +1851,7 @@ function settleTurn(d,target,releaseVelocity,finish){
       return;
     }catch(e){started.forEach(animation=>animation.cancel())}
   }
-  let lastFrame=performance.now(),elapsed=0;
+  let lastFrame=d.pt&&performance.now()-d.pt<50?d.pt:performance.now(),elapsed=0;
   function step(now){
     rafX=0;
     if(drag!==d)return;
@@ -1844,7 +1861,7 @@ function settleTurn(d,target,releaseVelocity,finish){
     if(t>=1){paintEnd();return}
     /* منحنى تكعيبي يحدّ سرعة البداية ويتجه إلى الهدف دون ارتداد. */
     const progress=t*(slope+t*(3-2*slope+t*(slope-2)));
-    dragPaint(d,start+delta*progress);
+    dragPaint(d,start+delta*progress,true);
     d.t=Date.now();
     rafX=requestAnimationFrame(step);
   }
